@@ -1,0 +1,32 @@
+Commands:
+  no-permission: "&cYou do not have permission for this."
+  player-only: "This command is only for players."
+  lpc:
+    usage: "&f&o/lpc choose | setClass | setRank | giveAttribute"
+    no-player: "&cPlayer not found."
+    choose:
+      usage: "&f&o/lpc choose <player>"
+    setClass:
+      usage: "&f&o/lpc choose <player> <class>"
+      success: "&fYou have set &b%player%'s&f class to &6%class%&f."
+      no-class: "&cClass not found."
+    giveAttribute:
+      usage: "&f&o/lpc choose <player> <amount>"
+      success: "&fYou have given &6%amount%&f attribute points to &b%player%&f."
+      nan: "&4%nan%&c is not a number."
+  rank:
+    usage: "&f&o/rank upgrade | list | info"
+    list: "List of all existing ranks:"
+    progress:
+      - "&fYour current progress is:"
+      - "%rank%&f %exp% %progress% &f%exp1% %rank1%"
+    info:
+      usage: "&f&o/rank info <rank>"
+      success: "Info about rank &b%rank%&f:\n  Requires &d%exp%&f experience points.\n  Rewards:"
+      no-rank: "&cRank not found!"
+Actions:
+  got_exp: "&a+%exp%&f exp"
+  ability_cooldown: "&cYour ability is on cooldown! &4%time%&c seconds left!"
+  class_choose: "&fYou have chosen the class &e%class%&f."
+  ability_activated: "&#7ba6a4Ability &#5c966bactivated"
+  ability_ended: "&#7ba6a4Ability &#965c5cended"

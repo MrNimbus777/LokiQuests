@@ -1,0 +1,209 @@
+Settings:
+  prefix: '&7[&e&lThrones&6&lRising&7] &r'
+  multipliers: # here is described how much each lvl increases players' characteristics.
+    strength: 3.0 # that mean that each lvl of strength increases the overall strength by +5%
+    speed: 2.0
+    health: 1.0 # for health, it is not % but it's just how much health does a lvl add, 1 hp = 0.5 hearts
+    dexterity: 2.0
+    magic: 5.0
+GUI:
+  class_choose:
+    name: "&8Choose your class"
+    class_item:
+      name: "&7%name%&f class:"
+      lore:
+        - ''
+        - '&8Default characteristics:'
+        - ''
+        - '&c%hp%&f HP'
+        - '&7%damage%%&f damage'
+        - '&7%speed%%&f walking speed'
+        - '&7%dexterity%%&f dexterity'
+        - '&7%magic%%&f magic potential'
+        - ''
+        - '%custom_description%'
+        - ''
+    border_item:
+      name: ' '
+      material: BLACK_STAINED_GLASS_PANE
+      lore: []
+  rank: # %lvl% - current level of player; %lvl1% - next player's lvl
+    name: "&8Upgrade yourself!"
+    speed_upgrade:
+      name: "&#6ae6d7Upgrade speed from &#a26ae6%lvl%&#6ae6d7 to &#540de0%lvl1%"
+      material: sugar
+      lore:
+        - ''
+        - '&#545b9eNeed 1 attribute point'
+        - '&#f7b5b5Get &#db699a+2% &#f7b5b5speed'
+        - ''
+    strength_upgrade:
+      name: "&#6ae6d7Upgrade strength from &#a26ae6%lvl%&#6ae6d7 to &#540de0%lvl1%"
+      material: blaze_powder
+      lore:
+        - ''
+        - '&#545b9eNeed 1 attribute point'
+        - '&#f7b5b5Get &#db699a+3% &#f7b5b5strength'
+        - ''
+    dexterity_upgrade:
+      name: "&#6ae6d7Upgrade dexterity from &#a26ae6%lvl%&#6ae6d7 to &#540de0%lvl1%"
+      material: golden_carrot
+      lore:
+        - ''
+        - '&#545b9eNeed 1 attribute point'
+        - '&#f7b5b5Get &#db699a+2% &#f7b5b5dexterity'
+        - ''
+    health_upgrade:
+      name: "&#6ae6d7Upgrade health from &#a26ae6%lvl%&#6ae6d7 to &#540de0%lvl1%"
+      material: GLISTERING_MELON_SLICE
+      lore:
+        - ''
+        - '&#545b9eNeed 1 attribute point'
+        - '&#f7b5b5Get &#db699a+1 &#f7b5b5hp'
+        - ''
+    magic_upgrade:
+      name: "&#6ae6d7Upgrade magic from &#a26ae6%lvl%&#6ae6d7 to &#540de0%lvl1%"
+      material: ender_pearl
+      lore:
+        - ''
+        - '&#545b9eNeed 1 attribute point'
+        - '&#f7b5b5Get &#db699a+5% &#f7b5b5magic power'
+        - ''
+    border_item:
+      name: " "
+      material: BLACK_STAINED_GLASS_PANE
+      lore: []
+Classes:
+  knight:
+    name: "&#877596Knight"
+    gui_icon: iron_sword
+    ability_cooldown: 30 # seconds
+    custom_description:
+      - 'Deals more sword damage'
+      - 'Deals less bow damage'
+    properties: # n lvl
+      strength: 4
+      speed: 3
+      dexterity: 2
+      magic: 0
+      health: 3
+  archer:
+    name: "&#7a634cArcher"
+    gui_icon: bow
+    ability_cooldown: 30 # seconds
+    custom_description:
+      - 'Deals less sword damage'
+      - 'Deals more bow damage'
+    properties:
+      strength: 1
+      speed: 6
+      dexterity: 3
+      magic: 1
+      health: 2
+  mage:
+    name: "&#f797b4Mage"
+    gui_icon: ender_eye
+    ability_cooldown: 30 # seconds
+    custom_description: []
+    properties:
+      strength: 0
+      speed: 6
+      dexterity: 0
+      magic: 5
+      health: 1
+  berserk:
+    name: "&#b04d4dBerserk"
+    gui_icon: iron_axe
+    ability_cooldown: 30 # seconds
+    custom_description: []
+    properties:
+      strength: 5
+      speed: 0
+      dexterity: 0
+      magic: 0
+      health: 5
+  assassin:
+    name: "&#79b1b5Assassin"
+    gui_icon: feather
+    ability_cooldown: 30 # seconds
+    custom_description: []
+    properties:
+      strength: 1
+      speed: 6
+      dexterity: 6
+      magic: 0
+      health: 0
+
+Ranks:
+  pioneer:
+    name: '&#8C4A2EPioneer'
+  civilian:
+    name: '&#4E6775Civilian'
+    exp: 500
+    rewards:
+      - 'cmd:eco give %player% 10|&610 coins&f'
+      - 'cmd:lokiplayerclass giveAttribute %player% 1|&b1 attribute point&f'
+      - 'perm:kingdoms.claim|ability to claim territory'
+  merchant:
+    name: '&#FFD700Merchant'
+    exp: 1500
+    rewards:
+      - 'perm:player.shop|ability to open a player shop'
+      - 'cmd:eco give %player% 25|&625 coins&f'
+  adventurer:
+    name: '&#2E8B57Adventurer'
+    exp: 2500
+    rewards:
+      - 'cmd:eco give %player% 50|&650 coins&f'
+      - 'perm:kingdoms.claim.2|ability to claim 2 territories'
+  vagabond:
+    name: '&#696969Vagabond'
+    exp: 5000
+    rewards:
+      - 'cmd:eco give %player% 100|&6100 coins&f'
+      - 'cmd:lokiplayerclass giveAttribute %player% 1|&b1 attribute point&f'
+      - 'perm:npc.shop|ability to use the npc shop'
+  noble:
+    name: '&#800080Noble'
+    exp: 7500
+    rewards:
+      - 'cmd:eco give %player% 250|&6250 coins&f'
+      - 'cmd:lokiplayerclass giveAttribute %player% 1|&b1 attribute point&f'
+      - 'perm:kingdoms.claim.4|ability to claim 4 territories'
+  duke:
+    name: '&#800000Duke'
+    exp: 10000
+    rewards:
+      - 'cmd:eco give %player% 350|&6350 coins&f'
+      - 'perm:npc.special.shop|ability to use special npc shop'
+  royal:
+    name: '&#4169E1Royal'
+    exp: 12000
+    rewards:
+      - 'cmd:eco give %player% 500|&6500 coins&f'
+  hero:
+    name: '&#fbaf00H&#fc954ae&#fc7a94r&#fd60deo'
+    exp: 15000
+    rewards:
+      - 'cmd:eco give %player% 1000|&61000 coins&f'
+      - 'cmd:lokiplayerclass giveAttribute %player% 2|&b2 attribute points&f'
+      - 'perm:npc.epic.shop|ability to use epic npc shop'
+  champion:
+    name: '&#00b6fbC&#24b1f8h&#48acf6a&#6ca7f3m&#91a2f0p&#b59dedi&#d998ebo&#fd93e8n'
+    exp: 17000
+    rewards:
+      - 'cmd:eco give %player% 1500|&61500 coins&f'
+      - 'cmd:lokiplayerclass giveAttribute %player% 3|&b3 attribute points&f'
+  mythic:
+    name: '&#a05ffbM&#b367e4y&#c570cdt&#d878b7h&#ea81a0i&#fd8989c'
+    exp: 20000
+    rewards:
+      - 'cmd:eco give %player% 5000|&65000 coins&f'
+      - 'cmd:lokiplayerclass giveAttribute %player% 4|&b4 attribute points&f'
+  legend:
+    name: '&#fb6d25L&#fb7339e&#fc784dg&#fc7e61e&#fd8375n&#fd8989d'
+    exp: 25000
+    rewards:
+      - 'cmd:eco give %player% 10000|&610000 coins&f'
+      - 'cmd:lokiplayerclass giveAttribute %player% 5|&b5 attribute points&f'
+      - 'perm:npc.rare.shop|ability to use rare npc shop'

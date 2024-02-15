@@ -1,0 +1,9 @@
+name: LokiPlayerClasses
+main: net.nimbus.lokiplayerclasses.LPClasses
+version: 1.0
+softdepend: [LuckPerms, PlaceholderAPI]
+api-version: 1.20
+commands:
+  lokiplayerclass:
+    aliases: [lpc, lpclass]
+  rank:
