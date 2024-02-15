@@ -1,9 +1,6 @@
-name: LokiPlayerClasses
-main: net.nimbus.lokiplayerclasses.LPClasses
+name: LokiQuests
+main: net.nimbus.lokiquests.LQuests
 version: 1.0
-softdepend: [LuckPerms, PlaceholderAPI]
+softdepend: []
 api-version: 1.20
 commands:
-  lokiplayerclass:
-    aliases: [lpc, lpclass]
-  rank:
