@@ -1,5 +1,7 @@
 package net.nimbus.lokiquests;
 
+import net.nimbus.lokiquests.core.reward.rewardprocessors.CommandProcessor;
+import net.nimbus.lokiquests.core.reward.rewardprocessors.RewardProcessors;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,9 +17,6 @@ public class LQuests extends JavaPlugin {
 
 
     private YamlConfiguration messages;
-
-
-
 
 
     public void loadConfig(boolean reload){
@@ -58,6 +57,7 @@ public class LQuests extends JavaPlugin {
         loadEvents();
         loadCommands();
 
+        RewardProcessors.register("cmd", new CommandProcessor());
 
     }
 

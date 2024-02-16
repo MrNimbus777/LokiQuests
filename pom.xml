@@ -52,7 +52,6 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
