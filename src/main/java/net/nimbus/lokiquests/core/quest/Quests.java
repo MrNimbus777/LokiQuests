@@ -1,4 +1,4 @@
-package net.nimbus.lokiquests.core.quests;
+package net.nimbus.lokiquests.core.quest;
 
 import java.util.HashMap;
 import java.util.Map;

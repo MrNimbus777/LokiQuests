@@ -1,7 +1,6 @@
 package net.nimbus.lokiquests;
 
-import net.nimbus.lokiquests.core.reward.rewardprocessors.CommandProcessor;
-import net.nimbus.lokiquests.core.reward.rewardprocessors.RewardProcessors;
+import net.nimbus.lokiquests.core.reward.rewardprocessors.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,6 +16,7 @@ public class LQuests extends JavaPlugin {
 
 
     private YamlConfiguration messages;
+    private YamlConfiguration items;
 
 
     public void loadConfig(boolean reload){
@@ -58,6 +58,9 @@ public class LQuests extends JavaPlugin {
         loadCommands();
 
         RewardProcessors.register("cmd", new CommandProcessor());
+        RewardProcessors.register("item", new ItemProcessor());
+
+        loadItems();
 
     }
 
@@ -115,5 +118,38 @@ public class LQuests extends JavaPlugin {
 
     public String getMessage(String key) {
         return getMessages().getString(key);
+    }
+
+
+    public void loadItems(){
+        File file = new File(getDataFolder(), "items.yml");
+        if (!file.exists()) {
+            if(!file.getParentFile().exists()) file.getParentFile().mkdirs();
+            try {
+                items = YamlConfiguration.loadConfiguration(new InputStreamReader(getResource("items.yml")));
+                items.save(file);
+                getLogger().info("Created new items.yml file at " + file.getPath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                items = YamlConfiguration.loadConfiguration(file);
+                getLogger().info("Messages file loaded.");
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+    }
+    public void saveItems(){
+        try {
+            File file = new File(getDataFolder(), "items.yml");
+            items.save(file);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+    public YamlConfiguration getItems() {
+        return items;
     }
 }
