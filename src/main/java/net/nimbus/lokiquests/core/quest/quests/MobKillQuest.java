@@ -1,6 +1,7 @@
 package net.nimbus.lokiquests.core.quest.quests;
 
 import net.nimbus.lokiquests.core.quest.Quest;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -33,6 +34,7 @@ public class MobKillQuest extends Quest {
             int kills = map.getOrDefault(killer.getUniqueId(), 0) + 1;
             if(kills >= amount) {
                 finish(QuestPlayers.get(killer));
+                complete(QuestPlayers.get(killer));
             } else map.put(killer.getUniqueId(), kills);
         }
     }

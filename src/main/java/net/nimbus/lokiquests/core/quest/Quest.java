@@ -18,6 +18,18 @@ public abstract class Quest {
         this.rewards = new ArrayList<>();
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Reward> getRewards() {
+        return rewards;
+    }
+
     public void setRewards(List<Reward> rewards){
         this.rewards = rewards;
     }
@@ -33,7 +45,7 @@ public abstract class Quest {
             reward.reward(player.getPlayer());
         }
         player.removeFinishedQuest(this);
-        player.addAccomplishedQuest(this);
+        player.addCompletedQuest(this);
     }
 
     public void finish(QuestPlayer player) {

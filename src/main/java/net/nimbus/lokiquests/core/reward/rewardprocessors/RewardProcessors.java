@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RewardProcessors {
-    private static Map<String, RewardProcessor> map = new HashMap<>();
+    private static final Map<String, RewardProcessor> map = new HashMap<>();
 
     public static List<RewardProcessor> getAll(){
         return new ArrayList<>(map.values());
@@ -20,5 +20,9 @@ public class RewardProcessors {
     }
     public static RewardProcessor get(String id){
         return map.getOrDefault(id, null);
+    }
+
+    public static void clearRAM(){
+        map.clear();
     }
 }

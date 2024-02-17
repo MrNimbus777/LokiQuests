@@ -1,13 +1,16 @@
 package net.nimbus.lokiquests;
 
+import net.nimbus.lokiquests.core.quest.Quests;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import net.nimbus.lokiquests.core.reward.rewardprocessors.*;
-import net.nimbus.lokiquests.events.entity.EntityDeathEvents;
-import net.nimbus.lokiquests.events.entity.EntityPickupItemEvents;
-import net.nimbus.lokiquests.events.player.PlayerJoinEvents;
-import net.nimbus.lokiquests.events.player.PlayerQuitEvents;
+import net.nimbus.lokiquests.events.entity.*;
+import net.nimbus.lokiquests.events.player.*;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -64,16 +67,25 @@ public class LQuests extends JavaPlugin {
 
         loadEvents();
         loadCommands();
+        loadItems();
 
         RewardProcessors.register("cmd", new CommandProcessor());
         RewardProcessors.register("item", new ItemProcessor());
 
-        loadItems();
+        Quests.load();
 
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            QuestPlayers.register(QuestPlayers.load(p));
+        }
     }
 
     public void onDisable() {
-
+        for(QuestPlayer player : QuestPlayers.getAll()) {
+            player.save();
+        }
+        QuestPlayers.clearRAM();
+        Quests.clearRAM();
+        RewardProcessors.clearRAM();
     }
 
     void loadEvent(Listener listener){

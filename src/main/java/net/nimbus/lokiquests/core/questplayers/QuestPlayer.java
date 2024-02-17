@@ -13,18 +13,25 @@ public class QuestPlayer {
 
     private List<Quest> activeQuests;
     private List<Quest> finishedQuests;
-    private List<Quest> accomplishedQuests;
+    private List<Quest> completedQuests;
 
     public QuestPlayer(UUID uuid){
         this.uuid = uuid;
         activeQuests = new ArrayList<>();
         finishedQuests = new ArrayList<>();
-        accomplishedQuests = new ArrayList<>();
+        completedQuests = new ArrayList<>();
     }
 
     public UUID getUUID() {
         return uuid;
     }
+
+
+    public void save(){
+
+    }
+
+
 
     public void setActiveQuests(List<Quest> list) {
         this.activeQuests = list;
@@ -40,9 +47,8 @@ public class QuestPlayer {
         this.activeQuests.remove(quest);
     }
     public List<Quest> getActiveQuests(){
-        return this.activeQuests;
+        return new ArrayList<>(this.activeQuests);
     }
-
 
     public void setFinishedQuests(List<Quest> list) {
         this.finishedQuests = list;
@@ -58,23 +64,21 @@ public class QuestPlayer {
         this.finishedQuests.remove(quest);
     }
     public List<Quest> getFinishedQuests(){
-        return this.activeQuests;
+        return new ArrayList<>(this.activeQuests);
     }
 
-
-
-    public void setAccomplishedQuests(List<Quest> list) {
-        this.accomplishedQuests = list;
+    public void setCompletedQuests(List<Quest> list) {
+        this.completedQuests = list;
     }
-    public boolean addAccomplishedQuest(Quest quest){
-        if(!this.accomplishedQuests.contains(quest)){
-            this.accomplishedQuests.add(quest);
+    public boolean addCompletedQuest(Quest quest){
+        if(!this.completedQuests.contains(quest)){
+            this.completedQuests.add(quest);
             return true;
         }
         return false;
     }
-    public List<Quest> getAccomplishedQuests(){
-        return accomplishedQuests;
+    public List<Quest> getCompletedQuests(){
+        return new ArrayList<>(this.completedQuests);
     }
 
     public Player getPlayer(){

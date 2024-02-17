@@ -1,7 +1,15 @@
 package net.nimbus.lokiquests.core.questplayers;
 
+import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.core.quest.Quest;
+import net.nimbus.lokiquests.core.quest.Quests;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.*;
 
 public class QuestPlayers {
@@ -26,14 +34,41 @@ public class QuestPlayers {
     }
 
     public static QuestPlayer load(UUID uuid){
-        //TODO
-        return null;
+        File file = new File(LQuests.a.getDataFolder(), "players/"+uuid.toString()+".json");
+        if(!file.exists()) {
+            return new QuestPlayer(uuid);
+        }
+        try {
+            FileReader reader = new FileReader(file);
+            JSONObject obj = (JSONObject) new JSONParser().parse(reader);
+            reader.close();
+
+            QuestPlayer player = new QuestPlayer(uuid);
+
+            player.setActiveQuests(getQuestsFromJson(obj.getOrDefault("active", new JSONArray())));
+            player.setFinishedQuests(getQuestsFromJson(obj.getOrDefault("finished", new JSONArray())));
+            player.setCompletedQuests(getQuestsFromJson(obj.getOrDefault("completed", new JSONArray())));
+
+            return player;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new QuestPlayer(uuid);
     }
     public static QuestPlayer load(Player player) {
         return load(player.getUniqueId());
     }
 
-
+    private static List<Quest> getQuestsFromJson(Object obj) {
+        List<String> list = Arrays.stream(((JSONArray) obj).toArray()).map(Object::toString).toList();
+        List<Quest> result = new ArrayList<>();
+        for(String id : list) {
+            Quest quest = Quests.get(id);
+            if(quest == null) continue;
+            result.add(quest);
+        }
+        return result;
+    }
 
 
     public static void clearRAM(){
