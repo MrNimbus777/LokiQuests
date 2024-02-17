@@ -24,15 +24,22 @@ public abstract class Quest {
 
     public void start(QuestPlayer player) {
         player.addActiveQuest(this);
-        player.getPlayer().sendMessage("You have a new active quest: " + name);
+        player.getPlayer().sendMessage("You have a new quest: " + name);
     }
 
-    public void finish(QuestPlayer player) {
+    public void complete(QuestPlayer player){
         player.getPlayer().sendMessage("You accomplished quest " + name);
         for(Reward reward : rewards){
             reward.reward(player.getPlayer());
         }
+        player.removeFinishedQuest(this);
+        player.addAccomplishedQuest(this);
+    }
 
+    public void finish(QuestPlayer player) {
+        player.getPlayer().sendMessage("You finished quest " + name);
+        player.removeActiveQuest(this);
+        player.addFinishedQuest(this);
     }
     public abstract void process(Event event);
 }

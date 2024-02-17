@@ -1,6 +1,10 @@
 package net.nimbus.lokiquests;
 
 import net.nimbus.lokiquests.core.reward.rewardprocessors.*;
+import net.nimbus.lokiquests.events.entity.EntityDeathEvents;
+import net.nimbus.lokiquests.events.entity.EntityPickupItemEvents;
+import net.nimbus.lokiquests.events.player.PlayerJoinEvents;
+import net.nimbus.lokiquests.events.player.PlayerQuitEvents;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -42,7 +46,11 @@ public class LQuests extends JavaPlugin {
     }
 
     void loadEvents(){
+        loadEvent(new PlayerJoinEvents());
+        loadEvent(new PlayerQuitEvents());
 
+        loadEvent(new EntityDeathEvents());
+        loadEvent(new EntityPickupItemEvents());
     }
     void loadCommands(){
 

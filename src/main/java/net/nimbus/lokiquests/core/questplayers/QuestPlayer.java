@@ -12,11 +12,13 @@ public class QuestPlayer {
     private final UUID uuid;
 
     private List<Quest> activeQuests;
+    private List<Quest> finishedQuests;
     private List<Quest> accomplishedQuests;
 
     public QuestPlayer(UUID uuid){
         this.uuid = uuid;
         activeQuests = new ArrayList<>();
+        finishedQuests = new ArrayList<>();
         accomplishedQuests = new ArrayList<>();
     }
 
@@ -37,11 +39,29 @@ public class QuestPlayer {
     public void removeActiveQuest(Quest quest){
         this.activeQuests.remove(quest);
     }
-
-
     public List<Quest> getActiveQuests(){
         return this.activeQuests;
     }
+
+
+    public void setFinishedQuests(List<Quest> list) {
+        this.finishedQuests = list;
+    }
+    public boolean addFinishedQuest(Quest quest){
+        if(!this.finishedQuests.contains(quest)){
+            this.finishedQuests.add(quest);
+            return true;
+        }
+        return false;
+    }
+    public void removeFinishedQuest(Quest quest){
+        this.finishedQuests.remove(quest);
+    }
+    public List<Quest> getFinishedQuests(){
+        return this.activeQuests;
+    }
+
+
 
     public void setAccomplishedQuests(List<Quest> list) {
         this.accomplishedQuests = list;
