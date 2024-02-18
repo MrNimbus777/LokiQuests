@@ -34,6 +34,10 @@ public class Quests {
     }
 
     public static void load(){
+        loadMobKill();
+    }
+
+    private static void loadMobKill(){
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new InputStreamReader(LQuests.a.getResource("quests/mobkill.yml")));
         File file = new File(LQuests.a.getDataFolder(), "quests/mobkill.yml");
         if(!file.exists()) {
@@ -56,6 +60,48 @@ public class Quests {
                     EntityType.valueOf(configuration.getString(id+".type")),
                     configuration.getInt(id+".amount")
             );
+            quest.setDisplay(configuration.getBoolean(id+".display", true));
+
+            List<Reward> rewards = new ArrayList<>();
+            for(String s : configuration.getStringList(id+".rewards")){
+                String processorId = s.split(":")[0];
+                RewardProcessor processor = RewardProcessors.get(processorId);
+                if(processor == null) {
+                    LQuests.a.getLogger().severe("Undefined reward for quest " + id + " from file " + file.getPath());
+                    continue;
+                }
+                String[] split = s.replaceFirst(processorId+":", "").split("[|]");
+                rewards.add(new Reward(split[1], split[0], processor));
+            }
+            quest.setRewards(rewards);
+
+            Quests.register(quest);
+        }
+    }
+    private static void loadItemCollecting(){
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new InputStreamReader(LQuests.a.getResource("quests/itemcollect.yml")));
+        File file = new File(LQuests.a.getDataFolder(), "quests/mobkill.yml");
+        if(!file.exists()) {
+            if(!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            try {
+                file.createNewFile();
+                configuration.save(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            configuration = YamlConfiguration.loadConfiguration(file);
+        }
+        for(String id : configuration.getKeys(false)){
+            MobKillQuest quest = new MobKillQuest(
+                    id,
+                    Utils.toColor(configuration.getString(id+".name")),
+                    EntityType.valueOf(configuration.getString(id+".type")),
+                    configuration.getInt(id+".amount")
+            );
+            quest.setDisplay(configuration.getBoolean(id+".display", true));
 
             List<Reward> rewards = new ArrayList<>();
             for(String s : configuration.getStringList(id+".rewards")){

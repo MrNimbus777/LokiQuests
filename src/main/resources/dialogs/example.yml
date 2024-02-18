@@ -1,15 +1,16 @@
 start:
-  text: "Hello, %player%"
+  text: "&7[&eJohn&7] &fHello, %player%"
   next: reply1
 dialog:
   reply1:
-    text: "I want to test your skills! Go and kill some zombies, and we will se how strong you really are!"
+    text: "&7[&eJohn&7] &fI want to test your skills! Go and kill some zombies, and we will se how strong you really are!"
     actions:
       - "startQuest:5zombie"
     next: reply2
   reply2:
     condition: "5zombie:1"
-    conditionText: "Go kill zombies!"
-    text: "You succeeded? You proved you are really a strong person!"
-    action: "completeQuest:5zombie"
+    conditionText: "&7[&eJohn&7] &fGo kill zombies!"
+    text: "&7[&eJohn&7] &fYou succeeded? You proved you are really a strong person!"
+    actions:
+      - "completeQuest:5zombie"
 

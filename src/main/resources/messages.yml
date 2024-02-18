@@ -1,0 +1,17 @@
+Commands:
+  no-permission: "&cYou do not have permission for this."
+  player-only: "&cThis command is for players only."
+  lquest:
+    usage: "&f&o/lquest process | item | reload"
+    process:
+      usage: "&f&o/lquest process <dialog> <player>"
+      no_dialog: "&cDialog &4%dialog%&c is not found."
+      no_player: "&cPlayer &4%player%&c is not found."
+    item:
+      usage: "&f&o/lquest item <name>"
+      no_item: "&cYou must hold an item in the main hand."
+      success: "&fItem was saved in the items.yml file with name &e%name%&f."
+Actions:
+  quest_start: ""
+  quest_finish: ""
+  quest_complete: ""

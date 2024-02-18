@@ -1,5 +1,12 @@
 package net.nimbus.lokiquests;
 
+import net.nimbus.lokiquests.commands.executors.LquestExe;
+import net.nimbus.lokiquests.core.dialogs.Dialogs;
+import net.nimbus.lokiquests.core.dialogs.action.Actions;
+import net.nimbus.lokiquests.core.dialogs.action.actions.ActionCompleteQuest;
+import net.nimbus.lokiquests.core.dialogs.action.actions.ActionGiveItem;
+import net.nimbus.lokiquests.core.dialogs.action.actions.ActionPointCompass;
+import net.nimbus.lokiquests.core.dialogs.action.actions.ActionStartQuest;
 import net.nimbus.lokiquests.core.quest.Quests;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
@@ -56,7 +63,7 @@ public class LQuests extends JavaPlugin {
         loadEvent(new EntityPickupItemEvents());
     }
     void loadCommands(){
-
+        loadCommand("lquest", new LquestExe());
     }
 
     public void onEnable() {
@@ -72,7 +79,13 @@ public class LQuests extends JavaPlugin {
         RewardProcessors.register("cmd", new CommandProcessor());
         RewardProcessors.register("item", new ItemProcessor());
 
+        Actions.register("startQuest", new ActionStartQuest());
+        Actions.register("completeQuest", new ActionCompleteQuest());
+        Actions.register("give", new ActionGiveItem());
+        Actions.register("compass", new ActionPointCompass());
+
         Quests.load();
+        Dialogs.load();
 
         for(Player p : Bukkit.getOnlinePlayers()) {
             QuestPlayers.register(QuestPlayers.load(p));
@@ -84,13 +97,15 @@ public class LQuests extends JavaPlugin {
             player.save();
         }
         QuestPlayers.clearRAM();
+        Dialogs.clearRAM();
         Quests.clearRAM();
+        Actions.clearRAM();
         RewardProcessors.clearRAM();
     }
 
     void loadEvent(Listener listener){
         try {
-            getServer().getPluginManager().registerEvents(listener, this);
+            a.getServer().getPluginManager().registerEvents(listener, this);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -98,7 +113,7 @@ public class LQuests extends JavaPlugin {
 
     void loadCommand(String cmd, CommandExecutor executor){
         try {
-            getCommand(cmd).setExecutor(executor);
+            a.getCommand(cmd).setExecutor(executor);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -106,7 +121,7 @@ public class LQuests extends JavaPlugin {
     void loadCommand(String cmd, CommandExecutor executor, TabCompleter completer){
         try {
             loadCommand(cmd, executor);
-            getCommand(cmd).setTabCompleter(completer);
+            a.getCommand(cmd).setTabCompleter(completer);
         } catch (Exception e){
             e.printStackTrace();
         }

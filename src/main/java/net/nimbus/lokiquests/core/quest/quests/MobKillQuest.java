@@ -1,5 +1,6 @@
 package net.nimbus.lokiquests.core.quest.quests;
 
+import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
@@ -17,12 +18,13 @@ public class MobKillQuest extends Quest {
     private final EntityType type;
     private final int amount;
 
-    private final Map<UUID, Integer> map = new HashMap<>();
+    private final Map<UUID, Integer> map;
 
     public MobKillQuest(String id, String name, EntityType type, int amount) {
         super(id, name);
         this.type = type;
         this.amount = amount;
+        map = new HashMap<>();
     }
 
     @Override
@@ -32,9 +34,9 @@ public class MobKillQuest extends Quest {
             if(e.getEntity().getType() != this.type) return;
             Player killer = e.getEntity().getKiller();
             int kills = map.getOrDefault(killer.getUniqueId(), 0) + 1;
+            killer.sendMessage(Utils.toColor("&aYou killed &e"+kills+"&f/&65"));
             if(kills >= amount) {
                 finish(QuestPlayers.get(killer));
-                complete(QuestPlayers.get(killer));
             } else map.put(killer.getUniqueId(), kills);
         }
     }

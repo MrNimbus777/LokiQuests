@@ -64,7 +64,7 @@ public class QuestPlayer {
         this.finishedQuests.remove(quest);
     }
     public List<Quest> getFinishedQuests(){
-        return new ArrayList<>(this.activeQuests);
+        return new ArrayList<>(this.finishedQuests);
     }
 
     public void setCompletedQuests(List<Quest> list) {
