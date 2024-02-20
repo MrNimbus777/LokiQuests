@@ -5,7 +5,12 @@ import net.nimbus.lokiquests.core.dialogs.Dialog;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.quest.Quest;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -21,6 +26,7 @@ public class QuestPlayer {
     private List<Quest> activeQuests;
     private List<Quest> finishedQuests;
     private List<Quest> completedQuests;
+    private Location indicator;
 
     public QuestPlayer(UUID uuid){
         this.uuid = uuid;
@@ -69,6 +75,11 @@ public class QuestPlayer {
         completed.addAll(getCompletedQuests().stream().map(Quest::getId).toList());
         obj.put("completed", completed);
 
+        if(indicator != null){
+            String indicator = getIndicator().getWorld().getName()+","+getIndicator().getX()+","+getIndicator().getY()+","+getIndicator().getZ();
+            obj.put("indicator", indicator);
+        }
+
         try {
             FileWriter writer = new FileWriter(file);
             writer.write(obj.toJSONString());
@@ -78,7 +89,40 @@ public class QuestPlayer {
         }
     }
 
+    public void setIndicator(Location location){
+        this.indicator = location.clone();
+    }
 
+    public Location getIndicator() {
+        return indicator;
+    }
+
+    public void runIndicator(Location indicator) {
+        setIndicator(indicator.clone());
+        runIndicator();
+    }
+
+    public void runIndicator(){
+        if(indicator == null) return;
+        new BukkitRunnable(){
+            Player player = QuestPlayer.this.getPlayer();
+            @Override
+            public void run() {
+                if(!player.isOnline()) {
+                    cancel();
+                    return;
+                }
+                Vector vec = player.getLocation().clone().toVector().subtract(QuestPlayer.this.indicator.toVector());
+                if(vec.length() > 4) {
+                    vec.setY(0);
+                    vec.normalize().multiply(4);
+                }
+                Location particle = player.getLocation().clone().add(vec);
+                player.spawnParticle(Particle.REDSTONE, particle, 2, 0.1, 0.1, 0.1, new Particle.DustOptions(Color.AQUA, 1));
+                player.spawnParticle(Particle.REDSTONE, particle, 3, 0.1, 0.1, 0.1, new Particle.DustOptions(Color.LIME, 1));
+            }
+        }.runTaskTimer(LQuests.a, 0, 10);
+    }
 
     public void setActiveQuests(List<Quest> list) {
         this.activeQuests = list;

@@ -1,16 +1,21 @@
 package net.nimbus.lokiquests.commands.executors;
 
+import net.minecraft.world.item.CompassItem;
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dialogs.Dialog;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CompassMeta;
 
 public class LquestExe implements CommandExecutor {
     @Override
@@ -58,6 +63,35 @@ public class LquestExe implements CommandExecutor {
                 LQuests.a.getItems().set(args[1], item);
                 LQuests.a.saveItems();
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.lquest.item.success").replace("%name%", args[1])));
+                return true;
+            }
+            case "indicator": {
+                if(args.length == 1) {
+                    return true;
+                }
+                Player player = Bukkit.getPlayer(args[1]);
+                if(player == null) {
+                    return true;
+                }
+                QuestPlayer qp = QuestPlayers.get(player);
+                qp.runIndicator(player.getLocation().add(10, 0, 0));
+                return true;
+            }
+            case "read" : {
+                if(!(sender instanceof Player p)) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.player-only")));
+                    return true;
+                }
+                try {
+                    Class<?> clazz = Class.forName("org.bukkit.craftbukkit." + LQuests.a.version + ".inventory.CraftItemStack");
+                    net.minecraft.world.item.ItemStack nms = (net.minecraft.world.item.ItemStack) clazz.getMethod("asNMSCopy", ItemStack.class).invoke(null, p.getEquipment().getItemInMainHand());
+
+                    for (String key : nms.getTag().getAllKeys()) {
+                        p.sendMessage(key + ": " + nms.getTag().get(key).getAsString());
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
             default: {

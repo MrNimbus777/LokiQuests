@@ -5,6 +5,8 @@ import net.nimbus.lokiquests.core.dialogs.Dialog;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.quest.Quests;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -66,6 +68,17 @@ public class QuestPlayers {
 
             player.setFinishedQuests(getQuestsFromJson(obj.getOrDefault("finished", new JSONArray())));
             player.setCompletedQuests(getQuestsFromJson(obj.getOrDefault("completed", new JSONArray())));
+
+            if(obj.containsKey("indicator")) {
+                String[] split = obj.get("indicator").toString().split(",");
+                Location loc = new Location(
+                        Bukkit.getWorld(split[0]),
+                        Double.parseDouble(split[1]),
+                        Double.parseDouble(split[2]),
+                        Double.parseDouble(split[3])
+                );
+                player.setIndicator(loc);
+            }
 
             return player;
         } catch (Exception e) {

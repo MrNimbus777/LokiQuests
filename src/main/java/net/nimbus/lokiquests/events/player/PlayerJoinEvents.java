@@ -11,5 +11,6 @@ public class PlayerJoinEvents implements Listener {
     public void onEvent(PlayerJoinEvent e){
         QuestPlayer player = QuestPlayers.load(e.getPlayer());
         QuestPlayers.register(player);
+        player.runIndicator();
     }
 }

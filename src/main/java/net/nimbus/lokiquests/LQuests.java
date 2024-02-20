@@ -3,10 +3,7 @@ package net.nimbus.lokiquests;
 import net.nimbus.lokiquests.commands.executors.LquestExe;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.dialogs.action.Actions;
-import net.nimbus.lokiquests.core.dialogs.action.actions.ActionCompleteQuest;
-import net.nimbus.lokiquests.core.dialogs.action.actions.ActionGiveItem;
-import net.nimbus.lokiquests.core.dialogs.action.actions.ActionPointCompass;
-import net.nimbus.lokiquests.core.dialogs.action.actions.ActionStartQuest;
+import net.nimbus.lokiquests.core.dialogs.action.actions.*;
 import net.nimbus.lokiquests.core.quest.Quests;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
@@ -82,16 +79,19 @@ public class LQuests extends JavaPlugin {
         RewardProcessors.register("cmd", new CommandProcessor());
         RewardProcessors.register("item", new ItemProcessor());
 
-        Actions.register("startQuest", new ActionStartQuest());
         Actions.register("completeQuest", new ActionCompleteQuest());
+        Actions.register("cmd", new ActionExecuteCommand());
         Actions.register("give", new ActionGiveItem());
-        Actions.register("compass", new ActionPointCompass());
+        Actions.register("compass", new ActionPointIndicator());
+        Actions.register("startQuest", new ActionStartQuest());
 
         Quests.load();
         Dialogs.load();
 
         for(Player p : Bukkit.getOnlinePlayers()) {
-            QuestPlayers.register(QuestPlayers.load(p));
+            QuestPlayer qp = QuestPlayers.load(p);
+            QuestPlayers.register(qp);
+            qp.runIndicator();
         }
     }
 
