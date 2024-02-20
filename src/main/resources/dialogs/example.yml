@@ -5,12 +5,12 @@ dialog:
   reply1:
     text: "&7[&eJohn&7] &fI want to test your skills! Go and kill some zombies, and we will se how strong you really are!"
     actions:
-      - "startQuest:5zombie"
+      - "startQuest:16wheat"
     next: reply2
   reply2:
-    condition: "5zombie:1"
-    conditionText: "&7[&eJohn&7] &fGo kill zombies!"
+    condition: "16wheat:1"
+    conditionText: "&7[&eJohn&7] &fGo collect wheat!"
     text: "&7[&eJohn&7] &fYou succeeded? You proved you are really a strong person!"
     actions:
-      - "completeQuest:5zombie"
+      - "completeQuest:16wheat"
 

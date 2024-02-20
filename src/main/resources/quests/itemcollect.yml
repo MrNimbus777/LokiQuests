@@ -1,0 +1,8 @@
+16wheat:
+  name: "Collect 16 wheat"
+  type: wheat
+  amount: 16
+  display: true
+  remove: true
+  rewards:
+    - "cmd:give %player% minecraft:iron_hoe 1|1 Iron Hoe"

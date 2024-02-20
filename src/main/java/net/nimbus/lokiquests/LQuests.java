@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 public class LQuests extends JavaPlugin {
 
     public static LQuests a;
+    public String version;
 
 
     private YamlConfiguration messages;
@@ -52,7 +53,7 @@ public class LQuests extends JavaPlugin {
                 exception.printStackTrace();
             }
         }
-        //Vars.init();
+        Vars.init();
     }
 
     void loadEvents(){
@@ -68,6 +69,8 @@ public class LQuests extends JavaPlugin {
 
     public void onEnable() {
         a = this;
+        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        version = packageName.substring(packageName.lastIndexOf(".") + 1);
 
         loadConfig(false);
         loadMessages();

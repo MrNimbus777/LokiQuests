@@ -72,9 +72,9 @@ public class Dialogs {
         if(quest == null) return false;
         int i = Integer.parseInt(split[1]);
         return switch (i) {
-            case 0 -> (!qp.getCompletedQuests().contains(quest) && !qp.getFinishedQuests().contains(quest));
-            case 1 -> qp.getFinishedQuests().contains(quest);
-            case 2 -> qp.getCompletedQuests().contains(quest);
+            case 0 -> (!quest.isCompleted(qp) && !quest.isFinished(qp));
+            case 1 -> quest.isFinished(qp);
+            case 2 -> quest.isCompleted(qp);
             default -> false;
         };
     }

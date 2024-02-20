@@ -6,6 +6,6 @@ import org.bukkit.entity.Player;
 public class ActionPointCompass implements Action {
     @Override
     public void execute(Player player, String vars) {
-
+        
     }
 }

@@ -1,8 +1,8 @@
 package net.nimbus.lokiquests.core.quest.quests;
 
+import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.quest.Quest;
-import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -34,10 +34,24 @@ public class MobKillQuest extends Quest {
             if(e.getEntity().getType() != this.type) return;
             Player killer = e.getEntity().getKiller();
             int kills = map.getOrDefault(killer.getUniqueId(), 0) + 1;
-            killer.sendMessage(Utils.toColor("&aYou killed &e"+kills+"&f/&65"));
+            killer.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.quest_progress").
+                    replace("%progress%", kills+"").
+                    replace("%goal%", amount+"").
+                    replace("%percentage%", (kills*100/amount)+"")
+            ));
             if(kills >= amount) {
                 finish(QuestPlayers.get(killer));
-            } else map.put(killer.getUniqueId(), kills);
+            } else setProgress(killer.getUniqueId(), kills);
         }
+    }
+
+    @Override
+    public int getProgress(UUID uuid) {
+        return map.getOrDefault(uuid, 0);
+    }
+
+    @Override
+    public void setProgress(UUID uuid, int progress) {
+        map.put(uuid, progress);
     }
 }

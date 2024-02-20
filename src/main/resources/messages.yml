@@ -12,6 +12,7 @@ Commands:
       no_item: "&cYou must hold an item in the main hand."
       success: "&fItem was saved in the items.yml file with name &e%name%&f."
 Actions:
-  quest_start: ""
-  quest_finish: ""
-  quest_complete: ""
+  quest_start: "&fYou have a new quest: &e%name%"
+  quest_finish: "&fYou finished quest: &e%name%"
+  quest_complete: "&fYou completed quest: &e%name%"
+  quest_progress: "&fYou completed the quest by &e%progress%&f/&6%goal% &7&o(%percentage%%)&f."

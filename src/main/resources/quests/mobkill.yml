@@ -2,5 +2,6 @@
   name: "Kill 5 zombies"
   type: ZOMBIE
   amount: 5
+  display: true
   rewards:
-    - "cmd:give %player% minecraft:diamond 1|1 diamond"
+    - "cmd:give %player% minecraft:diamond 1|&b1 diamond"

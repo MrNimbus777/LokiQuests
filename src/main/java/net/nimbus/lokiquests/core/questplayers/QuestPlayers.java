@@ -1,6 +1,8 @@
 package net.nimbus.lokiquests.core.questplayers;
 
 import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.core.dialogs.Dialog;
+import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.quest.Quests;
 import org.bukkit.entity.Player;
@@ -45,7 +47,23 @@ public class QuestPlayers {
 
             QuestPlayer player = new QuestPlayer(uuid);
 
-            player.setActiveQuests(getQuestsFromJson(obj.getOrDefault("active", new JSONArray())));
+            JSONObject dialogs = (JSONObject) obj.getOrDefault("dialogs", new JSONObject());
+            for(Object o : dialogs.keySet()) {
+                String id = o.toString();
+                Dialog dialog = Dialogs.get(id);
+                if(dialog == null) continue;
+                dialog.putPlayerProgress(uuid, dialogs.get(o).toString());
+            }
+
+            JSONObject active = (JSONObject) obj.getOrDefault("active", new JSONObject());
+            for(Object o : active.keySet()) {
+                String id = o.toString();
+                Quest quest = Quests.get(id);
+                if(quest == null) continue;
+                quest.setProgress(uuid, Integer.parseInt(active.get(o).toString()));
+                player.addActiveQuest(quest);
+            }
+
             player.setFinishedQuests(getQuestsFromJson(obj.getOrDefault("finished", new JSONArray())));
             player.setCompletedQuests(getQuestsFromJson(obj.getOrDefault("completed", new JSONArray())));
 

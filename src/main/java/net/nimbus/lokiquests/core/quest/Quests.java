@@ -2,6 +2,7 @@ package net.nimbus.lokiquests.core.quest;
 
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
+import net.nimbus.lokiquests.core.quest.quests.ItemCollectQuest;
 import net.nimbus.lokiquests.core.quest.quests.MobKillQuest;
 import net.nimbus.lokiquests.core.reward.Reward;
 import net.nimbus.lokiquests.core.reward.rewardprocessors.RewardProcessor;
@@ -35,6 +36,7 @@ public class Quests {
 
     public static void load(){
         loadMobKill();
+        loadItemCollecting();
     }
 
     private static void loadMobKill(){
@@ -80,7 +82,7 @@ public class Quests {
     }
     private static void loadItemCollecting(){
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(new InputStreamReader(LQuests.a.getResource("quests/itemcollect.yml")));
-        File file = new File(LQuests.a.getDataFolder(), "quests/mobkill.yml");
+        File file = new File(LQuests.a.getDataFolder(), "quests/itemcollect.yml");
         if(!file.exists()) {
             if(!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
@@ -95,11 +97,12 @@ public class Quests {
             configuration = YamlConfiguration.loadConfiguration(file);
         }
         for(String id : configuration.getKeys(false)){
-            MobKillQuest quest = new MobKillQuest(
+            ItemCollectQuest quest = new ItemCollectQuest(
                     id,
                     Utils.toColor(configuration.getString(id+".name")),
-                    EntityType.valueOf(configuration.getString(id+".type")),
-                    configuration.getInt(id+".amount")
+                    configuration.getString(id+".type", ""),
+                    configuration.getInt(id+".amount"),
+                    configuration.getBoolean(id+".remove")
             );
             quest.setDisplay(configuration.getBoolean(id+".display", true));
 

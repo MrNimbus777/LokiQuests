@@ -1,9 +1,16 @@
 package net.nimbus.lokiquests.core.questplayers;
 
+import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.core.dialogs.Dialog;
+import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.quest.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +35,47 @@ public class QuestPlayer {
 
 
     public void save(){
+        File file = new File(LQuests.a.getDataFolder(), "players/"+getUUID().toString()+".json");
+        if(!file.exists()) {
+            if(!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            try {
+                file.createNewFile();
+            } catch (Exception e){
+                e.printStackTrace();
+                return;
+            }
+        }
+        JSONObject obj = new JSONObject();
 
+        JSONObject dialogs = new JSONObject();
+        for(Dialog dialog : Dialogs.getAll()) {
+            if(dialog.getPlayerProgress(getUUID()) != null) dialogs.put(dialog.getId(), dialog.getPlayerProgress(getUUID()));
+        }
+        obj.put("dialogs", dialogs);
+
+        JSONObject active = new JSONObject();
+        for(Quest quest : getActiveQuests()) {
+            active.put(quest.getId(), quest.getProgress(getUUID()));
+        }
+        obj.put("active", active);
+
+        JSONArray finished = new JSONArray();
+        finished.addAll(getFinishedQuests().stream().map(Quest::getId).toList());
+        obj.put("finished", finished);
+
+        JSONArray completed = new JSONArray();
+        completed.addAll(getCompletedQuests().stream().map(Quest::getId).toList());
+        obj.put("completed", completed);
+
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(obj.toJSONString());
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
