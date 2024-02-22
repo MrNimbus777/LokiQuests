@@ -4,6 +4,8 @@ import net.nimbus.lokiquests.commands.executors.LquestExe;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.dialogs.action.Actions;
 import net.nimbus.lokiquests.core.dialogs.action.actions.*;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.MinecraftSpawner;
 import net.nimbus.lokiquests.core.quest.Quests;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
@@ -84,6 +86,8 @@ public class LQuests extends JavaPlugin {
         Actions.register("give", new ActionGiveItem());
         Actions.register("compass", new ActionPointIndicator());
         Actions.register("startQuest", new ActionStartQuest());
+
+        MobSpawners.register("minecraft", new MinecraftSpawner());
 
         Quests.load();
         Dialogs.load();

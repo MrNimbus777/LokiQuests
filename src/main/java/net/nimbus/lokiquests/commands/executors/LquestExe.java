@@ -8,6 +8,7 @@ import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -74,7 +75,7 @@ public class LquestExe implements CommandExecutor {
                     return true;
                 }
                 QuestPlayer qp = QuestPlayers.get(player);
-                qp.runIndicator(player.getLocation().add(10, 0, 0));
+                qp.runIndicator(new Location(player.getWorld(), 0, 100, 0));
                 return true;
             }
             case "read" : {

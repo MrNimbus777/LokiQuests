@@ -103,21 +103,21 @@ public class QuestPlayer {
     }
 
     public void runIndicator(){
-        if(indicator == null) return;
+        if(this.indicator == null) return;
         new BukkitRunnable(){
             Player player = QuestPlayer.this.getPlayer();
             @Override
             public void run() {
-                if(!player.isOnline()) {
+                if(!player.isOnline() || QuestPlayer.this.indicator == null) {
                     cancel();
                     return;
                 }
-                Vector vec = player.getLocation().clone().toVector().subtract(QuestPlayer.this.indicator.toVector());
-                if(vec.length() > 4) {
+                Vector vec = QuestPlayer.this.indicator.toVector().add(new Vector(0.5, 0.1, 0.5)).subtract(player.getLocation().toVector());
+                if(vec.length() > 5) {
                     vec.setY(0);
-                    vec.normalize().multiply(4);
+                    vec.normalize().multiply(5);
                 }
-                Location particle = player.getLocation().clone().add(vec);
+                Location particle = player.getEyeLocation().clone().add(vec);
                 player.spawnParticle(Particle.REDSTONE, particle, 2, 0.1, 0.1, 0.1, new Particle.DustOptions(Color.AQUA, 1));
                 player.spawnParticle(Particle.REDSTONE, particle, 3, 0.1, 0.1, 0.1, new Particle.DustOptions(Color.LIME, 1));
             }

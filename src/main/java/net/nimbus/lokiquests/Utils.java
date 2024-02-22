@@ -2,8 +2,12 @@ package net.nimbus.lokiquests;
 
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.nbt.CompoundTag;
+import org.bukkit.World;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +49,15 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
             return "";
+        }
+    }
+
+    protected static class VoidGenerator  extends ChunkGenerator {
+
+        @NotNull
+        @Override
+        public ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z, @NotNull ChunkGenerator.BiomeGrid biome) {
+            return createChunkData(world);
         }
     }
 }
