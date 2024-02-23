@@ -52,7 +52,7 @@ public class Utils {
         }
     }
 
-    protected static class VoidGenerator  extends ChunkGenerator {
+    protected static class VoidGenerator extends ChunkGenerator {
 
         @NotNull
         @Override
