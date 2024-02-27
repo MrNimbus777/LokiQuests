@@ -5,4 +5,5 @@ import org.bukkit.entity.Entity;
 
 public interface MobSpawner {
     Entity spawn(Location location, String type);
+    String id();
 }

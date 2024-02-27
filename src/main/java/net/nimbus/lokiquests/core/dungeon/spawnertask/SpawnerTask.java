@@ -1,9 +1,19 @@
 package net.nimbus.lokiquests.core.dungeon.spawnertask;
 
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.HologramLines;
+import me.filoghost.holographicdisplays.api.hologram.line.HologramLine;
 import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.Utils;
+import net.nimbus.lokiquests.Vars;
+import net.nimbus.lokiquests.core.dungeon.Dungeon;
+import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawner;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -20,16 +30,27 @@ public class SpawnerTask {
     private int kills;
     private boolean completed;
 
+    private final Hologram hologram;
+    private final long id;
+
     public SpawnerTask(int power, Location location, MobSpawner spawner, String type, int complete){
         this.power = power;
         this.location = location;
         this.spawner = spawner;
         this.type = type;
         this.complete = complete;
+        id = System.currentTimeMillis();
+        hologram = LQuests.a.hdapi.createHologram(location.clone().add(0, 3, 0));
+        createHologram();
         list = new ArrayList<>();
         kills = 0;
         completed = false;
     }
+
+    public long getId() {
+        return id;
+    }
+
     private final List<Entity> list;
     public void addEntity(Entity entity){
         list.add(entity);
@@ -48,8 +69,12 @@ public class SpawnerTask {
     public void complete(){
         setCompleted(true);
         stop();
-
     }
+
+    public Location getLocation() {
+        return location;
+    }
+
     public void addKill(){
         kills++;
         if(kills >= complete){
@@ -61,7 +86,7 @@ public class SpawnerTask {
         task = new BukkitRunnable() {
             private final Random random = new Random();
             private boolean isASpawnLocation(Location location){
-                return location.getBlock().isEmpty() && location.clone().add(0, 1, 0).getBlock().isEmpty();
+                return !location.clone().add(0, -1, 0).getBlock().isEmpty() && location.getBlock().isEmpty() && location.clone().add(0, 1, 0).getBlock().isEmpty();
             }
             @Override
             public void run() {
@@ -73,14 +98,15 @@ public class SpawnerTask {
                 if(location.getWorld().getPlayers().stream().filter(p -> p.getLocation().distance(location) <= 20).toList().isEmpty()){
                     return;
                 }
-                for(Entity ent : list) {
+                for(Entity ent : new ArrayList<>(list)) {
                     if(ent.isDead()) {
                         removeEntity(ent);
                     }
                 }
                 int amount = (int) (random.nextDouble(0.5, 1.1)*power);
                 if(amount > limit-list.size()) amount = limit - list.size();
-                for(int o = 0; o < amount && list.size() < limit; o++) {
+                if(amount > complete-kills-list.size()) amount = complete - kills - list.size();
+                for(int o = 0; o < amount; o++) {
                     double x = random.nextDouble(10) - 5;
                     double z = random.nextDouble(10) - 5;
                     final Location toSpawn = location.clone().add(x, 0, z);
@@ -90,19 +116,66 @@ public class SpawnerTask {
                             break;
                         }
                     }
-                    addEntity(spawner.spawn(toSpawn, type));
+                    addEntity(Utils.setMetadata(Utils.setMetadata(spawner.spawn(toSpawn, type), "spawner", getId()+""), "dungeon", getDungeon().getId()+""));
                 }
             }
         };
         task.runTaskTimer(LQuests.a, 0, 100);
     }
     public void stop(){
-        if(task != null) task.cancel();
+        if(task != null) {
+            task.cancel();
+            task = null;
+        }
         clearMobs();
     }
     public void clearMobs(){
         list.forEach(Entity::remove);
         list.clear();
         kills = 0;
+    }
+
+    public Dungeon getDungeon(){
+        for(Dungeon dungeon : Dungeons.getAll()){
+            if(dungeon.getSpawners().contains(this)) return dungeon;
+        }
+        return null;
+    }
+
+    private void createHologram(){
+        hologram.getLines().appendItem(new ItemStack(Material.SPAWNER));
+        hologram.getLines().appendText(Utils.toColor("&fSpawns: &e" + type));
+        if (kills < complete) {
+            hologram.getLines().appendText(Utils.toColor("&fCompleted: &a" + kills + "&f/&2" + complete + " &7&o(" + (kills * 100 / complete) + "%)"));
+        } else hologram.getLines().appendText(Utils.toColor("&6COMPLETED"));
+    }
+    public void updateHologram() {
+        if (!completed) {
+            hologram.getLines().insertText(2, Utils.toColor("&fCompleted: &a" + kills + "&f/&2" + complete + " &7&o(" + (kills * 100 / complete) + "%)"));
+        } else hologram.getLines().insertText(2, Utils.toColor("&6COMPLETED"));
+        hologram.getLines().remove(3);
+    }
+    @Override
+    public String toString() {
+        return power+","+
+                location.getX()+","+
+                location.getY()+","+
+                location.getZ()+","+
+                spawner.id()+","+
+                type+","+
+                complete;
+    }
+
+    public static SpawnerTask fromString(String str) {
+        try {
+            String[] split = str.split(",");
+            int power = Integer.parseInt(split[0]);
+            Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[1]), Double.parseDouble(split[2]), Double.parseDouble(split[3]));
+            MobSpawner spawner = MobSpawners.get(split[4]);
+            int complete = Integer.parseInt(split[6]);
+            return new SpawnerTask(power, loc, spawner, split[5], complete);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

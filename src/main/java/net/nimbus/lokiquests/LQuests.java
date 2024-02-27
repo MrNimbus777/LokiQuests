@@ -1,9 +1,11 @@
 package net.nimbus.lokiquests;
 
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import net.nimbus.lokiquests.commands.executors.LquestExe;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.dialogs.action.Actions;
 import net.nimbus.lokiquests.core.dialogs.action.actions.*;
+import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.MinecraftSpawner;
 import net.nimbus.lokiquests.core.quest.Quests;
@@ -27,6 +29,7 @@ public class LQuests extends JavaPlugin {
 
     public static LQuests a;
     public String version;
+    public HolographicDisplaysAPI hdapi;
 
 
     private YamlConfiguration messages;
@@ -68,6 +71,7 @@ public class LQuests extends JavaPlugin {
 
     public void onEnable() {
         a = this;
+        hdapi = HolographicDisplaysAPI.get(a);
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
         version = packageName.substring(packageName.lastIndexOf(".") + 1);
 
@@ -87,7 +91,9 @@ public class LQuests extends JavaPlugin {
         Actions.register("compass", new ActionPointIndicator());
         Actions.register("startQuest", new ActionStartQuest());
 
-        MobSpawners.register("minecraft", new MinecraftSpawner());
+        MobSpawners.register(new MinecraftSpawner());
+
+        Dungeons.load();
 
         Quests.load();
         Dialogs.load();
@@ -107,6 +113,8 @@ public class LQuests extends JavaPlugin {
         Dialogs.clearRAM();
         Quests.clearRAM();
         Actions.clearRAM();
+        Dungeons.clearRAM();
+        MobSpawners.clearRAM();
         RewardProcessors.clearRAM();
     }
 
@@ -136,7 +144,7 @@ public class LQuests extends JavaPlugin {
 
     public void loadMessages(){
         File messagesFile = new File(getDataFolder(), "messages.yml");
-        if (!messagesFile.exists()) {
+        if(!messagesFile.exists()) {
             if(!messagesFile.getParentFile().exists()) messagesFile.getParentFile().mkdirs();
             try {
                 messages = YamlConfiguration.loadConfiguration(new InputStreamReader(getResource("messages.yml")));
@@ -177,7 +185,7 @@ public class LQuests extends JavaPlugin {
         } else {
             try {
                 items = YamlConfiguration.loadConfiguration(file);
-                getLogger().info("Messages file loaded.");
+                getLogger().info("Item file loaded.");
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

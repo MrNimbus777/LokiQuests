@@ -9,8 +9,8 @@ public class MobSpawners {
     public static MobSpawner get(String id) {
         return map.getOrDefault(id, null);
     }
-    public static void register(String id, MobSpawner spawner){
-        map.put(id, spawner);
+    public static void register(MobSpawner spawner){
+        map.put(spawner.id(), spawner);
     }
     public static void clearRAM(){
         map.clear();

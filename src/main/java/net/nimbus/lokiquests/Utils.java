@@ -3,9 +3,13 @@ package net.nimbus.lokiquests;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValueAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -50,6 +54,18 @@ public class Utils {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public static Entity setMetadata(Entity entity, String key, String value) {
+        entity.setMetadata(key, new FixedMetadataValue(LQuests.a, value));
+        return entity;
+    }
+    public static String readMetadata(Entity entity, String key){
+       try {
+           return entity.getMetadata(key).get(0).asString();
+       } catch (Exception e) {
+           return "";
+       }
     }
 
     protected static class VoidGenerator extends ChunkGenerator {

@@ -15,4 +15,9 @@ public class MinecraftSpawner implements MobSpawner {
             return null;
         }
     }
+
+    @Override
+    public String id() {
+        return "vanilla";
+    }
 }

@@ -5,6 +5,10 @@ import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dialogs.Dialog;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
+import net.nimbus.lokiquests.core.dungeon.Dungeon;
+import net.nimbus.lokiquests.core.dungeon.Dungeons;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
+import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.Bukkit;
@@ -13,15 +17,13 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.CompassMeta;
 
 public class LquestExe implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(sender instanceof Player p) if(!p.hasPermission("lquests.admin")) {
+        if(sender instanceof Player p) if(!p.hasPermission("lq.admin")) {
             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.no-permission")));
             return true;
         }
@@ -78,21 +80,40 @@ public class LquestExe implements CommandExecutor {
                 qp.runIndicator(new Location(player.getWorld(), 0, 100, 0));
                 return true;
             }
-            case "read" : {
+            case "dungeon" : {
                 if(!(sender instanceof Player p)) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.player-only")));
                     return true;
                 }
-                try {
-                    Class<?> clazz = Class.forName("org.bukkit.craftbukkit." + LQuests.a.version + ".inventory.CraftItemStack");
-                    net.minecraft.world.item.ItemStack nms = (net.minecraft.world.item.ItemStack) clazz.getMethod("asNMSCopy", ItemStack.class).invoke(null, p.getEquipment().getItemInMainHand());
+                Dungeon dungeon = new Dungeon(p.getLocation());
 
-                    for (String key : nms.getTag().getAllKeys()) {
-                        p.sendMessage(key + ": " + nms.getTag().get(key).getAsString());
+                Location location = dungeon.getLocation().clone().add(10, 0, 0);
+                dungeon.addSpawner(
+                        new SpawnerTask(5, location, MobSpawners.get("vanilla"), "creeper", 15));
+
+                for(int x = -5; x <= 5; x++) {
+                    for(int z = -5; z <= 5; z++) {
+                        location.clone().add(x, -1, z).getBlock().setType(Material.STONE);
                     }
-                }catch (Exception e) {
-                    e.printStackTrace();
                 }
+
+                int cx = dungeon.getLocation().getChunk().getX();
+                int cz = dungeon.getLocation().getChunk().getZ();
+
+                for(int x = -1; x <= 1; x++) {
+                    for(int z = -1; z <= 1; z++) {
+                        dungeon.getLocation().getWorld().loadChunk(cx+x, cz+z);
+                    }
+                }
+
+                dungeon.getLocation().clone().add(0, -1, 0).getBlock().setType(Material.STONE);
+
+                p.teleport(dungeon.getLocation());
+
+                dungeon.start();
+                dungeon.getSpawners().forEach(SpawnerTask::updateHologram);
+
+                Dungeons.register(dungeon);
                 return true;
             }
             default: {
