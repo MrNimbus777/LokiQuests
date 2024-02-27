@@ -2,6 +2,8 @@ package net.nimbus.lokiquests;
 
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.nbt.CompoundTag;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.generator.ChunkGenerator;
@@ -10,7 +12,13 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValueAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +38,9 @@ public class Utils {
         return Vars.PREFIX+toColor(s);
     }
 
+    public static String locToString(Location loc){
+        return loc.getBlockX()+", "+loc.getBlockY()+", "+loc.getBlockZ();
+    }
 
     public static ItemStack setTag(ItemStack item, String key, String value){
         try {
@@ -67,7 +78,48 @@ public class Utils {
            return "";
        }
     }
+    public static void savePlates() {
+        File file = new File(LQuests.a.getDataFolder(), "plates.json");
+        if(!file.exists()) {
+            if(!file.getParentFile().exists()){
+                file.getParentFile().mkdirs();
+            }
+            try {
+                file.createNewFile();
 
+            } catch (Exception exception){
+                exception.printStackTrace();
+                return;
+            }
+        }
+        JSONObject obj = new JSONObject();
+        for(Location id : Vars.PLATES_MAP.keySet()) {
+            obj.put(id.getWorld().getName()+","+id.getBlockX()+","+id.getBlockY()+","+id.getBlockZ(), Vars.PLATES_MAP.get(id));
+        }
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(obj.toJSONString());
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static void loadPlates(){
+        File file = new File(LQuests.a.getDataFolder(), "plates.json");
+        if(!file.exists()) return;
+        try {
+            FileReader reader = new FileReader(file);
+            JSONObject obj = (JSONObject) new JSONParser().parse(reader);
+            for(Object o : obj.keySet()) {
+                String[] split = o.toString().split(",");
+                Location loc = new Location(Bukkit.getWorld(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]));
+                Vars.PLATES_MAP.put(loc, Long.parseLong(obj.get(o).toString()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     protected static class VoidGenerator extends ChunkGenerator {
 
         @NotNull

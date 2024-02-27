@@ -21,6 +21,9 @@ public class Dungeons {
         map.put(dungeon.getId(), dungeon);
     }
 
+    public static Dungeon get(long id){
+        return map.getOrDefault(id, null);
+    }
     public static Dungeon getDungeon(Location location){
         List<Dungeon> list = getAll();
         if(list.isEmpty()) return null;

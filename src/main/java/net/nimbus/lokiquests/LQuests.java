@@ -61,6 +61,7 @@ public class LQuests extends JavaPlugin {
     void loadEvents(){
         loadEvent(new PlayerJoinEvents());
         loadEvent(new PlayerQuitEvents());
+        loadEvent(new BlockPlaceEvents());
 
         loadEvent(new EntityDeathEvents());
         loadEvent(new EntityPickupItemEvents());
@@ -81,6 +82,8 @@ public class LQuests extends JavaPlugin {
         loadEvents();
         loadCommands();
         loadItems();
+
+        Utils.loadPlates();
 
         RewardProcessors.register("cmd", new CommandProcessor());
         RewardProcessors.register("item", new ItemProcessor());

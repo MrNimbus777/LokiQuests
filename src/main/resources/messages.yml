@@ -11,6 +11,13 @@ Commands:
       usage: "&f&o/lquest item <name>"
       no_item: "&cYou must hold an item in the main hand."
       success: "&fItem was saved in the items.yml file with name &e%name%&f."
+  dungeon:
+    usage: "&7&o/dungeon create | spawner | remove"
+    create: "&fYou have created a new dungeon at &b%location%&f."
+    spawner:
+      usage: "&7&o/dungeon spawner <source> <mob> <mob_limit> <goal>"
+      success: "You created a new spawner at &b%location%&f for &e%source%&f - &a%type%&f, with limit - &6%limit%&f and goal &6%complete%&f."
+      delete: "You deleted the spawner at &b%location%&f."
 Actions:
   quest_start: "&fYou have a new quest: &e%name%"
   quest_finish: "&fYou finished quest: &e%name%"
