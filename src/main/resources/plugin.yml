@@ -5,3 +5,6 @@ softdepend: [HolographicDisplays]
 api-version: 1.20
 commands:
   lquest:
+    aliases: [quest, q]
+  dungeon:
+    aliases: [dun]

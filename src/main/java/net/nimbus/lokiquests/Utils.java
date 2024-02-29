@@ -9,10 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValueAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -78,8 +75,8 @@ public class Utils {
            return "";
        }
     }
-    public static void savePlates() {
-        File file = new File(LQuests.a.getDataFolder(), "plates.json");
+    public static void saveSigns() {
+        File file = new File(LQuests.a.getDataFolder(), "signs.json");
         if(!file.exists()) {
             if(!file.getParentFile().exists()){
                 file.getParentFile().mkdirs();
@@ -93,8 +90,8 @@ public class Utils {
             }
         }
         JSONObject obj = new JSONObject();
-        for(Location id : Vars.PLATES_MAP.keySet()) {
-            obj.put(id.getWorld().getName()+","+id.getBlockX()+","+id.getBlockY()+","+id.getBlockZ(), Vars.PLATES_MAP.get(id));
+        for(Location id : Vars.SIGNS_MAP.keySet()) {
+            obj.put(id.getWorld().getName()+","+id.getBlockX()+","+id.getBlockY()+","+id.getBlockZ(), Vars.SIGNS_MAP.get(id));
         }
         try {
             FileWriter writer = new FileWriter(file);
@@ -105,8 +102,8 @@ public class Utils {
         }
 
     }
-    public static void loadPlates(){
-        File file = new File(LQuests.a.getDataFolder(), "plates.json");
+    public static void loadSigns(){
+        File file = new File(LQuests.a.getDataFolder(), "signs.json");
         if(!file.exists()) return;
         try {
             FileReader reader = new FileReader(file);
@@ -114,7 +111,7 @@ public class Utils {
             for(Object o : obj.keySet()) {
                 String[] split = o.toString().split(",");
                 Location loc = new Location(Bukkit.getWorld(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]));
-                Vars.PLATES_MAP.put(loc, Long.parseLong(obj.get(o).toString()));
+                Vars.SIGNS_MAP.put(loc, Long.parseLong(obj.get(o).toString()));
             }
         } catch (Exception e) {
             e.printStackTrace();

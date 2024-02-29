@@ -21,7 +21,8 @@ public class Dungeons {
         map.put(dungeon.getId(), dungeon);
     }
 
-    public static Dungeon get(long id){
+    public static Dungeon get(Long id){
+        if(id == null) return null;
         return map.getOrDefault(id, null);
     }
     public static Dungeon getDungeon(Location location){
@@ -61,8 +62,9 @@ public class Dungeons {
             long id = Long.parseLong(o);
 
             Location location = configuration.getLocation(o+".location");
+            short limit = (short) configuration.getInt(o+".limit");
 
-            Dungeon dungeon = new Dungeon(id, location);
+            Dungeon dungeon = new Dungeon(id, location, limit);
 
             for(String s : configuration.getStringList(o+".spawners")){
                 SpawnerTask spawner = SpawnerTask.fromString(s);

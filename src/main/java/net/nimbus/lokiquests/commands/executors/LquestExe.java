@@ -68,54 +68,6 @@ public class LquestExe implements CommandExecutor {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.lquest.item.success").replace("%name%", args[1])));
                 return true;
             }
-            case "indicator": {
-                if(args.length == 1) {
-                    return true;
-                }
-                Player player = Bukkit.getPlayer(args[1]);
-                if(player == null) {
-                    return true;
-                }
-                QuestPlayer qp = QuestPlayers.get(player);
-                qp.runIndicator(new Location(player.getWorld(), 0, 100, 0));
-                return true;
-            }
-            case "dungeon" : {
-                if(!(sender instanceof Player p)) {
-                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.player-only")));
-                    return true;
-                }
-                Dungeon dungeon = new Dungeon(p.getLocation());
-
-                Location location = dungeon.getLocation().clone().add(10, 0, 0);
-                dungeon.addSpawner(
-                        new SpawnerTask(5, location, MobSpawners.get("vanilla"), "creeper", 15));
-
-                for(int x = -5; x <= 5; x++) {
-                    for(int z = -5; z <= 5; z++) {
-                        location.clone().add(x, -1, z).getBlock().setType(Material.STONE);
-                    }
-                }
-
-                int cx = dungeon.getLocation().getChunk().getX();
-                int cz = dungeon.getLocation().getChunk().getZ();
-
-                for(int x = -1; x <= 1; x++) {
-                    for(int z = -1; z <= 1; z++) {
-                        dungeon.getLocation().getWorld().loadChunk(cx+x, cz+z);
-                    }
-                }
-
-                dungeon.getLocation().clone().add(0, -1, 0).getBlock().setType(Material.STONE);
-
-                p.teleport(dungeon.getLocation());
-
-                dungeon.start();
-                dungeon.getSpawners().forEach(SpawnerTask::updateHologram);
-
-                Dungeons.register(dungeon);
-                return true;
-            }
             default: {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.lquest.usage")));
                 return true;

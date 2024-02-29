@@ -90,6 +90,10 @@ public class QuestPlayer {
     }
 
     public void setIndicator(Location location){
+        if(location == null){
+            this.indicator = null;
+            return;
+        }
         this.indicator = location.clone();
     }
 
@@ -98,7 +102,7 @@ public class QuestPlayer {
     }
 
     public void runIndicator(Location indicator) {
-        setIndicator(indicator.clone());
+        setIndicator(indicator);
         runIndicator();
     }
 
@@ -108,10 +112,15 @@ public class QuestPlayer {
             Player player = QuestPlayer.this.getPlayer();
             @Override
             public void run() {
+                if(player == null) {
+                    cancel();
+                    return;
+                }
                 if(!player.isOnline() || QuestPlayer.this.indicator == null) {
                     cancel();
                     return;
                 }
+                if(!player.getLocation().getWorld().equals(QuestPlayer.this.indicator.getWorld())) return;
                 Vector vec = QuestPlayer.this.indicator.toVector().add(new Vector(0.5, 0.1, 0.5)).subtract(player.getLocation().toVector());
                 if(vec.length() > 4) {
                     vec.normalize().multiply(4);

@@ -12,18 +12,21 @@ public class Dungeon {
     private final List<SpawnerTask> spawners;
     private final List<Player> players;
     private final Location join;
+    private final short limit;
     private final long id;
-    public Dungeon(long id, Location join){
-        this.join = join.clone();
+    public Dungeon(long id, Location join, short limit){
+        this.join = new Location(Vars.DUNGEON_WORLD, join.getBlockX()+0.5, join.getBlockY(), join.getBlockZ()+0.5);
         this.join.setWorld(Vars.DUNGEON_WORLD);
         this.id = id;
+        this.limit = limit;
 
         this.spawners = new ArrayList<>();
         this.players = new ArrayList<>();
     }
-    public Dungeon(Location join){
+    public Dungeon(Location join, short limit){
         this.join = new Location(Vars.DUNGEON_WORLD, join.getBlockX()+0.5, join.getBlockY(), join.getBlockZ()+0.5);
         this.id = System.currentTimeMillis();
+        this.limit = limit;
 
         this.spawners = new ArrayList<>();
         this.players = new ArrayList<>();
@@ -47,7 +50,13 @@ public class Dungeon {
 
     public void join(Player player) {
         addPlayer(player);
-        player.teleport(join);
+        teleport(player);
+    }
+    public void teleport(Player player) {
+        Location toTeleport = join.clone();
+        toTeleport.setYaw(player.getLocation().getYaw());
+        toTeleport.setPitch(player.getLocation().getPitch());
+        player.teleport(toTeleport);
     }
     public List<Player> getPlayers() {
         return players;

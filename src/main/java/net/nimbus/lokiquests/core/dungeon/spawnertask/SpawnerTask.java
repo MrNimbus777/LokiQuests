@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 public class SpawnerTask {
-    private static final short limit = 15;
+    private final short limit;
     private final int power;
     private final Location location;
     private final MobSpawner spawner;
@@ -33,12 +33,13 @@ public class SpawnerTask {
     private final Hologram hologram;
     private final long id;
 
-    public SpawnerTask(int power, Location location, MobSpawner spawner, String type, int complete){
+    public SpawnerTask(int power, Location location, MobSpawner spawner, String type, int complete, short limit){
         this.power = power;
         this.location = location;
         this.spawner = spawner;
         this.type = type;
         this.complete = complete;
+        this.limit = limit;
         id = System.currentTimeMillis();
         hologram = LQuests.a.hdapi.createHologram(location.clone().add(0, 3, 0));
         createHologram();
@@ -163,7 +164,8 @@ public class SpawnerTask {
                 location.getZ()+","+
                 spawner.id()+","+
                 type+","+
-                complete;
+                complete+","+
+                limit;
     }
 
     public static SpawnerTask fromString(String str) {
@@ -173,7 +175,8 @@ public class SpawnerTask {
             Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[1]), Double.parseDouble(split[2]), Double.parseDouble(split[3]));
             MobSpawner spawner = MobSpawners.get(split[4]);
             int complete = Integer.parseInt(split[6]);
-            return new SpawnerTask(power, loc, spawner, split[5], complete);
+            short limit = Short.parseShort(split[7]);
+            return new SpawnerTask(power, loc, spawner, split[5], complete, limit);
         } catch (Exception e) {
             return null;
         }

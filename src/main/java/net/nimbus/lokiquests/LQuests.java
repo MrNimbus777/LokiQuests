@@ -1,6 +1,7 @@
 package net.nimbus.lokiquests;
 
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import net.nimbus.lokiquests.commands.executors.DungeonExe;
 import net.nimbus.lokiquests.commands.executors.LquestExe;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.dialogs.action.Actions;
@@ -60,6 +61,7 @@ public class LQuests extends JavaPlugin {
 
     void loadEvents(){
         loadEvent(new PlayerJoinEvents());
+        loadEvent(new PlayerInteractEvents());
         loadEvent(new PlayerQuitEvents());
         loadEvent(new BlockPlaceEvents());
 
@@ -68,6 +70,7 @@ public class LQuests extends JavaPlugin {
     }
     void loadCommands(){
         loadCommand("lquest", new LquestExe());
+        loadCommand("dungeon", new DungeonExe());
     }
 
     public void onEnable() {
@@ -83,7 +86,7 @@ public class LQuests extends JavaPlugin {
         loadCommands();
         loadItems();
 
-        Utils.loadPlates();
+        Utils.loadSigns();
 
         RewardProcessors.register("cmd", new CommandProcessor());
         RewardProcessors.register("item", new ItemProcessor());

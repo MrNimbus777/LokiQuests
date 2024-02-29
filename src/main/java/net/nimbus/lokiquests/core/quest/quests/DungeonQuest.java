@@ -1,12 +1,13 @@
 package net.nimbus.lokiquests.core.quest.quests;
 
+import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.quest.Quest;
 import org.bukkit.event.Event;
 
 import java.util.UUID;
 
 public class DungeonQuest extends Quest {
-    public DungeonQuest(String id, String name) {
+    public DungeonQuest(String id, String name, long dungeon_id) {
         super(id, name);
     }
 
