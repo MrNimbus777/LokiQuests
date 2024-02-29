@@ -25,10 +25,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 public class LQuests extends JavaPlugin {
 
     public static LQuests a;
+    public Random r;
     public String version;
     public HolographicDisplaysAPI hdapi;
 
@@ -75,6 +77,7 @@ public class LQuests extends JavaPlugin {
 
     public void onEnable() {
         a = this;
+        r = new Random();
         hdapi = HolographicDisplaysAPI.get(a);
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
         version = packageName.substring(packageName.lastIndexOf(".") + 1);
