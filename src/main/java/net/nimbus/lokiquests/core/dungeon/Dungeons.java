@@ -77,6 +77,7 @@ public class Dungeons {
 
     public static void clearRAM(){
         getAll().forEach(Dungeon::stop);
+        getAll().forEach(Dungeon::save);
         map.clear();
     }
 }

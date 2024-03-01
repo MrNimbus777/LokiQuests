@@ -35,7 +35,7 @@ public class SpawnerTask {
 
     public SpawnerTask(int power, Location location, MobSpawner spawner, String type, int complete, short limit){
         this.power = power;
-        this.location = location;
+        this.location = new Location(Vars.DUNGEON_WORLD, location.getBlockX()+0.5, location.getBlockY(), location.getBlockZ()+0.5);
         this.spawner = spawner;
         this.type = type;
         this.complete = complete;
@@ -84,6 +84,10 @@ public class SpawnerTask {
     }
     BukkitRunnable task;
     public void start() {
+        if(task != null) {
+            task.cancel();
+            task = null;
+        }
         task = new BukkitRunnable() {
             private final Random random = new Random();
             private boolean isASpawnLocation(Location location){

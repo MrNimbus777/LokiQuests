@@ -9,6 +9,7 @@ import net.nimbus.lokiquests.core.dialogs.action.actions.*;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.MinecraftSpawner;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.MythicmobsSpawner;
 import net.nimbus.lokiquests.core.quest.Quests;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
@@ -97,10 +98,11 @@ public class LQuests extends JavaPlugin {
         Actions.register("completeQuest", new ActionCompleteQuest());
         Actions.register("cmd", new ActionExecuteCommand());
         Actions.register("give", new ActionGiveItem());
-        Actions.register("compass", new ActionPointIndicator());
+        Actions.register("indicator", new ActionPointIndicator());
         Actions.register("startQuest", new ActionStartQuest());
 
         MobSpawners.register(new MinecraftSpawner());
+        MobSpawners.register(new MythicmobsSpawner());
 
         Dungeons.load();
 

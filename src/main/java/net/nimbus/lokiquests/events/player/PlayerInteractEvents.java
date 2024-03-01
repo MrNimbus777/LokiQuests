@@ -1,5 +1,7 @@
 package net.nimbus.lokiquests.events.player;
 
+import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.Vars;
 import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
@@ -21,6 +23,15 @@ public class PlayerInteractEvents implements Listener {
         Dungeon dungeon = Dungeons.get(Vars.SIGNS_MAP.get(loc));
         if(dungeon == null) return;
         e.setCancelled(true);
-        dungeon.teleport(p);
+        if(dungeon.getPlayers().size() >= dungeon.getLimit()) {
+            p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon_full")));
+            return;
+        }
+        if(false) {
+            p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.other_party")));
+            return;
+        }
+        dungeon.join(p);
+        p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon_join")));
     }
 }

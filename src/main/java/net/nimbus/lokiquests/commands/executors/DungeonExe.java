@@ -4,6 +4,9 @@ import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawner;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
+import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,7 +39,7 @@ public class DungeonExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.create.usage")));
                     return true;
                 }
-                short limit = 0;
+                short limit;
                 try {
                     limit = Short.parseShort(args[1]);
                 } catch (Exception e) {
@@ -62,8 +65,80 @@ public class DungeonExe implements CommandExecutor {
 
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.create.success").
                         replace("%location%", Utils.locToString(dungeon.getLocation()))));
+                return true;
+            }
+            case "spawner" : {
+                if(args.length == 1) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.usage")));
+                    return true;
+                }
+                switch (args[1].toLowerCase()) {
+                    case "create" : {
+                        if(args.length < 6) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.usage")));
+                            return true;
+                        }
+                        Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                        if(dungeon == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                            return true;
+                        }
+                        int power;
+                        try {
+                            power = Integer.parseInt(args[2]);
+                        } catch (Exception e) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                                    .replace("%NAN%", args[2])));
+                            return true;
+                        }
+                        MobSpawner spawner = MobSpawners.get(args[3].toLowerCase());
+                        if(spawner == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.no_source")
+                                    .replace("%source%", args[3].toLowerCase())));
+                            return true;
+                        }
+                        String type = args[4];
+                        short limit;
+                        try {
+                            limit = Short.parseShort(args[5]);
+                        } catch (Exception e) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                                    .replace("%NAN%", args[5])));
+                            return true;
+                        }
+                        short complete;
+                        try {
+                            complete = Short.parseShort(args[6]);
+                        } catch (Exception e) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                                    .replace("%NAN%", args[6])));
+                            return true;
+                        }
+                        SpawnerTask spawnerTask = new SpawnerTask(power, p.getLocation(), spawner, type, complete, limit);
+                        dungeon.addSpawner(spawnerTask);
+                        spawnerTask.start();
+                        return true;
+                    }
+                    case "delete" : {
+                        SpawnerTask task = Dungeons.getSpawner(p.getLocation());
+                        if(task == null) {
+                            return true;
+                        }
+                        task.stop();
+                        Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                        if(dungeon == null) {
+                            return true;
+                        }
+                        dungeon.removeSpawner(task);
+                        return true;
+                    }
+                    default: return true;
+                }
+            }
+            default: {
+                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.usage")));
+                return true;
             }
         }
-        return true;
     }
 }

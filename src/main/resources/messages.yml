@@ -13,16 +13,27 @@ Commands:
       no_item: "&cYou must hold an item in the main hand."
       success: "&fItem was saved in the items.yml file with name &e%name%&f."
   dungeon:
+    no_dungeon: "&cThere is no dungeons."
     usage: "&7&o/dungeon create | spawner | remove"
     create:
       usage: "&7&o/dungeon create <player_limit>"
       success: "&fYou have created a new dungeon at &b%location%&f."
     spawner:
-      usage: "&7&o/dungeon spawner <source> <mob> <mob_limit> <goal>"
-      success: "You created a new spawner at &b%location%&f for &e%source%&f - &a%type%&f, with limit - &6%limit%&f and goal &6%complete%&f."
-      delete: "You deleted the spawner at &b%location%&f."
+      usage: "&7&o/dungeon spawner create | remove"
+      create:
+        usage: "&7&o/dungeon spawner create <power> <source> <mob> <mob_limit> <goal>"
+        success: "&fYou created a new spawner at &b%location%&f with power &6%power%&f for &e%source%&f - &a%type%&f, with limit - &6%limit%&f and goal &6%complete%&f."
+        no_source: "&cThere is no source &4%source%&c."
+      remove:
+        success: "You deleted the spawner at &b%location%&f."
+        no_spawner: "&cThere is no spawners."
+    remove:
+      success: "&fYou removed dungeon &7&o%id%&f at &b%location%&f."
 Actions:
   quest_start: "&fYou have a new quest: &e%name%"
   quest_finish: "&fYou finished quest: &e%name%"
   quest_complete: "&fYou completed quest: &e%name%"
   quest_progress: "&fYou completed the quest by &e%progress%&f/&6%goal% &7&o(%percentage%%)&f."
+  dungeon_full: "&cThis dungeon is full."
+  other_party: "&cThis dungeon is being cleared by other party."
+  dungeon_join: "&fYou have entered the dungeon."

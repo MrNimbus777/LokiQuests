@@ -1,12 +1,16 @@
 package net.nimbus.lokiquests.core.dungeon;
 
+import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Vars;
 import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Dungeon {
     private final List<SpawnerTask> spawners;
@@ -39,6 +43,9 @@ public class Dungeon {
     public void addSpawner(SpawnerTask spawner){
         this.spawners.add(spawner);
     }
+    public void removeSpawner(SpawnerTask spawner){
+        this.spawners.add(spawner);
+    }
 
     public Location getLocation() {
         return join;
@@ -58,6 +65,11 @@ public class Dungeon {
         toTeleport.setPitch(player.getLocation().getPitch());
         player.teleport(toTeleport);
     }
+
+    public short getLimit() {
+        return limit;
+    }
+
     public List<Player> getPlayers() {
         return players;
     }
@@ -76,4 +88,55 @@ public class Dungeon {
         spawners.forEach(SpawnerTask::stop);
     }
 
+    public void save(){
+        File file = new File(LQuests.a.getDataFolder(), "dungeons.yml");
+        if(!file.exists()) {
+            if(!file.getParentFile().exists()){
+                file.getParentFile().mkdirs();
+            }
+            try {
+                file.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        List<String> spawners = getSpawners().stream().map(SpawnerTask::toString).collect(Collectors.toList());
+        configuration.set(getId()+".location", getLocation());
+        configuration.set(getId()+".limit", getLimit());
+        configuration.set(getId()+".spawners", spawners);
+        try {
+            configuration.save(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void remove(){
+        File file = new File(LQuests.a.getDataFolder(), "dungeons.yml");
+        if(!file.exists()) {
+            if(!file.getParentFile().exists()){
+                file.getParentFile().mkdirs();
+            }
+            try {
+                file.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        configuration.set(getId()+"", null);
+        try {
+            configuration.save(file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public boolean isCompleted(){
+        for(SpawnerTask task : getSpawners()) {
+            if(!task.isCompleted()) return false;
+        }
+        return true;
+    }
 }
