@@ -4,6 +4,7 @@ import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,16 +29,24 @@ public class Dungeons {
         if(id == null) return null;
         return map.getOrDefault(id, null);
     }
+    public static Dungeon getDungeon(Player player){
+        for(Dungeon dungeon : getAll()) {
+            if(dungeon.getPlayers().contains(player)) return dungeon;
+        }
+        return null;
+    }
+    private static double distance(Location loc1, Location loc2) {
+        return loc1.toVector().subtract(loc2.toVector()).length();
+    }
     public static Dungeon getDungeon(Location location){
         List<Dungeon> list = getAll();
         if(list.isEmpty()) return null;
         int closest = 0;
         for(int i = 1; i < list.size(); ){
-            if(list.get(closest).getLocation().distance(location) > list.get(i).getLocation().distance(location)) closest = i;
+            if(distance(list.get(closest).getLocation(), (location)) > distance(list.get(i).getLocation(), location)) closest = i;
         }
         return list.get(closest);
     }
-
     public static SpawnerTask getSpawner(Location location){
         Dungeon dungeon = getDungeon(location);
         if(dungeon == null) return null;
@@ -45,7 +54,7 @@ public class Dungeons {
         if(list.isEmpty()) return null;
         int closest = 0;
         for(int i = 0; i < list.size(); i++) {
-            if(list.get(closest).getLocation().distance(location) > list.get(i).getLocation().distance(location)) closest = i;
+            if(distance(list.get(closest).getLocation(), (location)) > distance(list.get(i).getLocation(), location)) closest = i;
         }
         return list.get(closest);
     }
@@ -80,7 +89,6 @@ public class Dungeons {
 
     public static void clearRAM(){
         getAll().forEach(Dungeon::stop);
-        getAll().forEach(Dungeon::save);
         map.clear();
     }
 }

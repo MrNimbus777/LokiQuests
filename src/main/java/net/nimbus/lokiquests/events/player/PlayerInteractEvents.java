@@ -26,6 +26,7 @@ public class PlayerInteractEvents implements Listener {
         Dungeon dungeon = Dungeons.get(Vars.SIGNS_MAP.get(loc));
         if(dungeon == null) return;
         e.setCancelled(true);
+        if(dungeon.getPlayers().contains(p)) return;
         if(dungeon.getPlayers().size() >= dungeon.getLimit() && dungeon.getLimit() > -1) {
             p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon_full")));
             return;

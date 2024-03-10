@@ -15,7 +15,7 @@ Commands:
       success: "&fItem was saved in the items.yml file with name &e%name%&f."
   dungeon:
     no_dungeon: "&cThere is no dungeons."
-    usage: "&7&o/dungeon create | spawner | remove"
+    usage: "&7&o/dungeon create | spawner | remove | getSign"
     create:
       usage: "&7&o/dungeon create <player_limit>"
       success: "&fYou have created a new dungeon at &b%location%&f."

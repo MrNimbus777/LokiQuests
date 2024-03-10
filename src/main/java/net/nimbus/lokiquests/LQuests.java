@@ -5,6 +5,7 @@ import net.nimbus.lokiquests.commands.completers.DungeonCompleter;
 import net.nimbus.lokiquests.commands.completers.LquestCompleter;
 import net.nimbus.lokiquests.commands.completers.PartyCompleter;
 import net.nimbus.lokiquests.commands.executors.DungeonExe;
+import net.nimbus.lokiquests.commands.executors.LeaveExe;
 import net.nimbus.lokiquests.commands.executors.LquestExe;
 import net.nimbus.lokiquests.commands.executors.PartyExe;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
@@ -81,6 +82,7 @@ public class LQuests extends JavaPlugin {
         loadCommand("lquest", new LquestExe(), new LquestCompleter());
         loadCommand("dungeon", new DungeonExe(), new DungeonCompleter());
         loadCommand("party", new PartyExe(), new PartyCompleter());
+        loadCommand("leave", new LeaveExe());
     }
 
     public void onEnable() {

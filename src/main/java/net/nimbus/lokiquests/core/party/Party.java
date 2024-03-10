@@ -7,18 +7,19 @@ import java.util.List;
 
 public class Party {
     private Player leader;
-    private List<Player> members;
+    private final List<Player> members;
     private static final short limit = 3;
 
     public Party(Player leader){
         this.leader = leader;
+        members = new ArrayList<>();
     }
 
     @Override
     public boolean equals(Object obj) {
         if(obj == null) return false;
-        if(obj instanceof Player p) {
-            return p.getUniqueId().equals(getLeader().getUniqueId());
+        if(obj instanceof Party p) {
+            return p.getLeader().getUniqueId().equals(getLeader().getUniqueId());
         }
         return false;
     }

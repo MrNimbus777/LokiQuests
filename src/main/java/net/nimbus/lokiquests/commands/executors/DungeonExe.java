@@ -56,15 +56,36 @@ public class DungeonExe implements CommandExecutor {
                 meta.setDisplayName(Utils.toColor("&aTeleporting sign"));
                 meta.setLore(List.of(
                         "",
-                        Utils.toColor("&8&oPlace wherever in world to join point to the dungeon."),
+                        Utils.toColor("&8&oPlace wherever in world to create a join point to the dungeon."),
                         "",
                         Utils.toColor("&8&oDungeon id: "+dungeon.getId())
                 ));
                 item.setItemMeta(meta);
                 p.getInventory().addItem(item);
 
+                dungeon.save();
+
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.create.success").
                         replace("%location%", Utils.locToString(dungeon.getLocation()))));
+                return true;
+            }
+            case "getsign" : {
+                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                if(dungeon == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                    return true;
+                }
+                ItemStack item = Utils.setTag(new ItemStack(Material.OAK_SIGN), "teleport_to_id", dungeon.getId()+"");
+                ItemMeta meta = item.getItemMeta();
+                meta.setDisplayName(Utils.toColor("&aTeleporting sign"));
+                meta.setLore(List.of(
+                        "",
+                        Utils.toColor("&8&oPlace wherever in world to create a join point to the dungeon."),
+                        "",
+                        Utils.toColor("&8&oDungeon id: "+dungeon.getId())
+                ));
+                item.setItemMeta(meta);
+                p.getInventory().addItem(item);
                 return true;
             }
             case "spawner" : {
@@ -117,6 +138,7 @@ public class DungeonExe implements CommandExecutor {
                         SpawnerTask spawnerTask = new SpawnerTask(power, p.getLocation(), spawner, type, complete, limit);
                         dungeon.addSpawner(spawnerTask);
                         spawnerTask.updateHologram();
+                        dungeon.save();
                         p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.success").
                                 replace("%location%", Utils.locToString(dungeon.getLocation())).
                                 replace("%power%", power+"").
@@ -142,6 +164,7 @@ public class DungeonExe implements CommandExecutor {
                         }
                         task.removeHologram();
                         dungeon.removeSpawner(task);
+                        dungeon.save();
                         sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.success").
                                 replace("%location%", Utils.locToString(task.getLocation()))));
                         return true;

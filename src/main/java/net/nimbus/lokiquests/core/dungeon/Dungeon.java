@@ -11,10 +11,12 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Dungeon {
+    protected static final HashMap<Player, Location> previosLocs = new HashMap<>();
     private final List<SpawnerTask> spawners;
     private final List<Player> players;
     private final Location join;
@@ -67,9 +69,12 @@ public class Dungeon {
     public void leave(Player player) {
         removePlayer(player);
         updateSigns();
+        player.teleport(previosLocs.get(player));
+        previosLocs.remove(player);
     }
     public void teleport(Player player) {
         Location toTeleport = join.clone();
+        previosLocs.put(player, player.getLocation().clone());
         toTeleport.setYaw(player.getLocation().getYaw());
         toTeleport.setPitch(player.getLocation().getPitch());
         player.teleport(toTeleport);
@@ -95,6 +100,9 @@ public class Dungeon {
 
     public void stop(){
         this.spawners.forEach(SpawnerTask::stop);
+        for(Player p : new ArrayList<>(getPlayers())) {
+            leave(p);
+        }
     }
 
     public void save(){
