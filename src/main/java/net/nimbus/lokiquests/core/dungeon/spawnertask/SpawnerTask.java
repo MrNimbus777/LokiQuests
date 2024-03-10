@@ -160,6 +160,9 @@ public class SpawnerTask {
         } else hologram.getLines().insertText(2, Utils.toColor("&6COMPLETED"));
         hologram.getLines().remove(3);
     }
+    public void removeHologram(){
+        hologram.delete();
+    }
     @Override
     public String toString() {
         return power+","+

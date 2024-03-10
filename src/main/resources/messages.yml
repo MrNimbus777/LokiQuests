@@ -2,6 +2,7 @@ Commands:
   no-permission: "&cYou do not have permission for this."
   player-only: "&cThis command is for players only."
   nan: "&4%NAN%&c is not a number!"
+  no_player: "&4There is no player &4%player%&c."
   lquest:
     usage: "&f&o/lquest process | item | reload"
     process:
@@ -27,8 +28,33 @@ Commands:
       remove:
         success: "You deleted the spawner at &b%location%&f."
         no_spawner: "&cThere is no spawners."
-    remove:
-      success: "&fYou removed dungeon &7&o%id%&f at &b%location%&f."
+    remove: "&fYou removed dungeon &7&o%id%&f at &b%location%&f."
+  party:
+    full: "&cThis party is full."
+    no_party: "&cYou are member of no party."
+    not_leader: "&cYou are not the leader."
+    no_member: "&cThere is no member &4%player%&c."
+    exists: "&cYou already are member of a party."
+    usage: "&7&o/party create | leave | invite | kick | remove | disband | accept | reject | setLeader"
+    create: "&fYou have created a party."
+    leave: "&fYou have left the party."
+    invite:
+      usage: "&7&o/party invite <player>"
+      success: "&fYou invited player &b%player%&f."
+      no_invitation: "&cYou have no invitations."
+      has_invitation: "&cThis player is already invited to other party"
+      has_party: "&cThis player is member of a party."
+      receive: "&fYou are invited to &b%leader%'s&f party."
+    kick: "&fYou have kicked player &b%player%&f from the party."
+    kick_usage: "&7&o/party kick <member>"
+    kicked: "&fYou have been kicked from the party."
+    disband: "&fYour party has been disbanded."
+    accept: "&fYou have joined &b%leader%'s&f party."
+    accept-feedback: "&b%player% has joined your party."
+    reject: "&fYou have reject &b%leader%'s&f invitation."
+    reject-feedback: "&b%player% has rejected the invitation to your party."
+    setLeader: "&b%player%&f is the new leader of the party."
+    setLeader_usage: "&7&o/party setLeader <member>"
 Actions:
   quest_start: "&fYou have a new quest: &e%name%"
   quest_finish: "&fYou finished quest: &e%name%"
@@ -37,3 +63,4 @@ Actions:
   dungeon_full: "&cThis dungeon is full."
   other_party: "&cThis dungeon is being cleared by other party."
   dungeon_join: "&fYou have entered the dungeon."
+  join_no_party: "&cYou must be in a party with at least 1 member to join a dungeon."

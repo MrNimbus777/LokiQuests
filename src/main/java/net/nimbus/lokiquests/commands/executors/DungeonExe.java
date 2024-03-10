@@ -116,24 +116,58 @@ public class DungeonExe implements CommandExecutor {
                         }
                         SpawnerTask spawnerTask = new SpawnerTask(power, p.getLocation(), spawner, type, complete, limit);
                         dungeon.addSpawner(spawnerTask);
-                        spawnerTask.start();
+                        spawnerTask.updateHologram();
+                        p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.success").
+                                replace("%location%", Utils.locToString(dungeon.getLocation())).
+                                replace("%power%", power+"").
+                                replace("%source%", spawner.id()).
+                                replace("%type%", type).
+                                replace("%limit%", limit+"").
+                                replace("%complete%", complete+"")
+                        ));
                         return true;
                     }
+                    case "remove" :
                     case "delete" : {
                         SpawnerTask task = Dungeons.getSpawner(p.getLocation());
                         if(task == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.no_spawner")));
                             return true;
                         }
                         task.stop();
                         Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
                         if(dungeon == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                             return true;
                         }
+                        task.removeHologram();
                         dungeon.removeSpawner(task);
+                        sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.success").
+                                replace("%location%", Utils.locToString(task.getLocation()))));
                         return true;
                     }
-                    default: return true;
+                    default: {
+                        sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.usage")));
+                        return true;
+                    }
                 }
+            }
+            case "remove" :
+            case "delete" : {
+                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                if(dungeon == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                    return true;
+                }
+                dungeon.stop();
+                dungeon.getSpawners().forEach(SpawnerTask::removeHologram);
+                Dungeons.unregister(dungeon);
+                dungeon.remove();
+                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.remove").
+                        replace("%id%", dungeon.getId()+"").
+                        replace("%location%", Utils.locToString(p.getLocation()))
+                ));
+                return true;
             }
             default: {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.usage")));

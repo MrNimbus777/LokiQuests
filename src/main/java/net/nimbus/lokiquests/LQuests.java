@@ -1,8 +1,12 @@
 package net.nimbus.lokiquests;
 
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import net.nimbus.lokiquests.commands.completers.DungeonCompleter;
+import net.nimbus.lokiquests.commands.completers.LquestCompleter;
+import net.nimbus.lokiquests.commands.completers.PartyCompleter;
 import net.nimbus.lokiquests.commands.executors.DungeonExe;
 import net.nimbus.lokiquests.commands.executors.LquestExe;
+import net.nimbus.lokiquests.commands.executors.PartyExe;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.dialogs.action.Actions;
 import net.nimbus.lokiquests.core.dialogs.action.actions.*;
@@ -10,6 +14,7 @@ import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.MinecraftSpawner;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.MythicmobsSpawner;
+import net.nimbus.lokiquests.core.party.Parties;
 import net.nimbus.lokiquests.core.quest.Quests;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
@@ -67,13 +72,15 @@ public class LQuests extends JavaPlugin {
         loadEvent(new PlayerInteractEvents());
         loadEvent(new PlayerQuitEvents());
         loadEvent(new BlockPlaceEvents());
+        loadEvent(new BlockBreakEvents());
 
         loadEvent(new EntityDeathEvents());
         loadEvent(new EntityPickupItemEvents());
     }
     void loadCommands(){
-        loadCommand("lquest", new LquestExe());
-        loadCommand("dungeon", new DungeonExe());
+        loadCommand("lquest", new LquestExe(), new LquestCompleter());
+        loadCommand("dungeon", new DungeonExe(), new DungeonCompleter());
+        loadCommand("party", new PartyExe(), new PartyCompleter());
     }
 
     public void onEnable() {
@@ -120,6 +127,7 @@ public class LQuests extends JavaPlugin {
         for(QuestPlayer player : QuestPlayers.getAll()) {
             player.save();
         }
+        Parties.clearRAM();
         QuestPlayers.clearRAM();
         Dialogs.clearRAM();
         Quests.clearRAM();

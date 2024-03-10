@@ -21,6 +21,9 @@ public class Dungeons {
         map.put(dungeon.getId(), dungeon);
     }
 
+    public static void unregister(Dungeon dungeon){
+        map.remove(dungeon.getId());
+    }
     public static Dungeon get(Long id){
         if(id == null) return null;
         return map.getOrDefault(id, null);

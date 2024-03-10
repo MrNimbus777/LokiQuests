@@ -1,9 +1,11 @@
 package net.nimbus.lokiquests.core.dungeon;
 
 import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.Vars;
 import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
 import org.bukkit.Location;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -44,7 +46,8 @@ public class Dungeon {
         this.spawners.add(spawner);
     }
     public void removeSpawner(SpawnerTask spawner){
-        this.spawners.add(spawner);
+        this.spawners.remove(spawner);
+        spawner.stop();
     }
 
     public Location getLocation() {
@@ -58,6 +61,12 @@ public class Dungeon {
     public void join(Player player) {
         addPlayer(player);
         teleport(player);
+        updateSigns();
+        if(players.size() == 1) start();
+    }
+    public void leave(Player player) {
+        removePlayer(player);
+        updateSigns();
     }
     public void teleport(Player player) {
         Location toTeleport = join.clone();
@@ -85,7 +94,7 @@ public class Dungeon {
     }
 
     public void stop(){
-        spawners.forEach(SpawnerTask::stop);
+        this.spawners.forEach(SpawnerTask::stop);
     }
 
     public void save(){
@@ -131,6 +140,18 @@ public class Dungeon {
             configuration.save(file);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public void updateSigns(){
+        for(Location loc : Vars.SIGNS_MAP.keySet()) {
+            if(Vars.SIGNS_MAP.get(loc) == getId()) {
+                Sign sign = (Sign) loc.getBlock().getState();
+                sign.setLine(0, Utils.toColor("&9[Teleport]"));
+                sign.setLine(1, Utils.toColor(getPlayers().size()+"/"+getLimit()));
+                sign.setLine(2, Utils.toColor("&aTeleport to"));
+                sign.setLine(3, Utils.toColor("&adungeon."));
+                sign.update();
+            }
         }
     }
     public boolean isCompleted(){

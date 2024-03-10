@@ -5,6 +5,8 @@ import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.Vars;
 import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
+import net.nimbus.lokiquests.core.party.Parties;
+import net.nimbus.lokiquests.core.party.Party;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+
 
 public class PlayerInteractEvents implements Listener {
     @EventHandler
@@ -23,13 +26,21 @@ public class PlayerInteractEvents implements Listener {
         Dungeon dungeon = Dungeons.get(Vars.SIGNS_MAP.get(loc));
         if(dungeon == null) return;
         e.setCancelled(true);
-        if(dungeon.getPlayers().size() >= dungeon.getLimit()) {
+        if(dungeon.getPlayers().size() >= dungeon.getLimit() && dungeon.getLimit() > -1) {
             p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon_full")));
             return;
         }
-        if(false) {
-            p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.other_party")));
+        Party player_party = Parties.get(p);
+        if(player_party == null) {
+            p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.join_no_party")));
             return;
+        }
+        if(!dungeon.getPlayers().isEmpty()) {
+            Party dungeon_party = Parties.get(dungeon.getPlayers().get(0));
+            if(!dungeon_party.equals(player_party)) {
+                p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.other_party")));
+                return;
+            }
         }
         dungeon.join(p);
         p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon_join")));

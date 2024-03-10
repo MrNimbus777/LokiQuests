@@ -8,7 +8,6 @@ import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,12 +41,7 @@ public class BlockPlaceEvents implements Listener {
                 Utils.saveSigns();
 
                 b.setBlockData(before);
-
-                Sign sign = (Sign) b.getState();
-                sign.setLine(0, Utils.toColor("&9[Teleport]"));
-                sign.setLine(2, Utils.toColor("&aTeleport to"));
-                sign.setLine(3, Utils.toColor("&adungeon."));
-                sign.update();
+                dungeon.updateSigns();
             }
         }.runTaskLater(LQuests.a, 0);
     }
