@@ -37,6 +37,9 @@ Commands:
         success: "You deleted the spawner at &b%location%&f."
         no_spawner: "&cThere is no spawners."
     remove: "&fYou removed dungeon &7&o%id%&f at &b%location%&f."
+    name:
+      usage: "&7&o/dungeon name <name>"
+      success: "The name of the dungeon has been set to &e%name%&f."
   party:
     full: "&cThis party is full."
     no_party: "&cYou are member of no party."

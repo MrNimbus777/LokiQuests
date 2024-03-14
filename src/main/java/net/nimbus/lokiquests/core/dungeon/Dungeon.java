@@ -12,6 +12,7 @@ import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -39,7 +40,7 @@ public class Dungeon {
         this.join.setWorld(Vars.DUNGEON_WORLD);
         this.id = id;
         this.limit = limit;
-        this.name = "dungeon";
+        this.name = "Normal";
 
         this.spawners = new ArrayList<>();
         this.players = new ArrayList<>();
@@ -49,7 +50,7 @@ public class Dungeon {
         this.join = new Location(Vars.DUNGEON_WORLD, join.getBlockX()+0.5, join.getBlockY(), join.getBlockZ()+0.5);
         this.id = System.currentTimeMillis();
         this.limit = limit;
-        this.name = "dungeon";
+        this.name = "Normal";
 
         this.spawners = new ArrayList<>();
         this.players = new ArrayList<>();
@@ -141,6 +142,7 @@ public class Dungeon {
             public void run() {
                 getPlayers().forEach(p -> {
                     p.sendTitle(Utils.toColor("&eWalls up!"), Utils.toColor("In &c" + countdown + "&f seconds."), 0, 20, 10);
+                    p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 });
                 countdown--;
                 if(countdown > 0) return;
@@ -152,10 +154,27 @@ public class Dungeon {
         }.runTaskTimer(LQuests.a, 0, 20);
     }
 
-    public void wallsDown(){
-        for(Wall wall : walls) {
-            wall.down();
-        }
+    public void wallsDown() {
+        getPlayers().forEach(p -> {
+            p.sendTitle(Utils.toColor("&5Boss fell!"), "", 5, 20, 10);
+        });
+        new BukkitRunnable() {
+            int countdown = 3;
+
+            @Override
+            public void run() {
+                getPlayers().forEach(p -> {
+                    p.sendTitle(Utils.toColor("&eWalls down!"), Utils.toColor("In &c" + countdown + "&f seconds."), 0, 20, 10);
+                    p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
+                });
+                countdown--;
+                if (countdown > 0) return;
+                for(Wall wall : walls) {
+                    wall.down();
+                }
+                cancel();
+            }
+        }.runTaskTimer(LQuests.a, 20, 20);
     }
 
     public void save(){
@@ -211,7 +230,7 @@ public class Dungeon {
                 Sign sign = (Sign) loc.getBlock().getState();
                 sign.setLine(0, Utils.toColor("&9[Teleport]"));
                 sign.setLine(1, Utils.toColor(getPlayers().size()+"/"+getLimit()));
-                sign.setLine(2, Utils.toColor("&0Go to"));
+                sign.setLine(2, Utils.toColor("&0Go to dungeon"));
                 sign.setLine(3, Utils.toColor("&a" + getName() + "&f."));
                 sign.update();
             }
@@ -256,12 +275,11 @@ public class Dungeon {
         public static List<Wall> UP = new ArrayList<>();
 
 
-        private final Dungeon dungeon;
+        private Dungeon dungeon;
 
         private final int x1, y1, z1, x2, y2, z2;
 
-        public Wall(Dungeon dungeon, int x1, int y1, int z1, int x2, int y2, int z2){
-            this.dungeon = dungeon;
+        public Wall(int x1, int y1, int z1, int x2, int y2, int z2){
             this.x1 = Math.min(x1, x2);
             this.y1 = Math.min(y1, y2);
             this.z1 = Math.min(z1, z2);
@@ -270,10 +288,19 @@ public class Dungeon {
             this.z2 = Math.max(z2, z1);
         }
 
+        public Dungeon getDungeon() {
+            return dungeon;
+        }
+
+        public void setDungeon(Dungeon dungeon) {
+            this.dungeon = dungeon;
+        }
 
         BukkitRunnable visualisation;
         public void up(){
             if(UP.contains(this)) return;
+            Location sound = new Location(Vars.DUNGEON_WORLD, (x1+x2)/2.0, (y1+y2)/2.0, (z1+z2)/2.0);
+            sound.getWorld().playSound(sound, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1, 1);
             UP.add(this);
             visualisation = new BukkitRunnable() {
                 @Override
@@ -294,6 +321,8 @@ public class Dungeon {
 
         public void down(){
             if(!UP.contains(this)) return;
+            Location sound = new Location(Vars.DUNGEON_WORLD, (x1+x2)/2.0, (y1+y2)/2.0, (z1+z2)/2.0);
+            sound.getWorld().playSound(sound, Sound.ENTITY_WITHER_BREAK_BLOCK, 1, 1);
             UP.remove(this);
             visualisation.cancel();
         }
@@ -301,6 +330,28 @@ public class Dungeon {
             return x1 <= loc.getBlockX() && loc.getBlockX() <= x2 &&
                     y1 <= loc.getBlockY() && loc.getBlockY() <= y2 &&
                     z1 <= loc.getBlockZ() && loc.getBlockZ() <= z2;
+        }
+
+        @Override
+        public String toString() {
+            return x1+","+
+                    y1+","+
+                    z1+","+
+                    x2+","+
+                    y2+","+
+                    z2;
+        }
+
+        public static Wall fromString(String string){
+            String[] split = string.split(",");
+            return new Wall(
+                    Integer.parseInt(split[0]),
+                    Integer.parseInt(split[1]),
+                    Integer.parseInt(split[2]),
+                    Integer.parseInt(split[3]),
+                    Integer.parseInt(split[4]),
+                    Integer.parseInt(split[5])
+            );
         }
     }
 

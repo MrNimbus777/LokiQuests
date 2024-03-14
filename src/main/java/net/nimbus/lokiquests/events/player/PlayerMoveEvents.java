@@ -1,5 +1,7 @@
 package net.nimbus.lokiquests.events.player;
 
+import net.nimbus.lokiquests.core.dungeon.Dungeon;
+import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
@@ -13,6 +15,11 @@ public class PlayerMoveEvents implements Listener {
         QuestPlayer qp = QuestPlayers.get(e.getPlayer());
         for(Quest quest : qp.getActiveQuests()){
             quest.process(e);
+        }
+        for(Dungeon.Wall wall : Dungeon.Wall.UP){
+            if(wall.isColliding(e.getTo())) {
+
+            }
         }
     }
 }

@@ -172,6 +172,20 @@ public class DungeonExe implements CommandExecutor {
                 ));
                 return true;
             }
+            case "name" : {
+                if(args.length == 1) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.name.usage")));
+                    return true;
+                }
+                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                if(dungeon == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                    return true;
+                }
+                dungeon.setName(Utils.toColor(args[1]));
+                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.name.success").
+                        replace("%name%", dungeon.getName())));
+            }
             default: {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.usage")));
                 return true;
