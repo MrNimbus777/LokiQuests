@@ -20,6 +20,10 @@ public class LeaveExe implements CommandExecutor {
         }
         Dungeon dungeon = Dungeons.getDungeon(p);
         if(dungeon == null) return true;
+        if(!dungeon.isCompleted()){
+            //p.sendMessage();
+            return true;
+        }
         dungeon.leave(p);
         return true;
     }

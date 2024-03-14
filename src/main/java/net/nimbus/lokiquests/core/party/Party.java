@@ -7,11 +7,12 @@ import java.util.List;
 
 public class Party {
     private Player leader;
+    private final String name;
     private final List<Player> members;
     private static final short limit = 3;
 
-    public Party(Player leader){
-        this.leader = leader;
+    public Party(String name){
+        this.name = name;
         members = new ArrayList<>();
     }
 
@@ -24,9 +25,13 @@ public class Party {
         return false;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setLeader(Player player) {
         members.remove(player);
-        members.add(leader);
+        if(leader != null) members.add(leader);
         this.leader = player;
     }
     public void addMember(Player player){

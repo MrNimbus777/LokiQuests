@@ -31,6 +31,7 @@ public class LocationQuest extends Quest {
                 if(move.getWorld().equals(location.getWorld())) {
                     if(location.distance(move) <= distance) {
                         finish(player);
+                        player.setIndicator(null);
                     }
                 }
             }

@@ -20,4 +20,8 @@ public class Reward {
         processor.executeReward(player, reward);
         player.sendMessage(Utils.toPrefix("You got " + processor.processMessage(name)));
     }
+
+    public String getName() {
+        return name;
+    }
 }

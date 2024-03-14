@@ -17,13 +17,21 @@ Commands:
     no_dungeon: "&cThere is no dungeons."
     usage: "&7&o/dungeon create | spawner | remove | getSign"
     create:
-      usage: "&7&o/dungeon create <player_limit>"
+      usage: "&7&o/dungeon create <player_limit> [<name>]"
       success: "&fYou have created a new dungeon at &b%location%&f."
+    wall:
+      usage:  "&7&o/dungeon wall create | remove"
+      create:
+        usage: "&7&o/dungeon wall create <x1> <y1> <z1> <x2> <y2> <z2>"
+        success: "&fYou have created a wall at &b%location%&f."
+      remove:
+        success: "You have removed the wall at &b%location%&f."
+        no_wall: "&cThere is no wall."
     spawner:
       usage: "&7&o/dungeon spawner create | remove"
       create:
-        usage: "&7&o/dungeon spawner create <power> <source> <mob> <mob_limit> <goal>"
-        success: "&fYou created a new spawner at &b%location%&f with power &6%power%&f for &e%source%&f - &a%type%&f, with limit - &6%limit%&f and goal &6%complete%&f."
+        usage: "&7&o/dungeon spawner create <source> <mob> <amount>"
+        success: "&fYou created a new spawner at &b%location%&f with &b%amount%&f of &e%source%&f - &a%type%&f."
         no_source: "&cThere is no source &4%source%&c."
       remove:
         success: "You deleted the spawner at &b%location%&f."
@@ -37,6 +45,7 @@ Commands:
     exists: "&cYou already are member of a party."
     usage: "&7&o/party create | leave | invite | kick | remove | disband | accept | reject | setLeader"
     create: "&fYou have created a party."
+    create_usage: "&7&o/party create <name>"
     leave: "&fYou have left the party."
     invite:
       usage: "&7&o/party invite <player>"
@@ -44,23 +53,28 @@ Commands:
       no_invitation: "&cYou have no invitations."
       has_invitation: "&cThis player is already invited to other party"
       has_party: "&cThis player is member of a party."
-      receive: "&fYou are invited to &b%leader%'s&f party."
+      receive: "&fYou are invited to party &b%party%&f."
     kick: "&fYou have kicked player &b%player%&f from the party."
     kick_usage: "&7&o/party kick <member>"
     kicked: "&fYou have been kicked from the party."
     disband: "&fYour party has been disbanded."
-    accept: "&fYou have joined &b%leader%'s&f party."
+    accept: "&fYou have joined party &b%party%&f."
     accept-feedback: "&b%player% has joined your party."
-    reject: "&fYou have reject &b%leader%'s&f invitation."
+    reject: "&fYou have rejected invitation to party &b%party%&f."
     reject-feedback: "&b%player% has rejected the invitation to your party."
     setLeader: "&b%player%&f is the new leader of the party."
     setLeader_usage: "&7&o/party setLeader <member>"
+  quest:
+    usage: "&7&o/quest list"
+    empty: "&fYou do not have any active quests now."
 Actions:
   quest_start: "&fYou have a new quest: &e%name%"
   quest_finish: "&fYou finished quest: &e%name%"
   quest_complete: "&fYou completed quest: &e%name%"
   quest_progress: "&fYou completed the quest by &e%progress%&f/&6%goal% &7&o(%percentage%%)&f."
   dungeon_full: "&cThis dungeon is full."
+  dungeon_complete: "&fYou have completed the dungeon. Use &7&o/leave&f to leave or you will be automatically kicked in 30 seconds."
+  cant_leave: "&fYou cannot leave the dungeon until you complete it."
   other_party: "&cThis dungeon is being cleared by other party."
   dungeon_join: "&fYou have entered the dungeon."
   join_no_party: "&cYou must be in a party with at least 1 member to join a dungeon."

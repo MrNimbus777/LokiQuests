@@ -1,0 +1,6 @@
+loc1:
+  name: "Find first kingdom"
+  location: "world,10,100,10"
+  distance: 10
+  display: true
+  rewards:

@@ -9,6 +9,7 @@ import org.bukkit.event.Event;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public abstract class Quest {
 
@@ -71,6 +72,13 @@ public abstract class Quest {
     }
     public boolean isCompleted(QuestPlayer player) {
         return player.getCompletedQuests().contains(this);
+    }
+
+    public List<String> getDescription(){
+        return List.of(
+                Utils.toColor("Name: &a" + getName()),
+                Utils.toColor("Rewards: &6" + getRewards().stream().map(Reward::getName).collect(Collectors.joining("&f, &6")))
+        );
     }
 
     public abstract void process(Event event);

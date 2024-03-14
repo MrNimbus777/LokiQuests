@@ -8,6 +8,8 @@ import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawner;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
+import java.util.List;
+
 public class MythicmobsSpawner implements MobSpawner {
 
     @Override
@@ -20,5 +22,10 @@ public class MythicmobsSpawner implements MobSpawner {
     @Override
     public String id() {
         return "mythicmobs";
+    }
+
+    @Override
+    public List<String> types() {
+        return MythicBukkit.inst().getMobManager().getMobTypes().stream().map(MythicMob::getInternalName).toList();
     }
 }

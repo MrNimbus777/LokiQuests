@@ -1,7 +1,6 @@
 package net.nimbus.lokiquests.core.dungeon;
 
 import net.nimbus.lokiquests.LQuests;
-import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -47,10 +46,10 @@ public class Dungeons {
         }
         return list.get(closest);
     }
-    public static SpawnerTask getSpawner(Location location){
+    public static Dungeon.Spawner getSpawner(Location location){
         Dungeon dungeon = getDungeon(location);
         if(dungeon == null) return null;
-        List<SpawnerTask> list = dungeon.getSpawners();
+        List<Dungeon.Spawner> list = dungeon.getSpawners();
         if(list.isEmpty()) return null;
         int closest = 0;
         for(int i = 0; i < list.size(); i++) {
@@ -58,9 +57,9 @@ public class Dungeons {
         }
         return list.get(closest);
     }
-    public static SpawnerTask getSpawner(long id){
+    public static Dungeon.Spawner getSpawner(long id){
         for(Dungeon dungeon : getAll()){
-            for(SpawnerTask spawner : dungeon.getSpawners()){
+            for(Dungeon.Spawner spawner : dungeon.getSpawners()){
                 if(id == spawner.getId()) return spawner;
             }
         }
@@ -79,7 +78,11 @@ public class Dungeons {
             Dungeon dungeon = new Dungeon(id, location, limit);
 
             for(String s : configuration.getStringList(o+".spawners")){
-                SpawnerTask spawner = SpawnerTask.fromString(s);
+                Dungeon.Spawner spawner = Dungeon.Spawner.fromString(s);
+                if(spawner != null) dungeon.addSpawner(spawner);
+            }
+            for(String s : configuration.getStringList(o+".boss")){
+                Dungeon.BossSpawner spawner = Dungeon.BossSpawner.fromString(s);
                 if(spawner != null) dungeon.addSpawner(spawner);
             }
             register(dungeon);

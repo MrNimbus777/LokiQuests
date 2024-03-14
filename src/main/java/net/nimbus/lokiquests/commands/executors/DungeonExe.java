@@ -6,7 +6,6 @@ import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawner;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
-import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -48,6 +47,7 @@ public class DungeonExe implements CommandExecutor {
                 }
 
                 Dungeon dungeon = new Dungeon(p.getLocation(), limit);
+                if(args.length > 2) dungeon.setName(Utils.toColor(args[2]));
                 dungeon.getLocation().clone().add(0, -1, 0).getBlock().setType(Material.STONE);
                 Dungeons.register(dungeon);
 
@@ -95,7 +95,7 @@ public class DungeonExe implements CommandExecutor {
                 }
                 switch (args[1].toLowerCase()) {
                     case "create" : {
-                        if(args.length < 6) {
+                        if(args.length < 4) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.usage")));
                             return true;
                         }
@@ -104,65 +104,46 @@ public class DungeonExe implements CommandExecutor {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                             return true;
                         }
-                        int power;
-                        try {
-                            power = Integer.parseInt(args[2]);
-                        } catch (Exception e) {
-                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
-                                    .replace("%NAN%", args[2])));
-                            return true;
-                        }
-                        MobSpawner spawner = MobSpawners.get(args[3].toLowerCase());
+                        MobSpawner spawner = MobSpawners.get(args[2].toLowerCase());
                         if(spawner == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.no_source")
-                                    .replace("%source%", args[3].toLowerCase())));
+                                    .replace("%source%", args[2].toLowerCase())));
                             return true;
                         }
-                        String type = args[4];
-                        short limit;
+                        String type = args[3];
+                        int amount;
                         try {
-                            limit = Short.parseShort(args[5]);
+                            amount = Integer.parseInt(args[4]);
                         } catch (Exception e) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
-                                    .replace("%NAN%", args[5])));
+                                    .replace("%NAN%", args[4])));
                             return true;
                         }
-                        short complete;
-                        try {
-                            complete = Short.parseShort(args[6]);
-                        } catch (Exception e) {
-                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
-                                    .replace("%NAN%", args[6])));
-                            return true;
-                        }
-                        SpawnerTask spawnerTask = new SpawnerTask(power, p.getLocation(), spawner, type, complete, limit);
+                        Dungeon.Spawner spawnerTask = new Dungeon.Spawner(p.getLocation(), spawner, type, amount);
                         dungeon.addSpawner(spawnerTask);
-                        spawnerTask.updateHologram();
                         dungeon.save();
                         p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.success").
                                 replace("%location%", Utils.locToString(dungeon.getLocation())).
-                                replace("%power%", power+"").
                                 replace("%source%", spawner.id()).
                                 replace("%type%", type).
-                                replace("%limit%", limit+"").
-                                replace("%complete%", complete+"")
+                                replace("%amount%", amount+"")
                         ));
                         return true;
                     }
                     case "remove" :
                     case "delete" : {
-                        SpawnerTask task = Dungeons.getSpawner(p.getLocation());
+                        Dungeon.Spawner task = Dungeons.getSpawner(p.getLocation());
                         if(task == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.no_spawner")));
                             return true;
                         }
-                        task.stop();
+                        task.cancel();
+                        task.clearMobs();
                         Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
                         if(dungeon == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                             return true;
                         }
-                        task.removeHologram();
                         dungeon.removeSpawner(task);
                         dungeon.save();
                         sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.success").
@@ -183,7 +164,6 @@ public class DungeonExe implements CommandExecutor {
                     return true;
                 }
                 dungeon.stop();
-                dungeon.getSpawners().forEach(SpawnerTask::removeHologram);
                 Dungeons.unregister(dungeon);
                 dungeon.remove();
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.remove").

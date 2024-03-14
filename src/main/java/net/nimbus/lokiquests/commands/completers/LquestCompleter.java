@@ -17,7 +17,7 @@ public class LquestCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         List<String> result = new ArrayList<>();
-        if(sender.hasPermission("lq.admin")) return result;
+        if(!sender.hasPermission("lq.admin")) return result;
         if(args.length == 0) return result;
         if(args.length == 1) {
             List<String> options = List.of("process", "item");

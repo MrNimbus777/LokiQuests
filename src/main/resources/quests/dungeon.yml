@@ -1,0 +1,6 @@
+dungeon1:
+  name: "Creeper's dungeon."
+  dungeon: 1710073818986
+  display: true
+  rewards:
+    - "cmd:give %player% minecraft:emerald 4|4 emeralds"

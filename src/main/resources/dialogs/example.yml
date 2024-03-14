@@ -13,4 +13,30 @@ dialog:
     text: "&7[&eJohn&7] &fYou succeeded? You proved you are really a strong person!"
     actions:
       - "completeQuest:16wheat"
-
+    next: reply3
+  reply3:
+    text: "&7[&eJohn&7] &fNow. Go and find the ancient fortress."
+    actions:
+      - "startQuest:loc1"
+      - "indicator:world,10,100,10"
+    next: reply4
+  reply4:
+    condition: "loc1:1"
+    conditionText: "&7[&eJohn&7] &fYou have not found the fortress yet."
+    text: "&7[&eJohn&7] &fCongratulations!"
+    actions:
+      - "completeQuest:loc1"
+    next: reply5
+  reply5:
+    text: "&7[&eJohn&7] &fDungeon: FIGHT!"
+    actions:
+      - "startQuest:dungeon1"
+      - "indicator:world,-41,72,81"
+    next: reply6
+  reply6:
+    condition: "dungeon1:1"
+    conditionText: "&7[&eJohn&7] &fYou have not completed the dungeon yet."
+    text: "&7[&eJohn&7] &fCongratulations!"
+    actions:
+      - "completeQuest:dungeon1"
+      - "indicator:null"

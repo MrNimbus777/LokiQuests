@@ -2,6 +2,7 @@ package net.nimbus.lokiquests.core.quest.quests;
 
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
+import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.reward.Reward;
@@ -11,7 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -31,7 +35,7 @@ public class ItemCollectQuest extends Quest {
         Material material = Material.matchMaterial(item);
         if(material == null){
             String[] split = item.split(":");
-            if(split.length == 2) {
+            if(split.length == 3) {
                 processor = (item1, var) -> {
                     String[] split1 = var.split(":");
                     return Utils.readTag(item1, split1[0]).equals(split1[1]);
@@ -44,7 +48,6 @@ public class ItemCollectQuest extends Quest {
             };
         }
     }
-
     @Override
     public void process(Event event) {
         if(event instanceof EntityPickupItemEvent e) {

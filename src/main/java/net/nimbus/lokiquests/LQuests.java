@@ -1,20 +1,14 @@
 package net.nimbus.lokiquests;
 
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import net.nimbus.lokiquests.commands.completers.DungeonCompleter;
-import net.nimbus.lokiquests.commands.completers.LquestCompleter;
-import net.nimbus.lokiquests.commands.completers.PartyCompleter;
-import net.nimbus.lokiquests.commands.executors.DungeonExe;
-import net.nimbus.lokiquests.commands.executors.LeaveExe;
-import net.nimbus.lokiquests.commands.executors.LquestExe;
-import net.nimbus.lokiquests.commands.executors.PartyExe;
+import net.nimbus.lokiquests.commands.completers.*;
+import net.nimbus.lokiquests.commands.executors.*;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
 import net.nimbus.lokiquests.core.dialogs.action.Actions;
 import net.nimbus.lokiquests.core.dialogs.action.actions.*;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
-import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.MinecraftSpawner;
-import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.MythicmobsSpawner;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.*;
 import net.nimbus.lokiquests.core.party.Parties;
 import net.nimbus.lokiquests.core.quest.Quests;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
@@ -74,6 +68,7 @@ public class LQuests extends JavaPlugin {
         loadEvent(new PlayerQuitEvents());
         loadEvent(new BlockPlaceEvents());
         loadEvent(new BlockBreakEvents());
+        loadEvent(new PlayerMoveEvents());
 
         loadEvent(new EntityDeathEvents());
         loadEvent(new EntityPickupItemEvents());
@@ -83,6 +78,7 @@ public class LQuests extends JavaPlugin {
         loadCommand("dungeon", new DungeonExe(), new DungeonCompleter());
         loadCommand("party", new PartyExe(), new PartyCompleter());
         loadCommand("leave", new LeaveExe());
+        loadCommand("quest", new QuestExe());
     }
 
     public void onEnable() {

@@ -3,60 +3,85 @@ package net.nimbus.lokiquests.core.dungeon;
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.Vars;
-import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawner;
+import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
+import net.nimbus.lokiquests.core.quest.Quest;
+import net.nimbus.lokiquests.core.quest.quests.DungeonQuest;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
+import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Dungeon {
-    protected static final HashMap<Player, Location> previosLocs = new HashMap<>();
-    private final List<SpawnerTask> spawners;
+    protected static final HashMap<Player, Location> previousLocs = new HashMap<>();
+    private final List<Spawner> spawners;
     private final List<Player> players;
+    private final List<Wall> walls;
     private final Location join;
     private final short limit;
     private final long id;
+    private String name;
     public Dungeon(long id, Location join, short limit){
         this.join = new Location(Vars.DUNGEON_WORLD, join.getBlockX()+0.5, join.getBlockY(), join.getBlockZ()+0.5);
         this.join.setWorld(Vars.DUNGEON_WORLD);
         this.id = id;
         this.limit = limit;
+        this.name = "dungeon";
 
         this.spawners = new ArrayList<>();
         this.players = new ArrayList<>();
+        this.walls = new ArrayList<>();
     }
     public Dungeon(Location join, short limit){
         this.join = new Location(Vars.DUNGEON_WORLD, join.getBlockX()+0.5, join.getBlockY(), join.getBlockZ()+0.5);
         this.id = System.currentTimeMillis();
         this.limit = limit;
+        this.name = "dungeon";
 
         this.spawners = new ArrayList<>();
         this.players = new ArrayList<>();
+        this.walls = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getId() {
         return id;
     }
 
-    public void addSpawner(SpawnerTask spawner){
+    public void addSpawner(Spawner spawner){
         this.spawners.add(spawner);
     }
-    public void removeSpawner(SpawnerTask spawner){
+    public void removeSpawner(Spawner spawner){
         this.spawners.remove(spawner);
-        spawner.stop();
+        spawner.cancel();
+        spawner.clearMobs();
     }
 
     public Location getLocation() {
         return join;
     }
 
-    public List<SpawnerTask> getSpawners() {
+    public List<Spawner> getSpawners() {
         return spawners;
     }
 
@@ -65,16 +90,17 @@ public class Dungeon {
         teleport(player);
         updateSigns();
         if(players.size() == 1) start();
+        player.sendTitle("Welcome to "+getName(), "", 20, 50, 20);
     }
     public void leave(Player player) {
         removePlayer(player);
         updateSigns();
-        player.teleport(previosLocs.get(player));
-        previosLocs.remove(player);
+        player.teleport(previousLocs.get(player));
+        previousLocs.remove(player);
     }
     public void teleport(Player player) {
         Location toTeleport = join.clone();
-        previosLocs.put(player, player.getLocation().clone());
+        previousLocs.put(player, player.getLocation().clone());
         toTeleport.setYaw(player.getLocation().getYaw());
         toTeleport.setPitch(player.getLocation().getPitch());
         player.teleport(toTeleport);
@@ -95,13 +121,40 @@ public class Dungeon {
     }
 
     public void start(){
-        this.spawners.forEach(SpawnerTask::start);
+        this.spawners.forEach(Spawner::run);
     }
 
     public void stop(){
-        this.spawners.forEach(SpawnerTask::stop);
-        for(Player p : new ArrayList<>(getPlayers())) {
+        this.spawners.forEach(st -> {
+            st.cancel();
+            st.clearMobs();
+        });
+        for(Player p : new ArrayList<>(getPlayers())){
             leave(p);
+        }
+    }
+
+    public void wallsUp(){
+        new BukkitRunnable(){
+            int countdown = 10;
+            @Override
+            public void run() {
+                getPlayers().forEach(p -> {
+                    p.sendTitle(Utils.toColor("&eWalls up!"), Utils.toColor("In &c" + countdown + "&f seconds."), 0, 20, 10);
+                });
+                countdown--;
+                if(countdown > 0) return;
+                for(Wall wall : walls) {
+                    wall.up();
+                }
+                cancel();
+            }
+        }.runTaskTimer(LQuests.a, 0, 20);
+    }
+
+    public void wallsDown(){
+        for(Wall wall : walls) {
+            wall.down();
         }
     }
 
@@ -119,10 +172,12 @@ public class Dungeon {
             }
         }
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        List<String> spawners = getSpawners().stream().map(SpawnerTask::toString).collect(Collectors.toList());
+        List<String> spawners = getSpawners().stream().filter(s -> !(s instanceof BossSpawner)).map(Spawner::toString).collect(Collectors.toList());
+        List<String> boss = getSpawners().stream().filter(s -> s instanceof BossSpawner).map(Spawner::toString).collect(Collectors.toList());
         configuration.set(getId()+".location", getLocation());
         configuration.set(getId()+".limit", getLimit());
         configuration.set(getId()+".spawners", spawners);
+        configuration.set(getId()+".boss", boss);
         try {
             configuration.save(file);
         } catch (Exception e) {
@@ -156,16 +211,258 @@ public class Dungeon {
                 Sign sign = (Sign) loc.getBlock().getState();
                 sign.setLine(0, Utils.toColor("&9[Teleport]"));
                 sign.setLine(1, Utils.toColor(getPlayers().size()+"/"+getLimit()));
-                sign.setLine(2, Utils.toColor("&aTeleport to"));
-                sign.setLine(3, Utils.toColor("&adungeon."));
+                sign.setLine(2, Utils.toColor("&0Go to"));
+                sign.setLine(3, Utils.toColor("&a" + getName() + "&f."));
                 sign.update();
             }
         }
     }
+
+    public void complete(){
+        this.spawners.forEach(sp -> {
+            sp.cancel();
+            sp.clearMobs();
+        });
+        for(Player p : new ArrayList<>(getPlayers())) {
+            QuestPlayer qp = QuestPlayers.get(p);
+            for(Quest quest : qp.getActiveQuests()) {
+                if(quest instanceof DungeonQuest dq) {
+                    if(dq.getDungeon() == getId()) {
+                        quest.finish(qp);
+                    }
+                }
+            }
+            p.sendTitle("Dungeon completed!", Utils.toColor("&aCongratulations!"), 20, 50, 20);
+            p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon.complete")));
+        }
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                for(Player p : new ArrayList<>(getPlayers())){
+                    leave(p);
+                }
+            }
+        }.runTaskLater(LQuests.a, 600);
+    }
     public boolean isCompleted(){
-        for(SpawnerTask task : getSpawners()) {
+        for(Spawner task : getSpawners()) {
             if(!task.isCompleted()) return false;
         }
         return true;
+    }
+
+    public static class Wall {
+
+        public static List<Wall> UP = new ArrayList<>();
+
+
+        private final Dungeon dungeon;
+
+        private final int x1, y1, z1, x2, y2, z2;
+
+        public Wall(Dungeon dungeon, int x1, int y1, int z1, int x2, int y2, int z2){
+            this.dungeon = dungeon;
+            this.x1 = Math.min(x1, x2);
+            this.y1 = Math.min(y1, y2);
+            this.z1 = Math.min(z1, z2);
+            this.x2 = Math.max(x2, x1);
+            this.y2 = Math.max(y2, y1);
+            this.z2 = Math.max(z2, z1);
+        }
+
+
+        BukkitRunnable visualisation;
+        public void up(){
+            if(UP.contains(this)) return;
+            UP.add(this);
+            visualisation = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for(int x = x1; x <= x2; x++) {
+                        for(int y = y1; y <= y2; y++) {
+                            for(int z = z1; z <= z2; z++) {
+                                Location to = new Location(Vars.DUNGEON_WORLD, x+.5, y+.5, z+.5);
+                                to.getWorld().spawnParticle(Particle.REDSTONE, to, 7, 0.5, 0.5, 0.5, new Particle.DustOptions(Color.PURPLE, 1));
+                                to.getWorld().spawnParticle(Particle.REDSTONE, to, 7, 0.5, 0.5, 0.5, new Particle.DustOptions(Color.BLACK, 1));
+                            }
+                        }
+                    }
+                }
+            };
+            visualisation.runTaskTimer(LQuests.a, 0, 3);
+        }
+
+        public void down(){
+            if(!UP.contains(this)) return;
+            UP.remove(this);
+            visualisation.cancel();
+        }
+        public boolean isColliding(Location loc){
+            return x1 <= loc.getBlockX() && loc.getBlockX() <= x2 &&
+                    y1 <= loc.getBlockY() && loc.getBlockY() <= y2 &&
+                    z1 <= loc.getBlockZ() && loc.getBlockZ() <= z2;
+        }
+    }
+
+    public static class Spawner {
+        private final int radius = 32;
+        private final int amount;
+        protected final Location location;
+        protected final MobSpawner spawner;
+        protected final String type;
+        protected final long id;
+
+        public Spawner(Location location, MobSpawner spawner, String type, int amount){
+            this.location = new Location(Vars.DUNGEON_WORLD, location.getBlockX()+0.5, location.getBlockY(), location.getBlockZ()+0.5);
+            this.spawner = spawner;
+            this.type = type;
+            this.amount = amount;
+            id = System.currentTimeMillis();
+            list = new ArrayList<>();
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        private final List<Entity> list;
+        public void addEntity(Entity entity){
+            list.add(entity);
+        }
+        public void removeEntity(Entity entity){
+            list.remove(entity);
+        }
+
+        public boolean isCompleted() {
+            if(task != null) if(!task.isCancelled()) return false;
+            return list.isEmpty();
+        }
+
+        public Location getLocation() {
+            return location;
+        }
+
+        private boolean isASpawnLocation(Location location){
+            return !location.clone().add(0, -1, 0).getBlock().isEmpty() && location.getBlock().isEmpty() && location.clone().add(0, 1, 0).getBlock().isEmpty();
+        }
+        public void spawn() {
+            final Random random = new Random();
+            for (int o = 0; o < amount; o++) {
+                double x = random.nextDouble(10) - 5;
+                double z = random.nextDouble(10) - 5;
+                final Location toSpawn = location.clone().add(x, 0, z);
+                for (int i = -5; i <= 5; i++) {
+                    if (isASpawnLocation(toSpawn.clone().add(0, i, 0))) {
+                        toSpawn.add(0, i, 0);
+                        break;
+                    }
+                }
+                addEntity(Utils.setMetadata(Utils.setMetadata(spawner.spawn(toSpawn, type), "spawner", getId() + ""), "dungeon", getDungeon().getId() + ""));
+            }
+        }
+
+        public void complete(){
+            if(getDungeon().isCompleted()) {
+                getDungeon().complete();
+            }
+        }
+
+        public void clearMobs(){
+            list.forEach(Entity::remove);
+            list.clear();
+        }
+        private BukkitRunnable task;
+        public void run() {
+            task = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    System.out.println(type);
+                    if(!Vars.DUNGEON_WORLD.getPlayers().stream().filter(p -> p.getLocation().distance(Spawner.this.getLocation()) <= radius).toList().isEmpty()){
+                        Spawner.this.cancel();
+                        Spawner.this.spawn();
+                    }
+                }
+            };
+            task.runTaskTimer(LQuests.a, 0, 50);
+        }
+        public void cancel(){
+            if(task != null) {
+                task.cancel();
+                task = null;
+            }
+        }
+
+        public Dungeon getDungeon(){
+            for(Dungeon dungeon : Dungeons.getAll()){
+                if(dungeon.getSpawners().contains(this)) return dungeon;
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return location.getX()+","+
+                    location.getY()+","+
+                    location.getZ()+","+
+                    spawner.id()+","+
+                    type+","+
+                    amount;
+        }
+
+        public static Spawner fromString(String str) {
+            try {
+                String[] split = str.split(",");
+                Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
+                MobSpawner spawner = MobSpawners.get(split[3]);
+                int amount = Integer.parseInt(split[5]);
+                return new Spawner(loc, spawner, split[4], amount);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
+    public static class BossSpawner extends Spawner {
+
+        public BossSpawner(Location location, MobSpawner spawner, String type) {
+            super(location, spawner, type, 1);
+        }
+
+        @Override
+        public void spawn() {
+            getDungeon().wallsUp();
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    spawner.spawn(location, type);
+                }
+            }.runTaskLater(LQuests.a, 200);
+        }
+
+        @Override
+        public void complete() {
+            super.complete();
+            getDungeon().wallsDown();
+        }
+
+        @Override
+        public String toString() {
+            return location.getX()+","+
+                    location.getY()+","+
+                    location.getZ()+","+
+                    spawner.id()+","+
+                    type;
+        }
+
+        public static BossSpawner fromString(String str) {
+            try {
+                String[] split = str.split(",");
+                Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
+                MobSpawner spawner = MobSpawners.get(split[3]);
+                return new BossSpawner(loc, spawner, split[4]);
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
 }

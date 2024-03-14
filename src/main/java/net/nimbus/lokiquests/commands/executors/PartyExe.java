@@ -24,12 +24,17 @@ public class PartyExe implements CommandExecutor {
         }
         switch (args[0].toLowerCase()) {
             case "create" : {
+                if(args.length == 1) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.create_usage")));
+                    return true;
+                }
                 Party party = Parties.get(p);
                 if(party != null) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.exists")));
                     return true;
                 }
-                party = new Party(p);
+                party = new Party(args[1]);
+                party.setLeader(p);
                 Parties.add(party);
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.create")));
                 return true;
@@ -83,8 +88,8 @@ public class PartyExe implements CommandExecutor {
                 Parties.invitations.put(invited, party);
                 p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.success")
                         .replace("%player%", invited.getName())));
-                invited.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.receive")
-                        .replace("%leader%", p.getName())));
+                invited.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.receive").
+                        replace("%party%", party.getName())));
                 return true;
             }
             case "kick" : {
@@ -143,8 +148,9 @@ public class PartyExe implements CommandExecutor {
                     return true;
                 }
                 Parties.invitations.remove(p);
+                party.addMember(p);
                 p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.accept").
-                        replace("%leader%", party.getLeader().getName())));
+                        replace("%party%", party.getName())));
                 party.getLeader().sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.accept-feedback").
                         replace("%player%", p.getName())));
                 return true;
@@ -157,7 +163,7 @@ public class PartyExe implements CommandExecutor {
                 }
                 Parties.invitations.remove(p);
                 p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.reject").
-                        replace("%leader%", party.getLeader().getName())));
+                        replace("%party%", party.getName())));
                 party.getLeader().sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.reject-feedback").
                         replace("%player%", p.getName())));
                 return true;

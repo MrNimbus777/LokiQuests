@@ -1,8 +1,8 @@
 package net.nimbus.lokiquests.events.entity;
 
 import net.nimbus.lokiquests.Utils;
+import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
-import net.nimbus.lokiquests.core.dungeon.spawnertask.SpawnerTask;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
@@ -18,9 +18,11 @@ public class EntityDeathEvents implements Listener {
         QuestPlayer player = QuestPlayers.get(e.getEntity().getKiller());
         String spawner_id = Utils.readMetadata(e.getEntity(), "spawner");
         if(!spawner_id.isEmpty()){
-            SpawnerTask spawner = Dungeons.getSpawner(Long.parseLong(spawner_id));
-            spawner.addKill();
-            spawner.updateHologram();
+            Dungeon.Spawner spawner = Dungeons.getSpawner(Long.parseLong(spawner_id));
+            if(spawner != null) if(!spawner.isCompleted()) {
+                spawner.removeEntity(e.getEntity());
+                if(spawner.isCompleted()) spawner.complete();
+            }
         }
         for(Quest quest : player.getActiveQuests()) {
             quest.process(e);

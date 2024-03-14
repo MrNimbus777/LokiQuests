@@ -16,7 +16,8 @@ public class ActionPointIndicator implements Action {
             QuestPlayer qp = QuestPlayers.get(player);
             qp.runIndicator(loc);
         } catch (Exception e) {
-            e.printStackTrace();
+            QuestPlayer qp = QuestPlayers.get(player);
+            qp.setIndicator(null);
         }
     }
 }
