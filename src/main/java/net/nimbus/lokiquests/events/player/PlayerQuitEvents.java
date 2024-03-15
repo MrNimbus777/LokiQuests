@@ -12,7 +12,10 @@ public class PlayerQuitEvents implements Listener {
     @EventHandler
     public void onEvent(PlayerQuitEvent e){
         Dungeon dungeon = Dungeons.getDungeon(e.getPlayer());
-        if(dungeon != null) dungeon.leave(e.getPlayer());
+        if(dungeon != null) {
+            e.getPlayer().setHealth(0);
+            dungeon.leave(e.getPlayer());
+        }
         QuestPlayer player = QuestPlayers.get(e.getPlayer());
         player.save();
         QuestPlayers.unregister(player);

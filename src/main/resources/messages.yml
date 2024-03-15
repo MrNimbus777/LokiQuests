@@ -20,19 +20,20 @@ Commands:
       usage: "&7&o/dungeon create <player_limit> [<name>]"
       success: "&fYou have created a new dungeon at &b%location%&f."
     wall:
-      usage:  "&7&o/dungeon wall create | remove"
-      create:
-        usage: "&7&o/dungeon wall create <x1> <y1> <z1> <x2> <y2> <z2>"
-        success: "&fYou have created a wall at &b%location%&f."
-      remove:
-        success: "You have removed the wall at &b%location%&f."
-        no_wall: "&cThere is no wall."
+      usage: "&7&o/dungeon wall <x1> <y1> <z1> <x2> <y2> <z2>"
+      success: "&fYou have created a wall at &b%location%&f."
+    wallRemove:
+      success: "You have removed the wall at &b%location%&f."
+      no_wall: "&cThere is no wall."
     spawner:
-      usage: "&7&o/dungeon spawner create | remove"
+      usage: "&7&o/dungeon spawner create | boss | remove"
       create:
         usage: "&7&o/dungeon spawner create <source> <mob> <amount>"
         success: "&fYou created a new spawner at &b%location%&f with &b%amount%&f of &e%source%&f - &a%type%&f."
         no_source: "&cThere is no source &4%source%&c."
+      boss:
+        usage: "&7&o/dungeon spawner boss <source> <mob> <radius>"
+        success: "&fYou created a new boss spawner at &b%location%&f with &e%source%&f - &a%type%&f."
       remove:
         success: "You deleted the spawner at &b%location%&f."
         no_spawner: "&cThere is no spawners."
@@ -56,13 +57,13 @@ Commands:
       no_invitation: "&cYou have no invitations."
       has_invitation: "&cThis player is already invited to other party"
       has_party: "&cThis player is member of a party."
-      receive: "&fYou are invited to party &b%party%&f."
+      receive: "&fYou are invited to party &b%party%&f. Type &7&o/party accept&f to join the party or &7&o/party reject&f to decline"
     kick: "&fYou have kicked player &b%player%&f from the party."
     kick_usage: "&7&o/party kick <member>"
     kicked: "&fYou have been kicked from the party."
     disband: "&fYour party has been disbanded."
     accept: "&fYou have joined party &b%party%&f."
-    accept-feedback: "&b%player% has joined your party."
+    accept-feedback: "&b%player%&f has joined your party."
     reject: "&fYou have rejected invitation to party &b%party%&f."
     reject-feedback: "&b%player% has rejected the invitation to your party."
     setLeader: "&b%player%&f is the new leader of the party."

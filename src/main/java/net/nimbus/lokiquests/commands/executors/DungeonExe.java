@@ -130,6 +130,41 @@ public class DungeonExe implements CommandExecutor {
                         ));
                         return true;
                     }
+                    case "boss" : {
+                        if(args.length < 4) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.boss.usage")));
+                            return true;
+                        }
+                        Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                        if(dungeon == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                            return true;
+                        }
+                        MobSpawner spawner = MobSpawners.get(args[2].toLowerCase());
+                        if(spawner == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.no_source")
+                                    .replace("%source%", args[2].toLowerCase())));
+                            return true;
+                        }
+                        String type = args[3];
+                        int radius;
+                        try {
+                            radius = Integer.parseInt(args[4]);
+                        } catch (Exception e) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                                    .replace("%NAN%", args[4])));
+                            return true;
+                        }
+                        Dungeon.BossSpawner spawnerTask = new Dungeon.BossSpawner(p.getLocation(), spawner, type, radius);
+                        dungeon.addSpawner(spawnerTask);
+                        dungeon.save();
+                        p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.boss.success").
+                                replace("%location%", Utils.locToString(dungeon.getLocation())).
+                                replace("%source%", spawner.id()).
+                                replace("%type%", type)
+                        ));
+                        return true;
+                    }
                     case "remove" :
                     case "delete" : {
                         Dungeon.Spawner task = Dungeons.getSpawner(p.getLocation());
@@ -183,8 +218,76 @@ public class DungeonExe implements CommandExecutor {
                     return true;
                 }
                 dungeon.setName(Utils.toColor(args[1]));
+                dungeon.save();
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.name.success").
                         replace("%name%", dungeon.getName())));
+                return true;
+            }
+            case "wall" : {
+                if(args.length < 7) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.wall.usage")));
+                    return true;
+                }
+                int x1;
+                try { x1 = Integer.parseInt(args[1]);} catch (Exception e) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                            .replace("%NAN%", args[1])));
+                    return true;
+                }
+                int y1;
+                try { y1 = Integer.parseInt(args[2]);} catch (Exception e) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                            .replace("%NAN%", args[2])));
+                    return true;
+                }
+                int z1;
+                try { z1 = Integer.parseInt(args[3]);} catch (Exception e) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                            .replace("%NAN%", args[3])));
+                    return true;
+                }
+                int x2;
+                try { x2 = Integer.parseInt(args[4]);} catch (Exception e) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                            .replace("%NAN%", args[4])));
+                    return true;
+                }
+                int y2;
+                try { y2 = Integer.parseInt(args[5]);} catch (Exception e) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                            .replace("%NAN%", args[5])));
+                    return true;
+                }
+                int z2;
+                try { z2 = Integer.parseInt(args[6]);} catch (Exception e) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                            .replace("%NAN%", args[6])));
+                    return true;
+                }
+                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                if(dungeon == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                    return true;
+                }
+                dungeon.addWall(new Dungeon.Wall(x1, y1, z1, x2, y2, z2));
+                dungeon.save();
+                return true;
+            }
+            case "wallremove" : {
+                Dungeon dungeon = Dungeons.getDungeon(p);
+                if(dungeon == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                    return true;
+                }
+                Dungeon.Wall wall = Dungeons.getWall(p.getLocation());
+                if(wall == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.wallRemove.no_wall")));
+                    return true;
+                }
+                dungeon.removeWall(wall);
+                dungeon.save();
+                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.wallRemove.success").
+                        replace("%location%", Utils.locToString(wall.getCenter()))));
             }
             default: {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.usage")));

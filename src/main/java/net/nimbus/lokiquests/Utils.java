@@ -64,17 +64,6 @@ public class Utils {
         }
     }
 
-    public static Entity setMetadata(Entity entity, String key, String value) {
-        entity.setMetadata(key, new FixedMetadataValue(LQuests.a, value));
-        return entity;
-    }
-    public static String readMetadata(Entity entity, String key){
-       try {
-           return entity.getMetadata(key).get(0).asString();
-       } catch (Exception e) {
-           return "";
-       }
-    }
     public static void saveSigns() {
         File file = new File(LQuests.a.getDataFolder(), "signs.json");
         if(!file.exists()) {

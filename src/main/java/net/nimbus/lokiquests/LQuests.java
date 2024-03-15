@@ -63,15 +63,20 @@ public class LQuests extends JavaPlugin {
     }
 
     void loadEvents(){
-        loadEvent(new PlayerJoinEvents());
-        loadEvent(new PlayerInteractEvents());
-        loadEvent(new PlayerQuitEvents());
-        loadEvent(new BlockPlaceEvents());
         loadEvent(new BlockBreakEvents());
+        loadEvent(new BlockPlaceEvents());
+        loadEvent(new PlayerDeathEvents());
+        loadEvent(new PlayerInteractEvents());
+        loadEvent(new PlayerItemConsumeEvents());
+        loadEvent(new PlayerJoinEvents());
         loadEvent(new PlayerMoveEvents());
+        loadEvent(new PlayerQuitEvents());
+        loadEvent(new PlayerTeleportEvents());
 
+        loadEvent(new CreatureSpawnEvents());
         loadEvent(new EntityDeathEvents());
         loadEvent(new EntityPickupItemEvents());
+        loadEvent(new ProjectileLaunchEvents());
     }
     void loadCommands(){
         loadCommand("lquest", new LquestExe(), new LquestCompleter());

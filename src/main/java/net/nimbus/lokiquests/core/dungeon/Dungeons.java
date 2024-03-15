@@ -1,8 +1,10 @@
 package net.nimbus.lokiquests.core.dungeon;
 
 import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.Utils;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -41,7 +43,7 @@ public class Dungeons {
         List<Dungeon> list = getAll();
         if(list.isEmpty()) return null;
         int closest = 0;
-        for(int i = 1; i < list.size(); ){
+        for(int i = 1; i < list.size(); i++){
             if(distance(list.get(closest).getLocation(), (location)) > distance(list.get(i).getLocation(), location)) closest = i;
         }
         return list.get(closest);
@@ -52,8 +54,19 @@ public class Dungeons {
         List<Dungeon.Spawner> list = dungeon.getSpawners();
         if(list.isEmpty()) return null;
         int closest = 0;
-        for(int i = 0; i < list.size(); i++) {
+        for(int i = 1; i < list.size(); i++) {
             if(distance(list.get(closest).getLocation(), (location)) > distance(list.get(i).getLocation(), location)) closest = i;
+        }
+        return list.get(closest);
+    }
+    public static Dungeon.Wall getWall(Location location){
+        Dungeon dungeon = getDungeon(location);
+        if(dungeon == null) return null;
+        List<Dungeon.Wall> list = dungeon.getWalls();
+        if(list.isEmpty()) return null;
+        int closest = 0;
+        for(int i = 1; i < list.size(); i++) {
+            if(distance(list.get(closest).getCenter(), (location)) > distance(list.get(i).getCenter(), location)) closest = i;
         }
         return list.get(closest);
     }
@@ -61,6 +74,14 @@ public class Dungeons {
         for(Dungeon dungeon : getAll()){
             for(Dungeon.Spawner spawner : dungeon.getSpawners()){
                 if(id == spawner.getId()) return spawner;
+            }
+        }
+        return null;
+    }
+    public static Dungeon.Spawner getSpawner(Entity entity) {
+        for(Dungeon dungeon : getAll()) {
+            for(Dungeon.Spawner spawner : dungeon.getSpawners()){
+                if(spawner.getMobs().contains(entity)) return spawner;
             }
         }
         return null;
@@ -76,6 +97,7 @@ public class Dungeons {
             short limit = (short) configuration.getInt(o+".limit");
 
             Dungeon dungeon = new Dungeon(id, location, limit);
+            dungeon.setName(Utils.toColor(configuration.getString(o+".name")));
 
             for(String s : configuration.getStringList(o+".spawners")){
                 Dungeon.Spawner spawner = Dungeon.Spawner.fromString(s);
@@ -84,6 +106,10 @@ public class Dungeons {
             for(String s : configuration.getStringList(o+".boss")){
                 Dungeon.BossSpawner spawner = Dungeon.BossSpawner.fromString(s);
                 if(spawner != null) dungeon.addSpawner(spawner);
+            }
+            for(String s : configuration.getStringList(o+".walls")){
+                Dungeon.Wall wall = Dungeon.Wall.fromString(s);
+                if(wall != null) dungeon.addWall(wall);
             }
             register(dungeon);
         }

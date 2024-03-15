@@ -9,12 +9,10 @@ import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.quest.quests.DungeonQuest;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_20_R1.CraftOfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -78,6 +76,19 @@ public class Dungeon {
         spawner.clearMobs();
     }
 
+    public List<Wall> getWalls() {
+        return walls;
+    }
+
+    public void addWall(Wall wall){
+        walls.add(wall);
+    }
+
+    public void removeWall(Wall wall){
+        walls.remove(wall);
+        wall.down();
+    }
+
     public Location getLocation() {
         return join;
     }
@@ -96,6 +107,13 @@ public class Dungeon {
     public void leave(Player player) {
         removePlayer(player);
         updateSigns();
+        if(players.isEmpty()) {
+            stop();
+            if(kick != null){
+                kick.cancel();
+                kick = null;
+            }
+        }
         player.teleport(previousLocs.get(player));
         previousLocs.remove(player);
     }
@@ -133,6 +151,7 @@ public class Dungeon {
         for(Player p : new ArrayList<>(getPlayers())){
             leave(p);
         }
+        walls.forEach(Wall::down);
     }
 
     public void wallsUp(){
@@ -145,7 +164,7 @@ public class Dungeon {
                     p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 });
                 countdown--;
-                if(countdown > 0) return;
+                if(countdown >= 0) return;
                 for(Wall wall : walls) {
                     wall.up();
                 }
@@ -156,7 +175,7 @@ public class Dungeon {
 
     public void wallsDown() {
         getPlayers().forEach(p -> {
-            p.sendTitle(Utils.toColor("&5Boss fell!"), "", 5, 20, 10);
+            p.sendTitle(Utils.toColor("&5Boss fell!"), "", 5, 20, 5);
         });
         new BukkitRunnable() {
             int countdown = 3;
@@ -164,17 +183,17 @@ public class Dungeon {
             @Override
             public void run() {
                 getPlayers().forEach(p -> {
-                    p.sendTitle(Utils.toColor("&eWalls down!"), Utils.toColor("In &c" + countdown + "&f seconds."), 0, 20, 10);
+                    p.sendTitle(Utils.toColor("&eWalls down!"), Utils.toColor("In &c" + countdown + "&f seconds."), 0, 20, 5);
                     p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
                 });
                 countdown--;
-                if (countdown > 0) return;
+                if (countdown >= 0) return;
                 for(Wall wall : walls) {
                     wall.down();
                 }
                 cancel();
             }
-        }.runTaskTimer(LQuests.a, 20, 20);
+        }.runTaskTimer(LQuests.a, 30, 20);
     }
 
     public void save(){
@@ -193,10 +212,13 @@ public class Dungeon {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         List<String> spawners = getSpawners().stream().filter(s -> !(s instanceof BossSpawner)).map(Spawner::toString).collect(Collectors.toList());
         List<String> boss = getSpawners().stream().filter(s -> s instanceof BossSpawner).map(Spawner::toString).collect(Collectors.toList());
+        List<String> walls = getWalls().stream().map(Wall::toString).collect(Collectors.toList());
         configuration.set(getId()+".location", getLocation());
         configuration.set(getId()+".limit", getLimit());
         configuration.set(getId()+".spawners", spawners);
         configuration.set(getId()+".boss", boss);
+        configuration.set(getId()+".walls", walls);
+        configuration.set(getId()+".name", getName());
         try {
             configuration.save(file);
         } catch (Exception e) {
@@ -225,18 +247,23 @@ public class Dungeon {
         }
     }
     public void updateSigns(){
-        for(Location loc : Vars.SIGNS_MAP.keySet()) {
+        for(Location loc : new ArrayList<>(Vars.SIGNS_MAP.keySet())) {
             if(Vars.SIGNS_MAP.get(loc) == getId()) {
-                Sign sign = (Sign) loc.getBlock().getState();
-                sign.setLine(0, Utils.toColor("&9[Teleport]"));
-                sign.setLine(1, Utils.toColor(getPlayers().size()+"/"+getLimit()));
-                sign.setLine(2, Utils.toColor("&0Go to dungeon"));
-                sign.setLine(3, Utils.toColor("&a" + getName() + "&f."));
-                sign.update();
+                try {
+                    Sign sign = (Sign) loc.getBlock().getState();
+                    sign.setLine(0, Utils.toColor("&9[&oClick&9]"));
+                    sign.setLine(1, Utils.toColor(getPlayers().size() + "/" + getLimit()));
+                    sign.setLine(2, Utils.toColor("&0Go to dungeon"));
+                    sign.setLine(3, Utils.toColor("&a" + getName() + "&f."));
+                    sign.setEditable(true);
+                    sign.update();
+                } catch (Exception e) {
+                    Vars.SIGNS_MAP.remove(loc);
+                }
             }
         }
     }
-
+    BukkitRunnable kick;
     public void complete(){
         this.spawners.forEach(sp -> {
             sp.cancel();
@@ -252,16 +279,17 @@ public class Dungeon {
                 }
             }
             p.sendTitle("Dungeon completed!", Utils.toColor("&aCongratulations!"), 20, 50, 20);
-            p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon.complete")));
+            p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon_complete")));
         }
-        new BukkitRunnable(){
+        kick = new BukkitRunnable(){
             @Override
             public void run() {
                 for(Player p : new ArrayList<>(getPlayers())){
                     leave(p);
                 }
             }
-        }.runTaskLater(LQuests.a, 600);
+        };
+        kick.runTaskLater(LQuests.a, 600);
     }
     public boolean isCompleted(){
         for(Spawner task : getSpawners()) {
@@ -269,6 +297,8 @@ public class Dungeon {
         }
         return true;
     }
+
+
 
     public static class Wall {
 
@@ -300,8 +330,16 @@ public class Dungeon {
         public void up(){
             if(UP.contains(this)) return;
             Location sound = new Location(Vars.DUNGEON_WORLD, (x1+x2)/2.0, (y1+y2)/2.0, (z1+z2)/2.0);
-            sound.getWorld().playSound(sound, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 1, 1);
+            sound.getWorld().playSound(sound, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 10, 1);
             UP.add(this);
+            for(int x = x1; x <= x2; x++) {
+                for (int y = y1; y <= y2; y++) {
+                    for (int z = z1; z <= z2; z++) {
+                        Location to = new Location(Vars.DUNGEON_WORLD, x+.5, y+.5, z+.5);
+                        if(to.getBlock().getType() == Material.AIR) to.getBlock().setType(Material.BARRIER);
+                    }
+                }
+            }
             visualisation = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -319,12 +357,25 @@ public class Dungeon {
             visualisation.runTaskTimer(LQuests.a, 0, 3);
         }
 
+        public Location getCenter(){
+            return new Location(Vars.DUNGEON_WORLD, (x1+x2)/2.0, (y1+y2)/2.0, (z1+z2)/2.0);
+        }
+
+
         public void down(){
             if(!UP.contains(this)) return;
-            Location sound = new Location(Vars.DUNGEON_WORLD, (x1+x2)/2.0, (y1+y2)/2.0, (z1+z2)/2.0);
-            sound.getWorld().playSound(sound, Sound.ENTITY_WITHER_BREAK_BLOCK, 1, 1);
+            Location sound = getCenter();
+            sound.getWorld().playSound(sound, Sound.ENTITY_WITHER_BREAK_BLOCK, 10, 1);
             UP.remove(this);
-            visualisation.cancel();
+            if(visualisation != null) if(LQuests.a.isEnabled()) visualisation.cancel();
+            for(int x = x1; x <= x2; x++) {
+                for (int y = y1; y <= y2; y++) {
+                    for (int z = z1; z <= z2; z++) {
+                        Location to = new Location(Vars.DUNGEON_WORLD, x+.5, y+.5, z+.5);
+                        if(to.getBlock().getType() == Material.BARRIER) to.getBlock().setType(Material.AIR);
+                    }
+                }
+            }
         }
         public boolean isColliding(Location loc){
             return x1 <= loc.getBlockX() && loc.getBlockX() <= x2 &&
@@ -344,19 +395,23 @@ public class Dungeon {
 
         public static Wall fromString(String string){
             String[] split = string.split(",");
-            return new Wall(
-                    Integer.parseInt(split[0]),
-                    Integer.parseInt(split[1]),
-                    Integer.parseInt(split[2]),
-                    Integer.parseInt(split[3]),
-                    Integer.parseInt(split[4]),
-                    Integer.parseInt(split[5])
-            );
+            try {
+                return new Wall(
+                        Integer.parseInt(split[0]),
+                        Integer.parseInt(split[1]),
+                        Integer.parseInt(split[2]),
+                        Integer.parseInt(split[3]),
+                        Integer.parseInt(split[4]),
+                        Integer.parseInt(split[5])
+                );
+            } catch (Exception e) {
+                return null;
+            }
         }
     }
 
     public static class Spawner {
-        private final int radius = 32;
+        protected int radius;
         private final int amount;
         protected final Location location;
         protected final MobSpawner spawner;
@@ -369,24 +424,29 @@ public class Dungeon {
             this.type = type;
             this.amount = amount;
             id = System.currentTimeMillis();
-            list = new ArrayList<>();
+            mobs = new ArrayList<>();
+            radius = 32;
         }
 
         public long getId() {
             return id;
         }
 
-        private final List<Entity> list;
+        private final List<Entity> mobs;
         public void addEntity(Entity entity){
-            list.add(entity);
+            mobs.add(entity);
         }
         public void removeEntity(Entity entity){
-            list.remove(entity);
+            mobs.remove(entity);
+        }
+
+        public List<Entity> getMobs() {
+            return mobs;
         }
 
         public boolean isCompleted() {
             if(task != null) if(!task.isCancelled()) return false;
-            return list.isEmpty();
+            return mobs.isEmpty();
         }
 
         public Location getLocation() {
@@ -408,7 +468,7 @@ public class Dungeon {
                         break;
                     }
                 }
-                addEntity(Utils.setMetadata(Utils.setMetadata(spawner.spawn(toSpawn, type), "spawner", getId() + ""), "dungeon", getDungeon().getId() + ""));
+                addEntity(spawner.spawn(toSpawn, type));
             }
         }
 
@@ -419,15 +479,14 @@ public class Dungeon {
         }
 
         public void clearMobs(){
-            list.forEach(Entity::remove);
-            list.clear();
+            mobs.forEach(Entity::remove);
+            mobs.clear();
         }
         private BukkitRunnable task;
         public void run() {
             task = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    System.out.println(type);
                     if(!Vars.DUNGEON_WORLD.getPlayers().stream().filter(p -> p.getLocation().distance(Spawner.this.getLocation()) <= radius).toList().isEmpty()){
                         Spawner.this.cancel();
                         Spawner.this.spawn();
@@ -475,8 +534,10 @@ public class Dungeon {
 
     public static class BossSpawner extends Spawner {
 
-        public BossSpawner(Location location, MobSpawner spawner, String type) {
+
+        public BossSpawner(Location location, MobSpawner spawner, String type, int radius) {
             super(location, spawner, type, 1);
+            this.radius = radius;
         }
 
         @Override
@@ -485,7 +546,7 @@ public class Dungeon {
             new BukkitRunnable(){
                 @Override
                 public void run() {
-                    spawner.spawn(location, type);
+                    addEntity(spawner.spawn(location, type));
                 }
             }.runTaskLater(LQuests.a, 200);
         }
@@ -502,7 +563,8 @@ public class Dungeon {
                     location.getY()+","+
                     location.getZ()+","+
                     spawner.id()+","+
-                    type;
+                    type+","+
+                    radius;
         }
 
         public static BossSpawner fromString(String str) {
@@ -510,7 +572,8 @@ public class Dungeon {
                 String[] split = str.split(",");
                 Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
                 MobSpawner spawner = MobSpawners.get(split[3]);
-                return new BossSpawner(loc, spawner, split[4]);
+                int radius = Integer.parseInt(split[5]);
+                return new BossSpawner(loc, spawner, split[4], radius);
             } catch (Exception e) {
                 return null;
             }
