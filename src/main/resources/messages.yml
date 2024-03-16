@@ -15,7 +15,7 @@ Commands:
       success: "&fItem was saved in the items.yml file with name &e%name%&f."
   dungeon:
     no_dungeon: "&cThere is no dungeons."
-    usage: "&7&o/dungeon create | spawner | remove | getSign"
+    usage: "&7&o/dungeon create | spawner | remove | getSign | teleport | name"
     create:
       usage: "&7&o/dungeon create <player_limit> [<name>]"
       success: "&fYou have created a new dungeon at &b%location%&f."
@@ -41,6 +41,7 @@ Commands:
     name:
       usage: "&7&o/dungeon name <name>"
       success: "The name of the dungeon has been set to &e%name%&f."
+    teleport: "&fYou have been teleported to dungeon &a%name%&f."
   party:
     full: "&cThis party is full."
     no_party: "&cYou are member of no party."
@@ -58,13 +59,14 @@ Commands:
       has_invitation: "&cThis player is already invited to other party"
       has_party: "&cThis player is member of a party."
       receive: "&fYou are invited to party &b%party%&f. Type &7&o/party accept&f to join the party or &7&o/party reject&f to decline"
-    kick: "&fYou have kicked player &b%player%&f from the party."
-    kick_usage: "&7&o/party kick <member>"
-    kicked: "&fYou have been kicked from the party."
+    kick:
+      success: "&fYou have kicked player &b%player%&f from the party."
+      usage: "&7&o/party kick <member>"
+      kicked: "&fYou have been kicked from the party."
     disband: "&fYour party has been disbanded."
     accept: "&fYou have joined party &b%party%&f."
     accept-feedback: "&b%player%&f has joined your party."
-    reject: "&fYou have rejected invitation to party &b%party%&f."
+    reject: "&fYou have rejected invitation from party &b%party%&f."
     reject-feedback: "&b%player% has rejected the invitation to your party."
     setLeader: "&b%player%&f is the new leader of the party."
     setLeader_usage: "&7&o/party setLeader <member>"
@@ -78,6 +80,7 @@ Actions:
   quest_progress: "&fYou completed the quest by &e%progress%&f/&6%goal% &7&o(%percentage%%)&f."
   dungeon_full: "&cThis dungeon is full."
   dungeon_complete: "&fYou have completed the dungeon. Use &7&o/leave&f to leave or you will be automatically kicked in 30 seconds."
+  dungeon_not_complete: "&cYou have not completed the dungeon yet! You cant leave until you do!"
   cant_leave: "&fYou cannot leave the dungeon until you complete it."
   other_party: "&cThis dungeon is being cleared by other party."
   dungeon_join: "&fYou have entered the dungeon."

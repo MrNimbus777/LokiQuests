@@ -13,13 +13,13 @@ import org.bukkit.event.entity.EntityDeathEvent;
 public class EntityDeathEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEvent(EntityDeathEvent e) {
-        if (e.getEntity().getKiller() == null) return;
-        QuestPlayer player = QuestPlayers.get(e.getEntity().getKiller());
         Dungeon.Spawner spawner = Dungeons.getSpawner(e.getEntity());
         if (spawner != null) if (!spawner.isCompleted()) {
             spawner.removeEntity(e.getEntity());
             if (spawner.isCompleted()) spawner.complete();
         }
+        if (e.getEntity().getKiller() == null) return;
+        QuestPlayer player = QuestPlayers.get(e.getEntity().getKiller());
         for (Quest quest : player.getActiveQuests()) {
             quest.process(e);
         }

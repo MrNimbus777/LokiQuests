@@ -289,6 +289,16 @@ public class DungeonExe implements CommandExecutor {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.wallRemove.success").
                         replace("%location%", Utils.locToString(wall.getCenter()))));
             }
+            case "teleport" : {
+                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                if(dungeon == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                    return true;
+                }
+                dungeon.teleport(p);
+                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.teleport").replace("%name%", dungeon.getName())));
+                return true;
+            }
             default: {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.usage")));
                 return true;

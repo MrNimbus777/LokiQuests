@@ -94,7 +94,7 @@ public class PartyExe implements CommandExecutor {
             }
             case "kick" : {
                 if(args.length == 1) {
-                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.kick_usage")));
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.kick.usage")));
                     return true;
                 }
                 Party party = Parties.get(p);
@@ -120,7 +120,7 @@ public class PartyExe implements CommandExecutor {
                 party.removePlayer(kicked);
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.kick").
                         replace("%player%", kicked.getName())));
-                kicked.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.kicked")));
+                kicked.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.kick.kicked")));
                 return true;
             }
             case "disband" : {

@@ -19,9 +19,15 @@ public class LeaveExe implements CommandExecutor {
             return true;
         }
         Dungeon dungeon = Dungeons.getDungeon(p);
-        if(dungeon == null) return true;
+        if(dungeon == null) {
+            if(p.hasPermission("lq.admin")) {
+                dungeon = Dungeons.getDungeon(p.getLocation());
+                if(dungeon != null) dungeon.teleportBack(p);
+            }
+            return true;
+        }
         if(!dungeon.isCompleted()){
-            //p.sendMessage();
+            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.dungeon_not_complete")));
             return true;
         }
         dungeon.leave(p);

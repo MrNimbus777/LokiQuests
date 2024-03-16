@@ -114,8 +114,7 @@ public class Dungeon {
                 kick = null;
             }
         }
-        player.teleport(previousLocs.get(player));
-        previousLocs.remove(player);
+        teleportBack(player);
     }
     public void teleport(Player player) {
         Location toTeleport = join.clone();
@@ -123,6 +122,12 @@ public class Dungeon {
         toTeleport.setYaw(player.getLocation().getYaw());
         toTeleport.setPitch(player.getLocation().getPitch());
         player.teleport(toTeleport);
+    }
+    public void teleportBack(Player player) {
+        if(previousLocs.containsKey(player)) {
+            player.teleport(previousLocs.get(player));
+            previousLocs.remove(player);
+        }
     }
 
     public short getLimit() {
