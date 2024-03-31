@@ -73,6 +73,7 @@ Commands:
   quest:
     usage: "&7&o/quest list"
     empty: "&fYou do not have any active quests now."
+    list: "&fYour active quests are:"
 Actions:
   quest_start: "&fYou have a new quest: &e%name%"
   quest_finish: "&fYou finished quest: &e%name%"

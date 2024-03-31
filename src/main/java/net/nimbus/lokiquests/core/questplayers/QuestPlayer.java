@@ -124,10 +124,15 @@ public class QuestPlayer {
                 Vector vec = QuestPlayer.this.indicator.toVector().add(new Vector(0.5, 0.1, 0.5)).subtract(player.getLocation().toVector());
                 if(vec.length() > 4) {
                     vec.normalize().multiply(4);
+                } else {
+                    cancel();
+                    setIndicator(null);
+                    return;
                 }
                 Location particle = player.getEyeLocation().clone().add(vec);
-                player.spawnParticle(Particle.REDSTONE, particle, 2, 0.1, 0.1, 0.1, 0, new Particle.DustOptions(Color.AQUA, 1));
-                player.spawnParticle(Particle.REDSTONE, particle, 3, 0.1, 0.1, 0.1, 0, new Particle.DustOptions(Color.LIME, 1));
+                player.spawnParticle(Particle.REDSTONE, particle, 3, 0.1, 0.1, 0.1, 0, new Particle.DustOptions(Color.fromRGB(74, 255, 177), 1));
+                player.spawnParticle(Particle.REDSTONE, particle, 3, 0.1, 0.1, 0.1, 0, new Particle.DustOptions(Color.fromRGB(74, 243, 255), 1));
+                player.spawnParticle(Particle.REDSTONE, particle, 3, 0.1, 0.1, 0.1, 0, new Particle.DustOptions(Color.fromRGB(255, 152, 74), 1));
             }
         }.runTaskTimer(LQuests.a, 0, 30);
     }

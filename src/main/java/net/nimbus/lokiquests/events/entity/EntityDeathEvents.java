@@ -14,9 +14,11 @@ public class EntityDeathEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEvent(EntityDeathEvent e) {
         Dungeon.Spawner spawner = Dungeons.getSpawner(e.getEntity());
-        if (spawner != null) if (!spawner.isCompleted()) {
-            spawner.removeEntity(e.getEntity());
-            if (spawner.isCompleted()) spawner.complete();
+        if (spawner != null) {
+            if (!spawner.isCompleted(false)) {
+                spawner.removeEntity(e.getEntity());
+                if (spawner.isCompleted(false)) spawner.complete();
+            }
         }
         if (e.getEntity().getKiller() == null) return;
         QuestPlayer player = QuestPlayers.get(e.getEntity().getKiller());

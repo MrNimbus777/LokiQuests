@@ -4,11 +4,12 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Party {
-    private Player leader;
+    private UUID leader;
     private final String name;
-    private final List<Player> members;
+    private final List<UUID> members;
     private static final short limit = 3;
 
     public Party(String name){
@@ -20,7 +21,7 @@ public class Party {
     public boolean equals(Object obj) {
         if(obj == null) return false;
         if(obj instanceof Party p) {
-            return p.getLeader().getUniqueId().equals(getLeader().getUniqueId());
+            return p.getLeader().equals(getLeader());
         }
         return false;
     }
@@ -29,30 +30,30 @@ public class Party {
         return name;
     }
 
-    public void setLeader(Player player) {
+    public void setLeader(UUID player) {
         members.remove(player);
         if(leader != null) members.add(leader);
         this.leader = player;
     }
     public void addMember(Player player){
-        if(members.contains(player)) return;
-        members.add(player);
+        if(members.contains(player.getUniqueId())) return;
+        members.add(player.getUniqueId());
     }
     public void removePlayer(Player player){
-        members.remove(player);
+        members.remove(player.getUniqueId());
     }
 
 
-    public List<Player> getAllMembers(){
-        List<Player> list = new ArrayList<>(members);
+    public List<UUID> getAllMembers(){
+        List<UUID> list = new ArrayList<>(members);
         list.add(leader);
         return list;
     }
-    public List<Player> getMembers() {
+    public List<UUID> getMembers() {
         return members;
     }
 
-    public Player getLeader() {
+    public UUID getLeader() {
         return leader;
     }
 

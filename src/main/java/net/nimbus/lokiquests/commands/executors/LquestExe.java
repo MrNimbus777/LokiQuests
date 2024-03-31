@@ -60,6 +60,7 @@ public class LquestExe implements CommandExecutor {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.lquest.item.success").replace("%name%", args[1])));
                 return true;
             }
+
             default: {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.lquest.usage")));
                 return true;

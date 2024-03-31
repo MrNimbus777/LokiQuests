@@ -1,6 +1,5 @@
 package net.nimbus.lokiquests;
 
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import net.nimbus.lokiquests.commands.completers.*;
 import net.nimbus.lokiquests.commands.executors.*;
 import net.nimbus.lokiquests.core.dialogs.Dialogs;
@@ -33,7 +32,6 @@ public class LQuests extends JavaPlugin {
     public static LQuests a;
     public Random r;
     public String version;
-    public HolographicDisplaysAPI hdapi;
 
 
     private YamlConfiguration messages;
@@ -74,6 +72,7 @@ public class LQuests extends JavaPlugin {
         loadEvent(new PlayerTeleportEvents());
 
         loadEvent(new CreatureSpawnEvents());
+        loadEvent(new EntityDamageByEntityEvents());
         loadEvent(new EntityDeathEvents());
         loadEvent(new EntityPickupItemEvents());
         loadEvent(new ProjectileLaunchEvents());
@@ -89,7 +88,6 @@ public class LQuests extends JavaPlugin {
     public void onEnable() {
         a = this;
         r = new Random();
-        hdapi = HolographicDisplaysAPI.get(a);
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
         version = packageName.substring(packageName.lastIndexOf(".") + 1);
 
@@ -123,6 +121,10 @@ public class LQuests extends JavaPlugin {
             QuestPlayer qp = QuestPlayers.load(p);
             QuestPlayers.register(qp);
             qp.runIndicator();
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new Placeholders().register();
         }
     }
 

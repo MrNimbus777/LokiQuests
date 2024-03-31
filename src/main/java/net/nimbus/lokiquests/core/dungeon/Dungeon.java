@@ -298,7 +298,7 @@ public class Dungeon {
     }
     public boolean isCompleted(){
         for(Spawner task : getSpawners()) {
-            if(!task.isCompleted()) return false;
+            if(!task.isCompleted(true)) return false;
         }
         return true;
     }
@@ -449,8 +449,11 @@ public class Dungeon {
             return mobs;
         }
 
-        public boolean isCompleted() {
+        public boolean isCompleted(boolean clear) {
             if(task != null) if(!task.isCancelled()) return false;
+            if(clear) for(Entity e : new ArrayList<>(mobs)){
+                if(e.isDead()) removeEntity(e);
+            }
             return mobs.isEmpty();
         }
 

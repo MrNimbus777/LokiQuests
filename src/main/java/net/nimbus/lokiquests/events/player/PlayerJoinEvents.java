@@ -1,5 +1,6 @@
 package net.nimbus.lokiquests.events.player;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.event.EventHandler;
@@ -12,5 +13,6 @@ public class PlayerJoinEvents implements Listener {
         QuestPlayer player = QuestPlayers.load(e.getPlayer());
         QuestPlayers.register(player);
         player.runIndicator();
+        e.getPlayer().sendMessage(PlaceholderAPI.setPlaceholders(e.getPlayer(), "%lpc_player_rank% Hui %lpc_player_rank%"));
     }
 }

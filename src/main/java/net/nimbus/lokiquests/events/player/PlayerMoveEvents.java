@@ -21,7 +21,6 @@ public class PlayerMoveEvents implements Listener {
         }
         for(Dungeon.Wall wall : Dungeon.Wall.UP){
             if(wall.isColliding(e.getTo())) {
-                e.getPlayer().sendMessage(e.getPlayer().getClass().getName());
                 Vector v1 = new Location(e.getTo().getWorld(), e.getTo().getBlockX()+0.5, e.getTo().getBlockY(), e.getTo().getBlockZ()+0.5).toVector();
                 Vector v2 = e.getFrom().toVector();
                 Vector dir = v2.subtract(v1).setY(0);

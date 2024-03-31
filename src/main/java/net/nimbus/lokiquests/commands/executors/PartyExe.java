@@ -34,7 +34,7 @@ public class PartyExe implements CommandExecutor {
                     return true;
                 }
                 party = new Party(args[1]);
-                party.setLeader(p);
+                party.setLeader(p.getUniqueId());
                 Parties.add(party);
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.create")));
                 return true;
@@ -45,7 +45,7 @@ public class PartyExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.no_party")));
                     return true;
                 }
-                if(party.getLeader().equals(p)) {
+                if(party.getLeader().equals(p.getUniqueId())) {
                     party.setLeader(party.getMembers().get(0));
                 }
                 party.removePlayer(p);
@@ -62,7 +62,7 @@ public class PartyExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.no_party")));
                     return true;
                 }
-                if(!party.getLeader().equals(p)) {
+                if(!party.getLeader().equals(p.getUniqueId())) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.not_leader")));
                     return true;
                 }
@@ -76,7 +76,7 @@ public class PartyExe implements CommandExecutor {
                             replace("%player%", args[1])));
                     return true;
                 }
-                if(Parties.exists(Parties.invitations.get(invited))){
+                if(Parties.exists(Parties.invitations.get(invited.getUniqueId()))){
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.has_invitation")));
                     return true;
                 }
@@ -85,7 +85,7 @@ public class PartyExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.has_party")));
                     return true;
                 }
-                Parties.invitations.put(invited, party);
+                Parties.invitations.put(invited.getUniqueId(), party);
                 p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.success")
                         .replace("%player%", invited.getName())));
                 invited.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.receive").
@@ -102,7 +102,7 @@ public class PartyExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.no_party")));
                     return true;
                 }
-                if(!party.getLeader().equals(p)) {
+                if(!party.getLeader().equals(p.getUniqueId())) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.not_leader")));
                     return true;
                 }
@@ -112,7 +112,7 @@ public class PartyExe implements CommandExecutor {
                             replace("%player%", args[1])));
                     return true;
                 }
-                if (!party.getMembers().contains(kicked)) {
+                if (!party.getMembers().contains(kicked.getUniqueId())) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.no_member").
                             replace("%player%", args[1])));
                     return true;
@@ -129,16 +129,20 @@ public class PartyExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.no_party")));
                     return true;
                 }
-                if(!party.getLeader().equals(p)) {
+                if(!party.getLeader().equals(p.getUniqueId())) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.not_leader")));
                     return true;
                 }
                 Parties.remove(party);
-                party.getAllMembers().forEach(m -> m.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.disband"))));
+                party.getAllMembers().forEach(m -> {
+                    try {
+                        Bukkit.getPlayer(party.getLeader()).sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.disband")));
+                    } catch (Exception e){}
+                });
                 return true;
             }
             case "accept" : {
-                Party party = Parties.invitations.get(p);
+                Party party = Parties.invitations.get(p.getUniqueId());
                 if(!Parties.exists(party)){
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.no_invitation")));
                     return true;
@@ -147,25 +151,29 @@ public class PartyExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.full")));
                     return true;
                 }
-                Parties.invitations.remove(p);
+                Parties.invitations.remove(p.getUniqueId());
                 party.addMember(p);
                 p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.accept").
                         replace("%party%", party.getName())));
-                party.getLeader().sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.accept-feedback").
-                        replace("%player%", p.getName())));
+                try {
+                    Bukkit.getPlayer(party.getLeader()).sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.accept-feedback").
+                            replace("%player%", p.getName())));
+                } catch (Exception e) {}
                 return true;
             }
             case "reject" : {
-                Party party = Parties.invitations.get(p);
+                Party party = Parties.invitations.get(p.getUniqueId());
                 if(!Parties.exists(party)){
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.invite.no_invitation")));
                     return true;
                 }
-                Parties.invitations.remove(p);
+                Parties.invitations.remove(p.getUniqueId());
                 p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.reject").
                         replace("%party%", party.getName())));
-                party.getLeader().sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.reject-feedback").
-                        replace("%player%", p.getName())));
+                try {
+                    Bukkit.getPlayer(party.getLeader()).sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.reject-feedback").
+                            replace("%player%", p.getName())));
+                } catch (Exception e) {}
                 return true;
             }
             case "setleader" : {
@@ -178,7 +186,7 @@ public class PartyExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.no_party")));
                     return true;
                 }
-                if(!party.getLeader().equals(p)) {
+                if(!party.getLeader().equals(p.getUniqueId())) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.not_leader")));
                     return true;
                 }
@@ -188,9 +196,17 @@ public class PartyExe implements CommandExecutor {
                             replace("%player%", args[1])));
                     return true;
                 }
-                if(party.getMembers().contains(leader));
-                party.setLeader(leader);
-                party.getMembers().forEach(m -> m.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.setLeader"))));
+                if(party.getMembers().contains(leader.getUniqueId())){
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.no_member").
+                            replace("%player%", args[1])));
+                    return true;
+                }
+                party.setLeader(leader.getUniqueId());
+                party.getMembers().forEach(m -> {
+                    try {
+                        Bukkit.getPlayer(party.getLeader()).sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.setLeader")));
+                    } catch (Exception e) {}
+                });
             }
             default: {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.party.usage")));
