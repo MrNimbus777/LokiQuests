@@ -34,9 +34,15 @@ Commands:
       boss:
         usage: "&7&o/dungeon spawner boss <source> <mob> <radius>"
         success: "&fYou created a new boss spawner at &b%location%&f with &e%source%&f - &a%type%&f."
+      addAction:
+        usage: "&7&o/dungeon spawner addAction <action> (e.g. /dungeon spawner addAction reward:cmd:give %player% minecraft:diamond 5)"
+        success: "&fYou have added a new action &2%action%&f to spawner at &b%location%&f."
       remove:
         success: "You deleted the spawner at &b%location%&f."
         no_spawner: "&cThere is no spawners."
+    addAction:
+      usage: "&7&o/dungeon addAction <action> (e.g. /dungeon addAction reward:cmd:give %player% minecraft:diamond 5)"
+      success: "&fYou have added a new action &2%action%&f to dungeon at &b%location%&f."
     remove: "&fYou removed dungeon &7&o%id%&f at &b%location%&f."
     name:
       usage: "&7&o/dungeon name <name>"

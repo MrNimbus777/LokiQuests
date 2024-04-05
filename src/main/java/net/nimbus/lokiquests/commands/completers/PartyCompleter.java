@@ -33,7 +33,7 @@ public class PartyCompleter implements TabCompleter {
                 case "invite" : {
                     Party party = Parties.get(p);
                     if(party == null) return result;
-                    List<String> options = Bukkit.getOnlinePlayers().stream().filter(m -> party.getMembers().contains(m)).map(Player::getName).toList();
+                    List<String> options = Bukkit.getOnlinePlayers().stream().filter(m -> party.getMembers().contains(m.getUniqueId())).map(Player::getName).toList();
                     for(String option : options) {
                         if(option.toLowerCase().startsWith(args[1])) result.add(option);
                     }
@@ -43,7 +43,7 @@ public class PartyCompleter implements TabCompleter {
                 case "kick" : {
                     Party party = Parties.get(p);
                     if(party == null) return result;
-                    List<String> options = Bukkit.getOnlinePlayers().stream().filter(m -> !party.getMembers().contains(m)).map(Player::getName).toList();
+                    List<String> options = Bukkit.getOnlinePlayers().stream().filter(m -> !party.getMembers().contains(m.getUniqueId())).map(Player::getName).toList();
                     for(String option : options) {
                         if(option.toLowerCase().startsWith(args[1])) result.add(option);
                     }

@@ -165,6 +165,29 @@ public class DungeonExe implements CommandExecutor {
                         ));
                         return true;
                     }
+                    case "addaction" : {
+                        if(args.length < 3) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.addAction.usage")));
+                            return true;
+                        }
+                        Dungeon.Spawner task = Dungeons.getSpawner(p.getLocation());
+                        if(task == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.no_spawner")));
+                            return true;
+                        }
+                        StringBuilder action = new StringBuilder(args[3]);
+                        for(int i = 4; i < args.length; i++) {
+                            action.append(" ").append(args[i]);
+                        }
+                        task.addAction(action.toString());
+                        sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.addAction.success").
+                                replace("%action%", action.toString()).
+                                replace("%location%", Utils.locToString(task.getLocation()))));
+                        return true;
+                    }
+                    case "removeAction" : {
+
+                    }
                     case "remove" :
                     case "delete" : {
                         Dungeon.Spawner task = Dungeons.getSpawner(p.getLocation());
@@ -190,6 +213,26 @@ public class DungeonExe implements CommandExecutor {
                         return true;
                     }
                 }
+            }
+            case "addaction" : {
+                if(args.length < 3) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.addAction.usage")));
+                    return true;
+                }
+                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                if(dungeon == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                    return true;
+                }
+                StringBuilder action = new StringBuilder(args[3]);
+                for(int i = 4; i < args.length; i++) {
+                    action.append(" ").append(args[i]);
+                }
+                dungeon.addAction(action.toString());
+                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.addAction.success").
+                        replace("%action%", action.toString()).
+                        replace("%location%", Utils.locToString(dungeon.getLocation()))));
+                return true;
             }
             case "remove" :
             case "delete" : {

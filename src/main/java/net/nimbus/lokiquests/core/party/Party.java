@@ -10,7 +10,7 @@ public class Party {
     private UUID leader;
     private final String name;
     private final List<UUID> members;
-    private static final short limit = 3;
+    private static final short limit = 5;
 
     public Party(String name){
         this.name = name;

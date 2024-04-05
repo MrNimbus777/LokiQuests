@@ -3,6 +3,8 @@ package net.nimbus.lokiquests.core.dungeon;
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.Vars;
+import net.nimbus.lokiquests.core.dialogs.action.Action;
+import net.nimbus.lokiquests.core.dialogs.action.Actions;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawner;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
 import net.nimbus.lokiquests.core.quest.Quest;
@@ -16,6 +18,9 @@ import org.bukkit.craftbukkit.v1_20_R1.CraftOfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,6 +34,7 @@ public class Dungeon {
     private final List<Spawner> spawners;
     private final List<Player> players;
     private final List<Wall> walls;
+    private final List<String> actions;
     private final Location join;
     private final short limit;
     private final long id;
@@ -43,6 +49,7 @@ public class Dungeon {
         this.spawners = new ArrayList<>();
         this.players = new ArrayList<>();
         this.walls = new ArrayList<>();
+        this.actions = new ArrayList<>();
     }
     public Dungeon(Location join, short limit){
         this.join = new Location(Vars.DUNGEON_WORLD, join.getBlockX()+0.5, join.getBlockY(), join.getBlockZ()+0.5);
@@ -53,6 +60,7 @@ public class Dungeon {
         this.spawners = new ArrayList<>();
         this.players = new ArrayList<>();
         this.walls = new ArrayList<>();
+        this.actions = new ArrayList<>();
     }
 
     public String getName() {
@@ -76,6 +84,12 @@ public class Dungeon {
         spawner.clearMobs();
     }
 
+    public void addAction(String action){
+        this.actions.add(action);
+    }
+    public void removeAction(int i){
+        this.actions.remove(i);
+    }
     public List<Wall> getWalls() {
         return walls;
     }
@@ -274,6 +288,13 @@ public class Dungeon {
             sp.cancel();
             sp.clearMobs();
         });
+        actions.forEach(a -> {
+            String action_id = a.split(":")[0];
+            Action action = Actions.get(action_id);
+            if(action == null) return;
+            String vars = a.replaceFirst(action_id+":", "");
+            getPlayers().forEach(player -> action.execute(player, vars));
+        });
         for(Player p : new ArrayList<>(getPlayers())) {
             QuestPlayer qp = QuestPlayers.get(p);
             for(Quest quest : qp.getActiveQuests()) {
@@ -331,7 +352,6 @@ public class Dungeon {
             this.dungeon = dungeon;
         }
 
-        BukkitRunnable visualisation;
         public void up(){
             if(UP.contains(this)) return;
             Location sound = new Location(Vars.DUNGEON_WORLD, (x1+x2)/2.0, (y1+y2)/2.0, (z1+z2)/2.0);
@@ -341,25 +361,10 @@ public class Dungeon {
                 for (int y = y1; y <= y2; y++) {
                     for (int z = z1; z <= z2; z++) {
                         Location to = new Location(Vars.DUNGEON_WORLD, x+.5, y+.5, z+.5);
-                        if(to.getBlock().getType() == Material.AIR) to.getBlock().setType(Material.BARRIER);
+                        if(to.getBlock().getType().name().contains("AIR")) to.getBlock().setType(Material.TINTED_GLASS);
                     }
                 }
             }
-            visualisation = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    for(int x = x1; x <= x2; x++) {
-                        for(int y = y1; y <= y2; y++) {
-                            for(int z = z1; z <= z2; z++) {
-                                Location to = new Location(Vars.DUNGEON_WORLD, x+.5, y+.5, z+.5);
-                                to.getWorld().spawnParticle(Particle.REDSTONE, to, 7, 0.5, 0.5, 0.5, new Particle.DustOptions(Color.PURPLE, 1));
-                                to.getWorld().spawnParticle(Particle.REDSTONE, to, 7, 0.5, 0.5, 0.5, new Particle.DustOptions(Color.BLACK, 1));
-                            }
-                        }
-                    }
-                }
-            };
-            visualisation.runTaskTimer(LQuests.a, 0, 3);
         }
 
         public Location getCenter(){
@@ -372,12 +377,11 @@ public class Dungeon {
             Location sound = getCenter();
             sound.getWorld().playSound(sound, Sound.ENTITY_WITHER_BREAK_BLOCK, 10, 1);
             UP.remove(this);
-            if(visualisation != null) if(LQuests.a.isEnabled()) visualisation.cancel();
             for(int x = x1; x <= x2; x++) {
                 for (int y = y1; y <= y2; y++) {
                     for (int z = z1; z <= z2; z++) {
                         Location to = new Location(Vars.DUNGEON_WORLD, x+.5, y+.5, z+.5);
-                        if(to.getBlock().getType() == Material.BARRIER) to.getBlock().setType(Material.AIR);
+                        if(to.getBlock().getType() == Material.TINTED_GLASS) to.getBlock().setType(Material.AIR);
                     }
                 }
             }
@@ -429,12 +433,24 @@ public class Dungeon {
             this.type = type;
             this.amount = amount;
             id = System.currentTimeMillis();
+            actions = new ArrayList<>();
             mobs = new ArrayList<>();
             radius = 32;
         }
 
         public long getId() {
             return id;
+        }
+
+        protected final List<String> actions;
+        public void addAction(String action){
+            actions.add(action);
+        }
+        public void removeAction(int i){
+            actions.remove(i);
+        }
+        public List<String> getActions() {
+            return actions;
         }
 
         private final List<Entity> mobs;
@@ -519,12 +535,17 @@ public class Dungeon {
 
         @Override
         public String toString() {
+            JSONObject obj = new JSONObject();
+            JSONArray actions = new JSONArray();
+            actions.addAll(this.actions);
+            obj.put("actions", actions);
             return location.getX()+","+
                     location.getY()+","+
                     location.getZ()+","+
                     spawner.id()+","+
                     type+","+
-                    amount;
+                    amount+","+
+                    obj.toJSONString();
         }
 
         public static Spawner fromString(String str) {
@@ -533,7 +554,17 @@ public class Dungeon {
                 Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
                 MobSpawner spawner = MobSpawners.get(split[3]);
                 int amount = Integer.parseInt(split[5]);
-                return new Spawner(loc, spawner, split[4], amount);
+                Spawner s = new Spawner(loc, spawner, split[4], amount);
+                try{
+                    JSONObject obj = (JSONObject) new JSONParser().parse(split[6]);
+                    JSONArray actions = (JSONArray) obj.get("actions");
+                    for (Object action : actions) {
+                        s.actions.add((String) action);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return s;
             } catch (Exception e) {
                 return null;
             }
@@ -567,12 +598,17 @@ public class Dungeon {
 
         @Override
         public String toString() {
+            JSONObject obj = new JSONObject();
+            JSONArray actions = new JSONArray();
+            actions.addAll(this.actions);
+            obj.put("actions", actions);
             return location.getX()+","+
                     location.getY()+","+
                     location.getZ()+","+
                     spawner.id()+","+
                     type+","+
-                    radius;
+                    radius+","+
+                    obj.toJSONString();
         }
 
         public static BossSpawner fromString(String str) {
@@ -581,7 +617,17 @@ public class Dungeon {
                 Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
                 MobSpawner spawner = MobSpawners.get(split[3]);
                 int radius = Integer.parseInt(split[5]);
-                return new BossSpawner(loc, spawner, split[4], radius);
+                BossSpawner s = new BossSpawner(loc, spawner, split[4], radius);
+                try{
+                    JSONObject obj = (JSONObject) new JSONParser().parse(split[6]);
+                    JSONArray actions = (JSONArray) obj.get("actions");
+                    for (Object action : actions) {
+                        s.actions.add((String) action);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return s;
             } catch (Exception e) {
                 return null;
             }

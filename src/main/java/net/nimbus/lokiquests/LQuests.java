@@ -107,6 +107,7 @@ public class LQuests extends JavaPlugin {
         Actions.register("cmd", new ActionExecuteCommand());
         Actions.register("give", new ActionGiveItem());
         Actions.register("indicator", new ActionPointIndicator());
+        Actions.register("reward", new ActionReward());
         Actions.register("startQuest", new ActionStartQuest());
 
         MobSpawners.register(new MinecraftSpawner());

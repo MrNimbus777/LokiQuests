@@ -78,6 +78,13 @@
             <version>2.11.5</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>me.lorenzo0111.kingdoms</groupId>
+            <artifactId>Kingdomss</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/libs/Kingdomss.jar</systemPath>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

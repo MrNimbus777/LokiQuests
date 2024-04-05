@@ -1,6 +1,8 @@
 package net.nimbus.lokiquests;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.lorenzo0111.kingdoms.KingdomsPlugin;
+import me.lorenzo0111.kingdoms.data.Kingdom;
 import net.nimbus.lokiquests.core.party.Parties;
 import net.nimbus.lokiquests.core.party.Party;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
@@ -40,6 +42,30 @@ public class Placeholders extends PlaceholderExpansion {
                 QuestPlayer qp = QuestPlayers.get(p);
                 if(qp.getActiveQuests().isEmpty()) yield "";
                 yield qp.getActiveQuests().get(0).getName();
+            }
+            case "kingdom" -> {
+                String ret = "";
+                try {
+                    Kingdom kingdom = KingdomsPlugin.getInstance().getManager().getPlayerKingdom(player);
+                    if (kingdom != null) {
+                        ret = kingdom.getName();
+                    }
+                } catch (Exception e) {
+                    ret = "";
+                }
+                yield ret;
+            }
+            case "kingdom_" -> {
+                String ret = "";
+                try {
+                    Kingdom kingdom = KingdomsPlugin.getInstance().getManager().getPlayerKingdom(player);
+                    if (kingdom != null) {
+                        ret = "&7["+kingdom.getName() + "&7] ";
+                    }
+                } catch (Exception e) {
+                    ret = "";
+                }
+                yield ret;
             }
             default -> "";
         };
