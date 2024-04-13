@@ -1,7 +1,7 @@
-package net.nimbus.lokiquests.core.dialogs.action.actions;
+package net.nimbus.lokiquests.core.dialogues.action.actions;
 
 import net.nimbus.lokiquests.LQuests;
-import net.nimbus.lokiquests.core.dialogs.action.Action;
+import net.nimbus.lokiquests.core.dialogues.action.Action;
 import org.bukkit.entity.Player;
 
 public class ActionGiveItem implements Action {

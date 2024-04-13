@@ -2,9 +2,9 @@ package net.nimbus.lokiquests;
 
 import net.nimbus.lokiquests.commands.completers.*;
 import net.nimbus.lokiquests.commands.executors.*;
-import net.nimbus.lokiquests.core.dialogs.Dialogs;
-import net.nimbus.lokiquests.core.dialogs.action.Actions;
-import net.nimbus.lokiquests.core.dialogs.action.actions.*;
+import net.nimbus.lokiquests.core.dialogues.Dialogues;
+import net.nimbus.lokiquests.core.dialogues.action.Actions;
+import net.nimbus.lokiquests.core.dialogues.action.actions.*;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.mobspawners.*;
@@ -85,17 +85,10 @@ public class LQuests extends JavaPlugin {
         loadCommand("quest", new QuestExe());
     }
 
-    public void onEnable() {
-        a = this;
-        r = new Random();
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        version = packageName.substring(packageName.lastIndexOf(".") + 1);
-
-        loadConfig(false);
+    public void enable(){
+        loadConfig(true);
         loadMessages();
 
-        loadEvents();
-        loadCommands();
         loadItems();
 
         Utils.loadSigns();
@@ -116,13 +109,25 @@ public class LQuests extends JavaPlugin {
         Dungeons.load();
 
         Quests.load();
-        Dialogs.load();
+        Dialogues.load();
 
         for(Player p : Bukkit.getOnlinePlayers()) {
             QuestPlayer qp = QuestPlayers.load(p);
             QuestPlayers.register(qp);
             qp.runIndicator();
         }
+
+
+    }
+    public void onEnable() {
+        a = this;
+        r = new Random();
+        String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        version = packageName.substring(packageName.lastIndexOf(".") + 1);
+        loadEvents();
+        loadCommands();
+
+        enable();
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholders().register();
@@ -135,7 +140,7 @@ public class LQuests extends JavaPlugin {
         }
         Parties.clearRAM();
         QuestPlayers.clearRAM();
-        Dialogs.clearRAM();
+        Dialogues.clearRAM();
         Quests.clearRAM();
         Actions.clearRAM();
         Dungeons.clearRAM();

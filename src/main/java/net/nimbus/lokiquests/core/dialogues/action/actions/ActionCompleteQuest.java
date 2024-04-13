@@ -1,7 +1,7 @@
-package net.nimbus.lokiquests.core.dialogs.action.actions;
+package net.nimbus.lokiquests.core.dialogues.action.actions;
 
 import net.nimbus.lokiquests.LQuests;
-import net.nimbus.lokiquests.core.dialogs.action.Action;
+import net.nimbus.lokiquests.core.dialogues.action.Action;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.quest.Quests;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;

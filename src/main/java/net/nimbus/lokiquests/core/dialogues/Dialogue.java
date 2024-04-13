@@ -1,8 +1,8 @@
-package net.nimbus.lokiquests.core.dialogs;
+package net.nimbus.lokiquests.core.dialogues;
 
 import net.nimbus.lokiquests.Utils;
-import net.nimbus.lokiquests.core.dialogs.action.Action;
-import net.nimbus.lokiquests.core.dialogs.action.Actions;
+import net.nimbus.lokiquests.core.dialogues.action.Action;
+import net.nimbus.lokiquests.core.dialogues.action.Actions;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -12,13 +12,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Dialog {
+public class Dialogue {
     private final String id;
     private YamlConfiguration configuration;
 
     private final Map<UUID, String> map;
 
-    public Dialog(String id){
+    public Dialogue(String id){
         this.id = id;
         configuration = new YamlConfiguration();
         map = new HashMap<>();
@@ -70,7 +70,7 @@ public class Dialog {
                 String vars = s.replaceFirst(action_id+":", "");
                 action.execute(player, vars);
             }
-        } else if(Dialogs.processCondition(player, condition)) {
+        } else if(Dialogues.processCondition(player, condition)) {
             player.sendMessage(Utils.toColor(section.getString("text").replace("%player%", player.getName())));
             String next = section.getString("next");
             putPlayerProgress(player, Objects.requireNonNullElse(next, "100%"));

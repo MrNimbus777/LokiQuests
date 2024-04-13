@@ -1,6 +1,6 @@
-package net.nimbus.lokiquests.core.dialogs.action.actions;
+package net.nimbus.lokiquests.core.dialogues.action.actions;
 
-import net.nimbus.lokiquests.core.dialogs.action.Action;
+import net.nimbus.lokiquests.core.dialogues.action.Action;
 import net.nimbus.lokiquests.core.reward.rewardprocessors.RewardProcessor;
 import net.nimbus.lokiquests.core.reward.rewardprocessors.RewardProcessors;
 import org.bukkit.entity.Player;

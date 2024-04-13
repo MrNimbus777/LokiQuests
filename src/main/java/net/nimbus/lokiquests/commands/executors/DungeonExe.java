@@ -175,18 +175,47 @@ public class DungeonExe implements CommandExecutor {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.no_spawner")));
                             return true;
                         }
-                        StringBuilder action = new StringBuilder(args[3]);
-                        for(int i = 4; i < args.length; i++) {
+                        StringBuilder action = new StringBuilder(args[2]);
+                        for(int i = 3; i < args.length; i++) {
                             action.append(" ").append(args[i]);
                         }
                         task.addAction(action.toString());
+                        task.getDungeon().save();
                         sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.addAction.success").
                                 replace("%action%", action.toString()).
                                 replace("%location%", Utils.locToString(task.getLocation()))));
                         return true;
                     }
-                    case "removeAction" : {
-
+                    case "removeaction" : {
+                        if(args.length < 3) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.removeAction.usage")));
+                            return true;
+                        }
+                        Dungeon.Spawner task = Dungeons.getSpawner(p.getLocation());
+                        if(task == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.no_spawner")));
+                            return true;
+                        }
+                        int index = 0;
+                        try {
+                            index = Integer.parseInt(args[2]);
+                        } catch (Exception e) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                                    .replace("%NAN%", args[2])));
+                            return true;
+                        }
+                        if(task.getActions().size() <= index) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.index_out_of_bounds").
+                                    replace("%index%", args[2]).
+                                    replace("%limit%", task.getActions().size()+"")));
+                            return true;
+                        }
+                        task.removeAction(index);
+                        task.getDungeon().save();
+                        sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.removeAction.success").
+                                replace("%action%", index+"").
+                                replace("%location%", Utils.locToString(task.getLocation()))));
+                        return true;
                     }
                     case "remove" :
                     case "delete" : {
@@ -215,7 +244,7 @@ public class DungeonExe implements CommandExecutor {
                 }
             }
             case "addaction" : {
-                if(args.length < 3) {
+                if(args.length < 2) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.addAction.usage")));
                     return true;
                 }
@@ -224,13 +253,45 @@ public class DungeonExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                     return true;
                 }
-                StringBuilder action = new StringBuilder(args[3]);
-                for(int i = 4; i < args.length; i++) {
+                StringBuilder action = new StringBuilder(args[1]);
+                for(int i = 2; i < args.length; i++) {
                     action.append(" ").append(args[i]);
                 }
                 dungeon.addAction(action.toString());
+                dungeon.save();
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.addAction.success").
                         replace("%action%", action.toString()).
+                        replace("%location%", Utils.locToString(dungeon.getLocation()))));
+                return true;
+            }
+            case "removeaction" : {
+                if(args.length < 2) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.removeAction.usage")));
+                    return true;
+                }
+                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                if(dungeon == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                    return true;
+                }
+                int index;
+                try {
+                    index = Integer.parseInt(args[1]);
+                } catch (Exception e) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.nan")
+                            .replace("%NAN%", args[1])));
+                    return true;
+                }
+                if(dungeon.getActions().size() <= index) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.index_out_of_bounds").
+                            replace("%index%", args[2]).
+                            replace("%limit%", dungeon.getActions().size()+"")));
+                    return true;
+                }
+                dungeon.removeAction(index);
+                dungeon.save();
+                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.removeAction.success").
+                        replace("%action%", index+"").
                         replace("%location%", Utils.locToString(dungeon.getLocation()))));
                 return true;
             }

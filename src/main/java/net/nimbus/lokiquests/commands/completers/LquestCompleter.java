@@ -1,7 +1,7 @@
 package net.nimbus.lokiquests.commands.completers;
 
-import net.nimbus.lokiquests.core.dialogs.Dialog;
-import net.nimbus.lokiquests.core.dialogs.Dialogs;
+import net.nimbus.lokiquests.core.dialogues.Dialogue;
+import net.nimbus.lokiquests.core.dialogues.Dialogues;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,7 +28,7 @@ public class LquestCompleter implements TabCompleter {
         }
         if(args.length == 2) {
             if(args[0].equalsIgnoreCase("process")) {
-                List<String> options = Dialogs.getAll().stream().map(Dialog::getId).toList();
+                List<String> options = Dialogues.getAll().stream().map(Dialogue::getId).toList();
                 for(String option : options) {
                     if(option.toLowerCase().startsWith(args[1].toLowerCase())) result.add(option);
                 }

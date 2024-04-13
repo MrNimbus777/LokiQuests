@@ -3,8 +3,8 @@ package net.nimbus.lokiquests.core.dungeon;
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.Vars;
-import net.nimbus.lokiquests.core.dialogs.action.Action;
-import net.nimbus.lokiquests.core.dialogs.action.Actions;
+import net.nimbus.lokiquests.core.dialogues.action.Action;
+import net.nimbus.lokiquests.core.dialogues.action.Actions;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawner;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
 import net.nimbus.lokiquests.core.quest.Quest;
@@ -14,7 +14,6 @@ import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_20_R1.CraftOfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -90,6 +89,11 @@ public class Dungeon {
     public void removeAction(int i){
         this.actions.remove(i);
     }
+
+    public List<String> getActions() {
+        return actions;
+    }
+
     public List<Wall> getWalls() {
         return walls;
     }
@@ -238,6 +242,7 @@ public class Dungeon {
         configuration.set(getId()+".boss", boss);
         configuration.set(getId()+".walls", walls);
         configuration.set(getId()+".name", getName());
+        configuration.set(getId()+".actions", getActions());
         try {
             configuration.save(file);
         } catch (Exception e) {

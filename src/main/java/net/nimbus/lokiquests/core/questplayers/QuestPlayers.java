@@ -1,8 +1,8 @@
 package net.nimbus.lokiquests.core.questplayers;
 
 import net.nimbus.lokiquests.LQuests;
-import net.nimbus.lokiquests.core.dialogs.Dialog;
-import net.nimbus.lokiquests.core.dialogs.Dialogs;
+import net.nimbus.lokiquests.core.dialogues.Dialogue;
+import net.nimbus.lokiquests.core.dialogues.Dialogues;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.quest.Quests;
 import org.bukkit.Bukkit;
@@ -49,10 +49,10 @@ public class QuestPlayers {
 
             QuestPlayer player = new QuestPlayer(uuid);
 
-            JSONObject dialogs = (JSONObject) obj.getOrDefault("dialogs", new JSONObject());
+            JSONObject dialogs = (JSONObject) obj.getOrDefault("dialogues", new JSONObject());
             for(Object o : dialogs.keySet()) {
                 String id = o.toString();
-                Dialog dialog = Dialogs.get(id);
+                Dialogue dialog = Dialogues.get(id);
                 if(dialog == null) continue;
                 dialog.putPlayerProgress(uuid, dialogs.get(o).toString());
             }

@@ -1,4 +1,4 @@
-package net.nimbus.lokiquests.core.dialogs.action;
+package net.nimbus.lokiquests.core.dialogues.action;
 
 import org.bukkit.entity.Player;
 

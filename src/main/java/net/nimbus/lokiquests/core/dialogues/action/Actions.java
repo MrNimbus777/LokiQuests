@@ -1,4 +1,4 @@
-package net.nimbus.lokiquests.core.dialogs.action;
+package net.nimbus.lokiquests.core.dialogues.action;
 
 import java.util.HashMap;
 import java.util.Map;
