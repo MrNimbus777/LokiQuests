@@ -470,6 +470,18 @@ public class Dungeon {
             return mobs;
         }
 
+        public String getType() {
+            return type;
+        }
+
+        public int getAmount(){
+            return amount;
+        }
+
+        public MobSpawner getSpawner() {
+            return spawner;
+        }
+
         public boolean isCompleted(boolean clear) {
             if(task != null) if(!task.isCancelled()) return false;
             if(clear) for(Entity e : new ArrayList<>(mobs)){

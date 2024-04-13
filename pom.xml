@@ -85,6 +85,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/libs/Kingdomss.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>net.nimbus.api</groupId>
+            <artifactId>NimbusAPI</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/NimbusAPI-1.0-SNAPSHOT.jar</systemPath>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

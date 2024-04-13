@@ -1,5 +1,7 @@
 package net.nimbus.lokiquests.commands.executors;
 
+import net.nimbus.api.modules.gui.core.GUI;
+import net.nimbus.api.modules.gui.core.GUIs;
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dungeon.Dungeon;
@@ -70,7 +72,7 @@ public class DungeonExe implements CommandExecutor {
                 return true;
             }
             case "getsign" : {
-                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                Dungeon dungeon = Dungeons.getSelection(p);
                 if(dungeon == null) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                     return true;
@@ -99,7 +101,7 @@ public class DungeonExe implements CommandExecutor {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.create.usage")));
                             return true;
                         }
-                        Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                        Dungeon dungeon = Dungeons.getSelection(p);
                         if(dungeon == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                             return true;
@@ -135,7 +137,7 @@ public class DungeonExe implements CommandExecutor {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.boss.usage")));
                             return true;
                         }
-                        Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                        Dungeon dungeon = Dungeons.getSelection(p);
                         if(dungeon == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                             return true;
@@ -170,7 +172,7 @@ public class DungeonExe implements CommandExecutor {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.addAction.usage")));
                             return true;
                         }
-                        Dungeon.Spawner task = Dungeons.getSpawner(p.getLocation());
+                        Dungeon.Spawner task = Dungeons.getSpawnerSelection(p);
                         if(task == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.no_spawner")));
                             return true;
@@ -191,7 +193,7 @@ public class DungeonExe implements CommandExecutor {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.removeAction.usage")));
                             return true;
                         }
-                        Dungeon.Spawner task = Dungeons.getSpawner(p.getLocation());
+                        Dungeon.Spawner task = Dungeons.getSpawnerSelection(p);
                         if(task == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.no_spawner")));
                             return true;
@@ -219,14 +221,14 @@ public class DungeonExe implements CommandExecutor {
                     }
                     case "remove" :
                     case "delete" : {
-                        Dungeon.Spawner task = Dungeons.getSpawner(p.getLocation());
+                        Dungeon.Spawner task = Dungeons.getSpawnerSelection(p);
                         if(task == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.no_spawner")));
                             return true;
                         }
                         task.cancel();
                         task.clearMobs();
-                        Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                        Dungeon dungeon = Dungeons.getSelection(p);
                         if(dungeon == null) {
                             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                             return true;
@@ -235,6 +237,20 @@ public class DungeonExe implements CommandExecutor {
                         dungeon.save();
                         sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.remove.success").
                                 replace("%location%", Utils.locToString(task.getLocation()))));
+                        return true;
+                    }
+                    case "select" : {
+                        Dungeon dungeon = Dungeons.getSelection(p);
+                        if(dungeon == null) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
+                            return true;
+                        }
+                        if(dungeon.getSpawners().isEmpty()) {
+                            sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_spawners")));
+                            return true;
+                        }
+                        GUI gui = GUIs.get("spawner_"+dungeon.getId()+"_0");
+                        gui.open(p);
                         return true;
                     }
                     default: {
@@ -248,7 +264,7 @@ public class DungeonExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.addAction.usage")));
                     return true;
                 }
-                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                Dungeon dungeon = Dungeons.getSelection(p);
                 if(dungeon == null) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                     return true;
@@ -269,7 +285,7 @@ public class DungeonExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.removeAction.usage")));
                     return true;
                 }
-                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                Dungeon dungeon = Dungeons.getSelection(p);
                 if(dungeon == null) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                     return true;
@@ -297,7 +313,7 @@ public class DungeonExe implements CommandExecutor {
             }
             case "remove" :
             case "delete" : {
-                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                Dungeon dungeon = Dungeons.getSelection(p);
                 if(dungeon == null) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                     return true;
@@ -316,7 +332,7 @@ public class DungeonExe implements CommandExecutor {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.name.usage")));
                     return true;
                 }
-                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                Dungeon dungeon = Dungeons.getSelection(p);
                 if(dungeon == null) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                     return true;
@@ -368,7 +384,8 @@ public class DungeonExe implements CommandExecutor {
                             .replace("%NAN%", args[6])));
                     return true;
                 }
-                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+
+                Dungeon dungeon = Dungeons.getSelection(p);
                 if(dungeon == null) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                     return true;
@@ -394,13 +411,22 @@ public class DungeonExe implements CommandExecutor {
                         replace("%location%", Utils.locToString(wall.getCenter()))));
             }
             case "teleport" : {
-                Dungeon dungeon = Dungeons.getDungeon(p.getLocation());
+                Dungeon dungeon = Dungeons.getSelection(p);
                 if(dungeon == null) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeon")));
                     return true;
                 }
                 dungeon.teleport(p);
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.teleport").replace("%name%", dungeon.getName())));
+                return true;
+            }
+            case "select" : {
+                if(Dungeons.getAll().isEmpty()) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.no_dungeons")));
+                    return true;
+                }
+                GUI gui = GUIs.get("dungeon_0");
+                gui.open(p);
                 return true;
             }
             default: {

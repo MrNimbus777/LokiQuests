@@ -1,7 +1,7 @@
 name: LokiQuests
 main: net.nimbus.lokiquests.LQuests
 version: 1.0
-softdepend: [HolographicDisplays]
+softdepend: [HolographicDisplays, NimbusAPI]
 api-version: 1.20
 commands:
   lquest:

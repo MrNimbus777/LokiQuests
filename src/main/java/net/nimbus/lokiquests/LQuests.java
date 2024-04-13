@@ -117,7 +117,7 @@ public class LQuests extends JavaPlugin {
             qp.runIndicator();
         }
 
-
+        LQGuis.load();
     }
     public void onEnable() {
         a = this;

@@ -8,13 +8,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Dungeons {
-    public static Map<Long, Dungeon> map = new HashMap<>();
+    private static Map<Long, Dungeon> map = new HashMap<>();
+
+    private static Map<UUID, Dungeon> selected = new HashMap<>();
+    private static Map<UUID, Dungeon.Spawner> selected_spawner = new HashMap<>();
 
     public static List<Dungeon> getAll(){
         return new ArrayList<>(map.values());
@@ -29,6 +29,24 @@ public class Dungeons {
     public static Dungeon get(Long id){
         if(id == null) return null;
         return map.getOrDefault(id, null);
+    }
+    public static void select(UUID uuid, Dungeon dungeon){
+        selected.put(uuid, dungeon);
+    }
+    public static Dungeon getSelection(UUID uuid){
+        return selected.getOrDefault(uuid, null);
+    }
+    public static Dungeon getSelection(Player player) {
+        return getSelection(player.getUniqueId());
+    }
+    public static void select(UUID uuid, Dungeon.Spawner spawner){
+        selected_spawner.put(uuid, spawner);
+    }
+    public static Dungeon.Spawner getSpawnerSelection(UUID uuid){
+        return selected_spawner.getOrDefault(uuid, null);
+    }
+    public static Dungeon.Spawner getSpawnerSelection(Player player) {
+        return getSpawnerSelection(player.getUniqueId());
     }
     public static Dungeon getDungeon(Player player){
         for(Dungeon dungeon : getAll()) {
