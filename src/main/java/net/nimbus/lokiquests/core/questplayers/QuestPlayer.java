@@ -18,8 +18,10 @@ import org.json.simple.JSONObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class QuestPlayer {
     private final UUID uuid;
@@ -28,7 +30,7 @@ public class QuestPlayer {
     private List<Quest> finishedQuests;
     private List<Quest> completedQuests;
 
-    private List<DailyQuest> dailyQuests;
+    private DailyQuest[] dailyQuests;
     private Location indicator;
 
     public QuestPlayer(UUID uuid){
@@ -36,6 +38,7 @@ public class QuestPlayer {
         activeQuests = new ArrayList<>();
         finishedQuests = new ArrayList<>();
         completedQuests = new ArrayList<>();
+        dailyQuests = new DailyQuest[3];
     }
 
     public UUID getUUID() {
@@ -77,6 +80,12 @@ public class QuestPlayer {
         JSONArray completed = new JSONArray();
         completed.addAll(getCompletedQuests().stream().map(Quest::getId).toList());
         obj.put("completed", completed);
+
+        JSONObject daily = new JSONObject();
+        for(int i = 0; i < 3; i++) {
+            if(getDailyQuests()[i] != null) daily.put(i, getDailyQuests()[i].toString());
+        }
+        obj.put("daily", daily);
 
         if(indicator != null){
             String indicator = getIndicator().getWorld().getName()+","+getIndicator().getX()+","+getIndicator().getY()+","+getIndicator().getZ();
@@ -190,5 +199,28 @@ public class QuestPlayer {
 
     public Player getPlayer(){
         return Bukkit.getPlayer(getUUID());
+    }
+
+    public void setDailyQuests(DailyQuest[] dailyQuests) {
+        this.dailyQuests = dailyQuests;
+    }
+    public void removeDailyQuest(DailyQuest quest) {
+        for(int i = 0; i < 3; i++) {
+            if(getDailyQuests()[i] == quest){
+                getDailyQuests()[i] = null;
+                return;
+            }
+        }
+    }
+    public void removeDailyQuest(int index) {
+        getDailyQuests()[index] = null;
+    }
+    public DailyQuest[] getDailyQuests() {
+        return dailyQuests;
+    }
+
+
+    public void generateDailyQuests(){
+
     }
 }

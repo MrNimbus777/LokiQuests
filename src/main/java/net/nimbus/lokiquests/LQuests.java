@@ -2,6 +2,7 @@ package net.nimbus.lokiquests;
 
 import net.nimbus.lokiquests.commands.completers.*;
 import net.nimbus.lokiquests.commands.executors.*;
+import net.nimbus.lokiquests.core.dailyquest.DailyQuests;
 import net.nimbus.lokiquests.core.dialogues.Dialogues;
 import net.nimbus.lokiquests.core.dialogues.action.Actions;
 import net.nimbus.lokiquests.core.dialogues.action.actions.*;
@@ -63,6 +64,7 @@ public class LQuests extends JavaPlugin {
     void loadEvents(){
         loadEvent(new BlockBreakEvents());
         loadEvent(new BlockPlaceEvents());
+        loadEvent(new CraftItemEvents());
         loadEvent(new PlayerDeathEvents());
         loadEvent(new PlayerInteractEvents());
         loadEvent(new PlayerItemConsumeEvents());
@@ -109,8 +111,11 @@ public class LQuests extends JavaPlugin {
 
         Dungeons.load();
 
+        DailyQuests.load();
+
         Quests.load();
         Dialogues.load();
+        Parties.clearRAM();
 
         for(Player p : Bukkit.getOnlinePlayers()) {
             QuestPlayer qp = QuestPlayers.load(p);
@@ -145,6 +150,7 @@ public class LQuests extends JavaPlugin {
         QuestPlayers.clearRAM();
         Dialogues.clearRAM();
         Quests.clearRAM();
+        DailyQuests.clearRAM();
         Actions.clearRAM();
         Dungeons.clearRAM();
         MobSpawners.clearRAM();
