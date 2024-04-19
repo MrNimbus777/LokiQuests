@@ -48,6 +48,11 @@ public class ItemCollectQuest extends Quest {
             };
         }
     }
+
+    public String getType() {
+        return item;
+    }
+
     @Override
     public void process(Event event) {
         if(event instanceof EntityPickupItemEvent e) {

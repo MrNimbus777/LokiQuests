@@ -21,7 +21,7 @@ public class LeaveExe implements CommandExecutor {
         Dungeon dungeon = Dungeons.getDungeon(p);
         if(dungeon == null) {
             if(p.hasPermission("lq.admin")) {
-                dungeon = Dungeons.getDungeon(p.getLocation());
+                dungeon = Dungeons.getDungeonCloseToPlayer(p);
                 if(dungeon != null) dungeon.teleportBack(p);
             }
             return true;

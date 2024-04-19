@@ -1,6 +1,7 @@
 package net.nimbus.lokiquests.core.questplayers;
 
 import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.core.dailyquest.DailyQuest;
 import net.nimbus.lokiquests.core.dialogues.Dialogue;
 import net.nimbus.lokiquests.core.dialogues.Dialogues;
 import net.nimbus.lokiquests.core.quest.Quest;
@@ -26,6 +27,8 @@ public class QuestPlayer {
     private List<Quest> activeQuests;
     private List<Quest> finishedQuests;
     private List<Quest> completedQuests;
+
+    private List<DailyQuest> dailyQuests;
     private Location indicator;
 
     public QuestPlayer(UUID uuid){

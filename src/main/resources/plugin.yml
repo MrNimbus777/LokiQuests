@@ -11,3 +11,4 @@ commands:
     aliases: [dun]
   party:
   leave:
+  setspawnplace:

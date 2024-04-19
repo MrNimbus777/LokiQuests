@@ -1,5 +1,6 @@
 package net.nimbus.lokiquests.commands.executors;
 
+import net.nimbus.lokiquests.LQGuis;
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.quest.Quest;
@@ -27,10 +28,7 @@ public class QuestExe implements CommandExecutor {
             if(qp.getActiveQuests().isEmpty()) {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.quest.empty")));
             } else {
-                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.quest.list")));
-                for(Quest quest : qp.getActiveQuests()) {
-                    quest.getDescription().forEach(p::sendMessage);
-                }
+                LQGuis.createQuestGui(qp, 0).open(p);
             }
         }
         return true;

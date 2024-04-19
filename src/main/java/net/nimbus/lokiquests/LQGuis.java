@@ -7,11 +7,22 @@ import net.nimbus.api.modules.gui.core.guiobject.GUIObject;
 import net.nimbus.api.modules.gui.core.itembuilder.ItemBuilder;
 import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
+import net.nimbus.lokiquests.core.quest.Quest;
+import net.nimbus.lokiquests.core.quest.quests.DungeonQuest;
+import net.nimbus.lokiquests.core.quest.quests.ItemCollectQuest;
+import net.nimbus.lokiquests.core.quest.quests.LocationQuest;
+import net.nimbus.lokiquests.core.quest.quests.MobKillQuest;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LQGuis {
     public static void load(){
@@ -19,6 +30,95 @@ public class LQGuis {
         loadSpawnerSelectingGui();
     }
 
+    public static GUI createQuestGui(QuestPlayer player, int page){
+        if(page > ((player.getActiveQuests().size()-1)/14)) return null;
+        GUI gui = new VanishGUI("quests", "Your active quests | Page " + (page+1), 36);
+        GUIs.register(gui);
+
+        GUIObject border = new GUIObject(gui, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
+                .setName(" ")
+                .build());
+        List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35).
+                forEach(i -> gui.setItem(i, border));
+
+        for(int i = 0; i < 14 && i+page*14 < player.getActiveQuests().size(); i++) {
+            Quest quest = player.getActiveQuests().get(i+page*14);
+            List<String> lore = new ArrayList<>();
+            lore.add("");
+            lore.add("&7Rewards:");
+            lore.addAll(quest.getRewards().stream().map(r -> "  &7•&e "+r.getName()).toList());
+            lore.add("");
+            GUIObject gobj = new GUIObject(gui,
+                    new ItemBuilder(getQuestIco(quest))
+                            .setName("&a"+quest.getName())
+                            .setLore(lore)
+                            .build()
+            );
+            gui.setItem(10+i+(i/7)*2, gobj);
+
+            final int finalPage = page;
+            if(finalPage < ((player.getActiveQuests().size()-1)/28)) {
+                GUIButton next_page = new GUIButton(gui, new ItemBuilder(Material.PAPER)
+                        .setName("&#03fcc2→" + (finalPage +2))
+                        .build()) {
+                    @Override
+                    public void onClick(ClickType clickType, Player player) {
+                        player.closeInventory();
+                        QuestPlayer qp = QuestPlayers.get(player);
+                        GUI gui = createQuestGui(qp, finalPage+1);
+                        if(gui == null) return;
+                        gui.open(player);
+                    }
+                };
+                gui.setItem(32, next_page);
+            }
+            if(finalPage > 0) {
+                GUIButton next_page = new GUIButton(gui, new ItemBuilder(Material.PAPER)
+                        .setName("&#03fcc2→" + (finalPage +2))
+                        .build()) {
+                    @Override
+                    public void onClick(ClickType clickType, Player player) {
+                        player.closeInventory();
+                        QuestPlayer qp = QuestPlayers.get(player);
+                        GUI gui = createQuestGui(qp, finalPage-1);
+                        if(gui == null) return;
+                        gui.open(player);
+                    }
+                };
+                gui.setItem(30, next_page);
+            }
+        }
+
+        return gui;
+    }
+
+    private static ItemStack getQuestIco(Quest quest) {
+        if(quest instanceof DungeonQuest) {
+            return new ItemStack(Material.SPAWNER);
+        } else if(quest instanceof ItemCollectQuest quest1) {
+            Material material;
+            try {
+                material = Material.valueOf(quest1.getType());
+            } catch (Exception e) {
+                material = Material.CHEST;
+            }
+            return new ItemStack(material);
+        } else if(quest instanceof LocationQuest) {
+            return new ItemStack(Material.FILLED_MAP);
+        } else if(quest instanceof MobKillQuest quest1) {
+            return new ItemStack(Material.valueOf(quest1.getType().name()+"_SPAWN_EGG"));
+        } else {
+            return new ItemStack(Material.BOOK);
+        }
+    }
+
+    public static void updateSelectionGui(){
+        for(GUI gui : GUIs.getAll()) {
+            if(gui.getId().startsWith("spawner_") || gui.getId().startsWith("dungeon_")) GUIs.unregister(gui);
+        }
+        loadDungeonSelectingGui();
+        loadSpawnerSelectingGui();
+    }
     private static void loadSpawnerSelectingGui(){
         for(Dungeon dungeon : Dungeons.getAll()){
             List<Dungeon.Spawner> list = dungeon.getSpawners();
@@ -38,7 +138,7 @@ public class LQGuis {
                                     .setName("&fLocation &b" + Utils.locToString(spawner.getLocation()))
                                     .setLore("",
                                             "&fID: &7"+spawner.getId(),
-                                            "&fMob type: &a"+Utils.locToString(dungeon.getLocation()),
+                                            "&fMob type: &a"+spawner.getType(),
                                             "&fMob source: &e"+spawner.getSpawner().id(),
                                             "&fMob amount: &d"+spawner.getAmount(),
                                             "")
@@ -46,7 +146,8 @@ public class LQGuis {
                                     .build()) {
                         @Override
                         public void onClick(ClickType clickType, Player player) {
-                            Dungeon.Spawner spawner = Dungeons.getSpawner(Long.parseLong(Utils.readTag(getView(player), "spawner_id")));
+                            Dungeon dungeon = Dungeons.getDungeonSelection(player);
+                            Dungeon.Spawner spawner = dungeon.getSpawners().get(Integer.parseInt(Utils.readTag(getView(player), "spawner_id")));
                             Dungeons.select(player.getUniqueId(), spawner);
                             player.closeInventory();
                             player.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.spawn_selected")
@@ -151,6 +252,17 @@ public class LQGuis {
                 };
                 dungeon_administration.setItem(48, prev_page);
             }
+        }
+    }
+    public static class VanishGUI extends GUI{
+
+        public VanishGUI(String id, String name, int size) {
+            super(id, name, size);
+        }
+
+        @Override
+        public void onClose() {
+            GUIs.unregister(this);
         }
     }
 }

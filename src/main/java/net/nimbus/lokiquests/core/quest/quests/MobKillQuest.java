@@ -27,6 +27,10 @@ public class MobKillQuest extends Quest {
         map = new HashMap<>();
     }
 
+    public EntityType getType() {
+        return type;
+    }
+
     @Override
     public void process(Event event) {
         if(event instanceof EntityDeathEvent e) {

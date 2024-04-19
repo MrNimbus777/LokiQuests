@@ -13,7 +13,7 @@ import java.util.*;
 public class Dungeons {
     private static Map<Long, Dungeon> map = new HashMap<>();
 
-    private static Map<UUID, Dungeon> selected = new HashMap<>();
+    private static Map<UUID, Dungeon> selected_dundeon = new HashMap<>();
     private static Map<UUID, Dungeon.Spawner> selected_spawner = new HashMap<>();
 
     public static List<Dungeon> getAll(){
@@ -31,13 +31,13 @@ public class Dungeons {
         return map.getOrDefault(id, null);
     }
     public static void select(UUID uuid, Dungeon dungeon){
-        selected.put(uuid, dungeon);
+        selected_dundeon.put(uuid, dungeon);
     }
-    public static Dungeon getSelection(UUID uuid){
-        return selected.getOrDefault(uuid, null);
+    public static Dungeon getDungeonSelection(UUID uuid){
+        return selected_dundeon.getOrDefault(uuid, null);
     }
-    public static Dungeon getSelection(Player player) {
-        return getSelection(player.getUniqueId());
+    public static Dungeon getDungeonSelection(Player player) {
+        return getDungeonSelection(player.getUniqueId());
     }
     public static void select(UUID uuid, Dungeon.Spawner spawner){
         selected_spawner.put(uuid, spawner);
@@ -57,44 +57,27 @@ public class Dungeons {
     private static double distance(Location loc1, Location loc2) {
         return loc1.toVector().subtract(loc2.toVector()).length();
     }
-    public static Dungeon getDungeon(Location location){
+    public static Dungeon getDungeonCloseToPlayer(Player player){
         List<Dungeon> list = getAll();
         if(list.isEmpty()) return null;
         int closest = 0;
         for(int i = 1; i < list.size(); i++){
-            if(distance(list.get(closest).getLocation(), (location)) > distance(list.get(i).getLocation(), location)) closest = i;
+            if(distance(list.get(closest).getLocation(), (player.getLocation())) >
+                    distance(list.get(i).getLocation(), player.getLocation())) closest = i;
         }
         return list.get(closest);
     }
-    public static Dungeon.Spawner getSpawner(Location location){
-        Dungeon dungeon = getDungeon(location);
-        if(dungeon == null) return null;
-        List<Dungeon.Spawner> list = dungeon.getSpawners();
-        if(list.isEmpty()) return null;
-        int closest = 0;
-        for(int i = 1; i < list.size(); i++) {
-            if(distance(list.get(closest).getLocation(), (location)) > distance(list.get(i).getLocation(), location)) closest = i;
-        }
-        return list.get(closest);
-    }
-    public static Dungeon.Wall getWall(Location location){
-        Dungeon dungeon = getDungeon(location);
+    public static Dungeon.Wall getWallCloseToPlayer(Player player){
+        Dungeon dungeon = getDungeonSelection(player);
         if(dungeon == null) return null;
         List<Dungeon.Wall> list = dungeon.getWalls();
         if(list.isEmpty()) return null;
         int closest = 0;
         for(int i = 1; i < list.size(); i++) {
-            if(distance(list.get(closest).getCenter(), (location)) > distance(list.get(i).getCenter(), location)) closest = i;
+            if(distance(list.get(closest).getCenter(), (player.getLocation())) >
+                    distance(list.get(i).getCenter(), player.getLocation())) closest = i;
         }
         return list.get(closest);
-    }
-    public static Dungeon.Spawner getSpawner(long id){
-        for(Dungeon dungeon : getAll()){
-            for(Dungeon.Spawner spawner : dungeon.getSpawners()){
-                if(id == spawner.getId()) return spawner;
-            }
-        }
-        return null;
     }
     public static Dungeon.Spawner getSpawner(Entity entity) {
         for(Dungeon dungeon : getAll()) {

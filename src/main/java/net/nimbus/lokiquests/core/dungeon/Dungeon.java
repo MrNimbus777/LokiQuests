@@ -74,6 +74,7 @@ public class Dungeon {
         return id;
     }
 
+
     public void addSpawner(Spawner spawner){
         this.spawners.add(spawner);
     }
@@ -430,21 +431,16 @@ public class Dungeon {
         protected final Location location;
         protected final MobSpawner spawner;
         protected final String type;
-        protected final long id;
 
         public Spawner(Location location, MobSpawner spawner, String type, int amount){
             this.location = new Location(Vars.DUNGEON_WORLD, location.getBlockX()+0.5, location.getBlockY(), location.getBlockZ()+0.5);
             this.spawner = spawner;
             this.type = type;
             this.amount = amount;
-            id = System.currentTimeMillis();
+
             actions = new ArrayList<>();
             mobs = new ArrayList<>();
             radius = 32;
-        }
-
-        public long getId() {
-            return id;
         }
 
         protected final List<String> actions;
@@ -534,13 +530,22 @@ public class Dungeon {
                     }
                 }
             };
-            task.runTaskTimer(LQuests.a, 0, 50);
+            task.runTaskTimer(LQuests.a, 0, 10);
         }
         public void cancel(){
             if(task != null) {
                 task.cancel();
                 task = null;
             }
+        }
+
+        public int getId() {
+            int id = 0;
+            for(Spawner task : getDungeon().spawners){
+                if(task == this) return id;
+                id++;
+            }
+            return id;
         }
 
         public Dungeon getDungeon(){
@@ -595,14 +600,22 @@ public class Dungeon {
             super(location, spawner, type, 1);
             this.radius = radius;
         }
+        private boolean hasSpawned = true;
+
+        @Override
+        public boolean isCompleted(boolean clear) {
+            return super.isCompleted(clear) && hasSpawned;
+        }
 
         @Override
         public void spawn() {
             getDungeon().wallsUp();
+            hasSpawned = false;
             new BukkitRunnable(){
                 @Override
                 public void run() {
                     addEntity(spawner.spawn(location, type));
+                    hasSpawned = true;
                 }
             }.runTaskLater(LQuests.a, 200);
         }

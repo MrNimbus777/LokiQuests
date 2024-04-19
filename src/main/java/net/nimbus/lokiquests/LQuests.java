@@ -82,7 +82,8 @@ public class LQuests extends JavaPlugin {
         loadCommand("dungeon", new DungeonExe(), new DungeonCompleter());
         loadCommand("party", new PartyExe(), new PartyCompleter());
         loadCommand("leave", new LeaveExe());
-        loadCommand("quest", new QuestExe());
+        loadCommand("quest", new QuestExe(), new QuestCompleter());
+        loadCommand("setspawnplace", new SetspawnplaceExe());
     }
 
     public void enable(){
@@ -138,7 +139,9 @@ public class LQuests extends JavaPlugin {
         for(QuestPlayer player : QuestPlayers.getAll()) {
             player.save();
         }
-        Parties.clearRAM();
+        try {
+            Parties.clearRAM();
+        } catch (Exception ignored) {}
         QuestPlayers.clearRAM();
         Dialogues.clearRAM();
         Quests.clearRAM();
