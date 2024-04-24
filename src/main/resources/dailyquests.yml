@@ -1,0 +1,27 @@
+reward_command: "eco give %player% %amount%"
+rewards:
+  low: 16-26
+  medium: 50-75
+  hard: 100-150
+low:
+  craft:
+    '16':
+      - 'chest'
+      - 'furnace'
+      - 'crafting_table'
+medium:
+  craft:
+    '48':
+      - 'chest'
+      - 'furnace'
+      - 'crafting_table'
+    '1':
+      - 'netherite_hoe'
+hard:
+  craft:
+    '128':
+      - 'chest'
+      - 'furnace'
+      - 'crafting_table'
+    '4':
+      - "netherite_block"

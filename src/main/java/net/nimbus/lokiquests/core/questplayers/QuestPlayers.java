@@ -1,12 +1,15 @@
 package net.nimbus.lokiquests.core.questplayers;
 
 import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.core.dailyquest.DailyQuest;
+import net.nimbus.lokiquests.core.dailyquest.DailyQuests;
 import net.nimbus.lokiquests.core.dialogues.Dialogue;
 import net.nimbus.lokiquests.core.dialogues.Dialogues;
 import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.quest.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -65,6 +68,16 @@ public class QuestPlayers {
                 quest.setProgress(uuid, Integer.parseInt(active.get(o).toString()));
                 player.addActiveQuest(quest);
             }
+
+            JSONObject daily = (JSONObject) obj.getOrDefault("daily", new JSONObject());
+            DailyQuest[] dailyQuests = new DailyQuest[3];
+            for(int i = 0; i < 3; i++){
+                String s = (String) daily.getOrDefault(i+"", null);
+                if(s == null) continue;
+                String id = s.split(":")[0];
+                dailyQuests[i] = DailyQuests.createQuest(id, player, s.replaceFirst(id+":", ""));
+            }
+            player.setDailyQuests(dailyQuests);
 
             player.setFinishedQuests(getQuestsFromJson(obj.getOrDefault("finished", new JSONArray())));
             player.setCompletedQuests(getQuestsFromJson(obj.getOrDefault("completed", new JSONArray())));

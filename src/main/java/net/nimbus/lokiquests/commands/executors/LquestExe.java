@@ -4,6 +4,7 @@ import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dialogues.Dialogue;
 import net.nimbus.lokiquests.core.dialogues.Dialogues;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -66,6 +67,20 @@ public class LquestExe implements CommandExecutor {
                 sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.lquest.reload")));
                 LQuests.a.onDisable();
                 LQuests.a.enable();
+                return true;
+            }
+            case "generatedailyquests" : {
+                if(args.length == 1) {
+                    sender.sendMessage("not enough arguments");
+                    return true;
+                }
+                Player player = Bukkit.getPlayer(args[1]);
+                if(player == null) {
+                    sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.lquest.process.no_player")
+                            .replace("%player%", args[1])));
+                    return true;
+                }
+                QuestPlayers.get(player).generateDailyQuests();
                 return true;
             }
 

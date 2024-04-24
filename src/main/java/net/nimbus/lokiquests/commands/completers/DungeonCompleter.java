@@ -18,7 +18,7 @@ public class DungeonCompleter implements TabCompleter {
         if(!sender.hasPermission("lq.admin")) return result;
         if(args.length == 0) return result;
         if(args.length == 1) {
-            List<String> options = List.of("create", "spawner", "delete", "remove", "getSign", "wall", "name", "teleport", "select");
+            List<String> options = List.of("create", "spawner", "delete", "remove", "getSign", "wall", "name", "teleport", "select", "addAction", "removeAction");
             for(String option : options) {
                 if(option.toLowerCase().startsWith(args[0].toLowerCase())) result.add(option);
             }
@@ -26,7 +26,7 @@ public class DungeonCompleter implements TabCompleter {
         }
         if(args.length == 2) {
             if (args[0].equalsIgnoreCase("spawner")) {
-                List<String> options = List.of("create", "delete", "remove", "boss", "select");
+                List<String> options = List.of("create", "delete", "remove", "boss", "select", "addAction", "removeAction");
                 for(String option : options) {
                     if(option.startsWith(args[1].toLowerCase())) result.add(option);
                 }

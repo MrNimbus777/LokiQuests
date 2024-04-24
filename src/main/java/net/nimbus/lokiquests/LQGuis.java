@@ -5,6 +5,7 @@ import net.nimbus.api.modules.gui.core.GUIs;
 import net.nimbus.api.modules.gui.core.guiobject.GUIButton;
 import net.nimbus.api.modules.gui.core.guiobject.GUIObject;
 import net.nimbus.api.modules.gui.core.itembuilder.ItemBuilder;
+import net.nimbus.lokiquests.core.dailyquest.DailyQuest;
 import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.dungeon.Dungeons;
 import net.nimbus.lokiquests.core.quest.Quest;
@@ -30,65 +31,99 @@ public class LQGuis {
         loadSpawnerSelectingGui();
     }
 
-    public static GUI createQuestGui(QuestPlayer player, int page){
-        if(page > ((player.getActiveQuests().size()-1)/14)) return null;
-        GUI gui = new VanishGUI("quests", "Your active quests | Page " + (page+1), 36);
-        GUIs.register(gui);
+    public static GUI createQuestGui(QuestPlayer player, int page) {
+        if (page > ((player.getActiveQuests().size() - 1) / 14) && !player.getActiveQuests().isEmpty()) return null;
+        GUI gui;
+        if (page == 0) {
+            gui = new VanishGUI("quests", "Your quests | Page 1", 54);
+            GUIs.register(gui);
 
-        GUIObject border = new GUIObject(gui, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
-                .setName(" ")
-                .build());
-        List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35).
-                forEach(i -> gui.setItem(i, border));
-
-        for(int i = 0; i < 14 && i+page*14 < player.getActiveQuests().size(); i++) {
-            Quest quest = player.getActiveQuests().get(i+page*14);
-            List<String> lore = new ArrayList<>();
-            lore.add("");
-            lore.add("&7Rewards:");
-            lore.addAll(quest.getRewards().stream().map(r -> "  &7•&e "+r.getName()).toList());
-            lore.add("");
-            GUIObject gobj = new GUIObject(gui,
-                    new ItemBuilder(getQuestIco(quest))
-                            .setName("&a"+quest.getName())
-                            .setLore(lore)
-                            .build()
-            );
-            gui.setItem(10+i+(i/7)*2, gobj);
-
-            final int finalPage = page;
-            if(finalPage < ((player.getActiveQuests().size()-1)/28)) {
-                GUIButton next_page = new GUIButton(gui, new ItemBuilder(Material.PAPER)
-                        .setName("&#03fcc2→" + (finalPage +2))
-                        .build()) {
-                    @Override
-                    public void onClick(ClickType clickType, Player player) {
-                        player.closeInventory();
-                        QuestPlayer qp = QuestPlayers.get(player);
-                        GUI gui = createQuestGui(qp, finalPage+1);
-                        if(gui == null) return;
-                        gui.open(player);
-                    }
-                };
-                gui.setItem(32, next_page);
+            GUIObject border = new GUIObject(gui, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
+                    .setName(" ")
+                    .build());
+            List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53).
+                    forEach(i -> gui.setItem(i, border));
+            for (int i = 0; i < 3; i++) {
+                DailyQuest dq = player.getDailyQuests()[i];
+                if(dq == null){
+                    gui.setItem(12 + i, new GUIObject(gui, new ItemBuilder(Material.PAPER).setName("&a&lCOMPLETED").build()));
+                    continue;
+                }
+                GUIObject gobj = new GUIObject(gui, dq.getDisplay());
+                gui.setItem(12 + i, gobj);
             }
-            if(finalPage > 0) {
-                GUIButton next_page = new GUIButton(gui, new ItemBuilder(Material.PAPER)
-                        .setName("&#03fcc2→" + (finalPage +2))
-                        .build()) {
-                    @Override
-                    public void onClick(ClickType clickType, Player player) {
-                        player.closeInventory();
-                        QuestPlayer qp = QuestPlayers.get(player);
-                        GUI gui = createQuestGui(qp, finalPage-1);
-                        if(gui == null) return;
-                        gui.open(player);
-                    }
-                };
-                gui.setItem(30, next_page);
+            for (int i = 0; i < 14 && i < player.getActiveQuests().size(); i++) {
+                Quest quest = player.getActiveQuests().get(i);
+                List<String> lore = new ArrayList<>();
+                lore.add("");
+                lore.add("&7Rewards:");
+                lore.addAll(quest.getRewards().stream().map(r -> "  &7•&e " + r.getName()).toList());
+                lore.add("");
+                GUIObject gobj = new GUIObject(gui,
+                        new ItemBuilder(getQuestIco(quest))
+                                .setName("&a" + quest.getName())
+                                .setLore(lore)
+                                .build()
+                );
+                gui.setItem(28 + i + (i / 7) * 2, gobj);
+            }
+        } else {
+            gui = new VanishGUI("quests", "Your active quests | Page " + (page + 1), 36);
+            GUIs.register(gui);
+
+            GUIObject border = new GUIObject(gui, new ItemBuilder(Material.LIME_STAINED_GLASS_PANE)
+                    .setName(" ")
+                    .build());
+            List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35).
+                    forEach(i -> gui.setItem(i, border));
+
+            for (int i = 0; i < 14 && i + page * 14 < player.getActiveQuests().size(); i++) {
+                Quest quest = player.getActiveQuests().get(i + page * 14);
+                List<String> lore = new ArrayList<>();
+                lore.add("");
+                lore.add("&7Rewards:");
+                lore.addAll(quest.getRewards().stream().map(r -> "  &7•&e " + r.getName()).toList());
+                lore.add("");
+                GUIObject gobj = new GUIObject(gui,
+                        new ItemBuilder(getQuestIco(quest))
+                                .setName("&a" + quest.getName())
+                                .setLore(lore)
+                                .build()
+                );
+                gui.setItem(10 + i + (i / 7) * 2, gobj);
             }
         }
-
+        final int finalPage = page;
+        if (finalPage < ((player.getActiveQuests().size() - 1) / 28)) {
+            GUIButton next_page = new GUIButton(gui, new ItemBuilder(Material.PAPER)
+                    .setName("&#03fcc2→" + (finalPage + 2))
+                    .build()) {
+                @Override
+                public void onClick(ClickType clickType, Player player) {
+                    player.closeInventory();
+                    QuestPlayer qp = QuestPlayers.get(player);
+                    GUI gui = createQuestGui(qp, finalPage + 1);
+                    if (gui == null) return;
+                    gui.open(player);
+                }
+            };
+            gui.setItem(page == 0 ? 50 : 32, next_page);
+        }
+        if (finalPage > 0) {
+            GUIButton next_page = new GUIButton(gui, new ItemBuilder(Material.PAPER)
+                    .setName("&#03fcc2→" + (finalPage + 2))
+                    .build()) {
+                @Override
+                public void onClick(ClickType clickType, Player player) {
+                    player.closeInventory();
+                    QuestPlayer qp = QuestPlayers.get(player);
+                    GUI gui = createQuestGui(qp, finalPage - 1);
+                    if (gui == null) return;
+                    gui.open(player);
+                }
+            };
+            gui.setItem(30, next_page);
+        }
         return gui;
     }
 

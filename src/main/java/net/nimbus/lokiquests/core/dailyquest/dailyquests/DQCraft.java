@@ -1,8 +1,14 @@
 package net.nimbus.lokiquests.core.dailyquest.dailyquests;
 
+import net.nimbus.api.modules.gui.core.itembuilder.ItemBuilder;
+import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dailyquest.DailyQuest;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -16,14 +22,47 @@ public class DQCraft extends DailyQuest {
     private final ItemStack result;
     private final int amount;
 
-    public DQCraft(QuestPlayer player, ItemStack result, int amount) {
-        super(player);
+    public DQCraft(QuestPlayer player, Integer reward, ItemStack result, Integer amount) {
+        super(player, reward);
         this.result = result.clone();
         this.result.setAmount(1);
         this.amount = amount;
 
         progress = 0;
     }
+
+    public DQCraft(QuestPlayer player, String vars) {
+        super(player, vars);
+        vars = vars.replaceFirst(reward+";", "");
+
+        YamlConfiguration c = new YamlConfiguration();
+        try {
+            c.loadFromString(vars);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        result = c.getItemStack("item");
+        result.setAmount(1);
+
+        amount = c.getInt("amount");
+        setProgress(c.getInt("progress", 0));
+    }
+
+    @Override
+    public ItemStack getDisplay() {
+        return new ItemBuilder(result)
+                .setName("&fCraft &b" + Utils.getLocalisedName(result.getType()))
+                .setLore(
+                        "",
+                        "&fReward: &e" + reward + "&2$",
+                        "",
+                        "&fProgress: &d" + progress + "&f/&5" + amount,
+                        ""
+                )
+                .build();
+    }
+
     private int progress;
 
     public void setProgress(int progress) {
@@ -41,7 +80,7 @@ public class DQCraft extends DailyQuest {
 
     @Override
     public boolean isCompleted(Event event) {
-        if(event == null) return progress >= amount;
+        if(event == null) return isCompleted();
         if(event instanceof CraftItemEvent e) {
             ItemStack clone = e.getRecipe().getResult().clone();
             clone.setAmount(1);
@@ -59,8 +98,14 @@ public class DQCraft extends DailyQuest {
                 }
             }
         }
+        return isCompleted();
+    }
+
+    @Override
+    public boolean isCompleted() {
         return progress >= amount;
     }
+
     private int getSpaceFor(Player player, ItemStack itemStack) {
         ItemStack search = itemStack.clone();
         search.setAmount(1);
@@ -94,7 +139,25 @@ public class DQCraft extends DailyQuest {
         return list.get(min);
     }
     @Override
-    public String toString() {
-        return null;
+    public String saveToString() {
+        YamlConfiguration c = new YamlConfiguration();
+        c.set("item", result);
+        c.set("amount", amount);
+        c.set("progress", getProgress());
+        return c.saveToString();
+    }
+
+    public static DQCraft generate(QuestPlayer player, Integer reward, ConfigurationSection section) {
+        try {
+            List<String> amounts = new ArrayList<>(section.getKeys(false));
+            int amount = Integer.parseInt(amounts.get(LQuests.a.r.nextInt(amounts.size())));
+            List<String> types = new ArrayList<>(section.getStringList(""+amount));
+            amount = (int) (0.5+(amount*(1+(LQuests.a.r.nextInt(11)-5)/100.0)));
+            Material material = Material.valueOf(types.get(LQuests.a.r.nextInt(types.size())).toUpperCase());
+            return new DQCraft(player, reward, new ItemStack(material), amount);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

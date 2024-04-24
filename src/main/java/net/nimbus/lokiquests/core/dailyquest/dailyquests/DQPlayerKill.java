@@ -3,10 +3,16 @@ package net.nimbus.lokiquests.core.dailyquest.dailyquests;
 import net.nimbus.lokiquests.core.dailyquest.DailyQuest;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 
 public class DQPlayerKill extends DailyQuest {
-    public DQPlayerKill(QuestPlayer player) {
-        super(player);
+    public DQPlayerKill(QuestPlayer player, Integer reward) {
+        super(player, reward);
+    }
+
+    @Override
+    public ItemStack getDisplay() {
+        return null;
     }
 
     @Override
@@ -20,7 +26,12 @@ public class DQPlayerKill extends DailyQuest {
     }
 
     @Override
-    public String toString() {
+    public boolean isCompleted() {
+        return false;
+    }
+
+    @Override
+    public String saveToString() {
         return null;
     }
 }

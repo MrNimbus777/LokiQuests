@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LquestCompleter implements TabCompleter {
 
@@ -20,7 +21,7 @@ public class LquestCompleter implements TabCompleter {
         if(!sender.hasPermission("lq.admin")) return result;
         if(args.length == 0) return result;
         if(args.length == 1) {
-            List<String> options = List.of("process", "item");
+            List<String> options = List.of("process", "item", "reload", "generateDailyQuests");
             for(String option : options) {
                 if(option.startsWith(args[0].toLowerCase())) result.add(option);
             }
@@ -29,6 +30,12 @@ public class LquestCompleter implements TabCompleter {
         if(args.length == 2) {
             if(args[0].equalsIgnoreCase("process")) {
                 List<String> options = Dialogues.getAll().stream().map(Dialogue::getId).toList();
+                for(String option : options) {
+                    if(option.toLowerCase().startsWith(args[1].toLowerCase())) result.add(option);
+                }
+                return result;
+            } else if(args[0].equalsIgnoreCase("generatedailyquests")){
+                List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
                 for(String option : options) {
                     if(option.toLowerCase().startsWith(args[1].toLowerCase())) result.add(option);
                 }

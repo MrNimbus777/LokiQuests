@@ -1,37 +1,39 @@
 package net.nimbus.lokiquests.core.dailyquest;
 
+import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
-import net.nimbus.lokiquests.core.reward.Reward;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.bukkit.inventory.ItemStack;
 
 public abstract class DailyQuest {
 
-    private final QuestPlayer player;
+    protected final QuestPlayer player;
+    protected final int reward;
 
-    public DailyQuest(QuestPlayer player){
+    public DailyQuest(QuestPlayer player, Integer reward){
         this.player = player;
-
-        rewards = new ArrayList<>();
+        this.reward = reward;
+    }
+    public DailyQuest(QuestPlayer player, String str) {
+        this.player = player;
+        this.reward = Integer.parseInt(str.split(";")[0]);
     }
 
-    private static List<Reward> rewards;
-
-    public static void setRewards(List<Reward> rewards) {
-        DailyQuest.rewards = rewards;
-    }
-
-    public static List<Reward> getRewards() {
-        return DailyQuest.rewards;
-    }
 
     public void complete(){
-        DailyQuest.rewards.forEach(r -> r.reward(this.player.getPlayer()));
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), LQuests.a.getDailyQuests().getString("reward_command")
+                .replace("%player%", player.getPlayer().getName())
+                .replace("%amount%", reward+""));
         this.player.removeDailyQuest(this);
     }
+    @Override
+    public String toString(){
+        return DailyQuests.getID(getClass())+":"+reward+";"+saveToString();
+    }
+    public abstract ItemStack getDisplay();
     public abstract void run();
     public abstract boolean isCompleted(Event event);
-    public abstract String toString();
+    public abstract boolean isCompleted();
+    public abstract String saveToString();
 }

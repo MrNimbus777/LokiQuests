@@ -2,6 +2,7 @@ package net.nimbus.lokiquests.core.questplayers;
 
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.core.dailyquest.DailyQuest;
+import net.nimbus.lokiquests.core.dailyquest.DailyQuests;
 import net.nimbus.lokiquests.core.dialogues.Dialogue;
 import net.nimbus.lokiquests.core.dialogues.Dialogues;
 import net.nimbus.lokiquests.core.quest.Quest;
@@ -18,10 +19,8 @@ import org.json.simple.JSONObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class QuestPlayer {
     private final UUID uuid;
@@ -204,6 +203,9 @@ public class QuestPlayer {
     public void setDailyQuests(DailyQuest[] dailyQuests) {
         this.dailyQuests = dailyQuests;
     }
+    public void setDailyQuest(int index, DailyQuest dailyQuest){
+        dailyQuests[index] = dailyQuest;
+    }
     public void removeDailyQuest(DailyQuest quest) {
         for(int i = 0; i < 3; i++) {
             if(getDailyQuests()[i] == quest){
@@ -221,6 +223,17 @@ public class QuestPlayer {
 
 
     public void generateDailyQuests(){
-
+        int low = LQuests.a.r.nextInt(2)+1;
+        int medium = LQuests.a.r.nextInt(low, 4);
+        int hard = 3 - medium;
+        for(int i = 0; i < low; i++) {
+            dailyQuests[i] = DailyQuests.generateRandom(this, "low");
+        }
+        for(int i = low; i < medium; i++) {
+            dailyQuests[i] = DailyQuests.generateRandom(this, "medium");
+        }
+        for(int i = 0; i < hard; i++) {
+            dailyQuests[2-i] = DailyQuests.generateRandom(this, "hard");
+        }
     }
 }

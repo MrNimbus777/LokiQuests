@@ -19,18 +19,15 @@ public class QuestExe implements CommandExecutor {
             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.player-only")));
             return true;
         }
-        if(args.length == 0) {
+        QuestPlayer qp = QuestPlayers.get(p);
+        LQGuis.createQuestGui(qp, 0).open(p);
+        /*if(args.length == 0) {
             sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.quest.usage")));
             return true;
         }
         if(args[0].equalsIgnoreCase("list")){
-            QuestPlayer qp = QuestPlayers.get(p);
-            if(qp.getActiveQuests().isEmpty()) {
-                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.quest.empty")));
-            } else {
-                LQGuis.createQuestGui(qp, 0).open(p);
-            }
-        }
+
+        }*/
         return true;
     }
 }

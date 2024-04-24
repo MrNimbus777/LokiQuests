@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.generator.ChunkGenerator;
@@ -61,6 +62,17 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
             return "";
+        }
+    }
+
+    public static String getLocalisedName(Material material){
+        try {
+            ItemStack item = new ItemStack(material);
+            Class<?> clazz = Class.forName("org.bukkit.craftbukkit." + LQuests.a.version + ".inventory.CraftItemStack");
+            net.minecraft.world.item.ItemStack nmsItem = (net.minecraft.world.item.ItemStack) clazz.getMethod("asNMSCopy", ItemStack.class).invoke(null, item);
+            return nmsItem.getItem().getDefaultInstance().getHoverName().getString();
+        } catch (Exception e) {
+            return material.name().toLowerCase().replace("_", " ");
         }
     }
 

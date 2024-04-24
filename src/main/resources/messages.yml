@@ -44,7 +44,7 @@ Commands:
         success: "&fYou have added a new action &2%action%&f to spawner at &b%location%&f."
       removeAction:
         usage: "&7&o/dungeon spawner removeAction <index>"
-      success: "&fYou have removed action &2%action%&f from spawner at &b%location%&f."
+        success: "&fYou have removed action &2%action%&f from spawner at &b%location%&f."
       remove:
         success: "You deleted the spawner at &b%location%&f."
     addAction:

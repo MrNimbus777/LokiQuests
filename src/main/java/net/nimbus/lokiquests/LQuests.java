@@ -37,6 +37,7 @@ public class LQuests extends JavaPlugin {
 
     private YamlConfiguration messages;
     private YamlConfiguration items;
+    private YamlConfiguration dailyquests;
 
 
     public void loadConfig(boolean reload){
@@ -93,6 +94,7 @@ public class LQuests extends JavaPlugin {
         loadMessages();
 
         loadItems();
+        loadDailyQuests();
 
         Utils.loadSigns();
 
@@ -240,5 +242,29 @@ public class LQuests extends JavaPlugin {
     }
     public YamlConfiguration getItems() {
         return items;
+    }
+
+
+    public void loadDailyQuests(){
+        File f = new File(getDataFolder(), "dailyquests.yml");
+        if(!f.exists()) {
+            if(!f.getParentFile().exists()) {
+                f.getParentFile().mkdirs();
+            }
+            try {
+                dailyquests = YamlConfiguration.loadConfiguration(new InputStreamReader(getResource("dailyquests.yml")));
+                f.createNewFile();
+                dailyquests.save(f);
+                getLogger().info("Created new dailyquests.yml file at " + f.getPath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            dailyquests = YamlConfiguration.loadConfiguration(f);
+            getLogger().info("Daily Quests file loaded.");
+        }
+    }
+    public YamlConfiguration getDailyQuests(){
+        return dailyquests;
     }
 }

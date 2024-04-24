@@ -400,16 +400,16 @@ public class Dungeon {
 
         @Override
         public String toString() {
-            return x1+","+
-                    y1+","+
-                    z1+","+
-                    x2+","+
-                    y2+","+
+            return x1+";"+
+                    y1+";"+
+                    z1+";"+
+                    x2+";"+
+                    y2+";"+
                     z2;
         }
 
         public static Wall fromString(String string){
-            String[] split = string.split(",");
+            String[] split = string.split(";");
             try {
                 return new Wall(
                         Integer.parseInt(split[0]),
@@ -561,18 +561,18 @@ public class Dungeon {
             JSONArray actions = new JSONArray();
             actions.addAll(this.actions);
             obj.put("actions", actions);
-            return location.getX()+","+
-                    location.getY()+","+
-                    location.getZ()+","+
-                    spawner.id()+","+
-                    type+","+
-                    amount+","+
+            return location.getX()+";"+
+                    location.getY()+";"+
+                    location.getZ()+";"+
+                    spawner.id()+";"+
+                    type+";"+
+                    amount+";"+
                     obj.toJSONString();
         }
 
         public static Spawner fromString(String str) {
             try {
-                String[] split = str.split(",");
+                String[] split = str.split(";");
                 Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
                 MobSpawner spawner = MobSpawners.get(split[3]);
                 int amount = Integer.parseInt(split[5]);
@@ -632,18 +632,18 @@ public class Dungeon {
             JSONArray actions = new JSONArray();
             actions.addAll(this.actions);
             obj.put("actions", actions);
-            return location.getX()+","+
-                    location.getY()+","+
-                    location.getZ()+","+
-                    spawner.id()+","+
-                    type+","+
-                    radius+","+
+            return location.getX()+";"+
+                    location.getY()+";"+
+                    location.getZ()+";"+
+                    spawner.id()+";"+
+                    type+";"+
+                    radius+";"+
                     obj.toJSONString();
         }
 
         public static BossSpawner fromString(String str) {
             try {
-                String[] split = str.split(",");
+                String[] split = str.split(";");
                 Location loc = new Location(Vars.DUNGEON_WORLD, Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
                 MobSpawner spawner = MobSpawners.get(split[3]);
                 int radius = Integer.parseInt(split[5]);
