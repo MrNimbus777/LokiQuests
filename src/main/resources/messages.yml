@@ -104,3 +104,4 @@ Actions:
   join_no_party: "&cYou must be in a party with at least 1 member to join a dungeon."
   dungeon_selected: "&fYou have selected the dungeon &7%dungeon%&f."
   spawn_selected: "&fYou have selected the spawner &7%spawner%&f."
+  daily_quest_updated: "&fYour daily quests were updated."

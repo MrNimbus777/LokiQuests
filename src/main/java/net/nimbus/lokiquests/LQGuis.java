@@ -55,14 +55,14 @@ public class LQGuis {
             for (int i = 0; i < 14 && i < player.getActiveQuests().size(); i++) {
                 Quest quest = player.getActiveQuests().get(i);
                 List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add("&7Rewards:");
-                lore.addAll(quest.getRewards().stream().map(r -> "  &7•&e " + r.getName()).toList());
-                lore.add("");
+                lore.add("  &#e0b8e6Rewards:");
+                lore.addAll(quest.getRewards().stream().map(r -> "    &#e0b8e6•&#ff6993 " + r.getName()).toList());
                 GUIObject gobj = new GUIObject(gui,
                         new ItemBuilder(getQuestIco(quest))
-                                .setName("&a" + quest.getName())
+                                .setName("&#ff5e00" + quest.getName())
                                 .setLore(lore)
+                                .setEnchanted()
+                                .hideAttributes()
                                 .build()
                 );
                 gui.setItem(28 + i + (i / 7) * 2, gobj);
@@ -81,13 +81,15 @@ public class LQGuis {
                 Quest quest = player.getActiveQuests().get(i + page * 14);
                 List<String> lore = new ArrayList<>();
                 lore.add("");
-                lore.add("&7Rewards:");
-                lore.addAll(quest.getRewards().stream().map(r -> "  &7•&e " + r.getName()).toList());
+                lore.add("&#e0b8e6Rewards:");
+                lore.addAll(quest.getRewards().stream().map(r -> "  &#e0b8e6•&#ff6993 " + r.getName()).toList());
                 lore.add("");
                 GUIObject gobj = new GUIObject(gui,
                         new ItemBuilder(getQuestIco(quest))
-                                .setName("&a" + quest.getName())
+                                .setName("&#ff5e00" + quest.getName())
                                 .setLore(lore)
+                                .setEnchanted()
+                                .hideAttributes()
                                 .build()
                 );
                 gui.setItem(10 + i + (i / 7) * 2, gobj);

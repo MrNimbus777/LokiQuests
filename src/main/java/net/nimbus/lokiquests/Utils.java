@@ -6,10 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -70,7 +68,9 @@ public class Utils {
             ItemStack item = new ItemStack(material);
             Class<?> clazz = Class.forName("org.bukkit.craftbukkit." + LQuests.a.version + ".inventory.CraftItemStack");
             net.minecraft.world.item.ItemStack nmsItem = (net.minecraft.world.item.ItemStack) clazz.getMethod("asNMSCopy", ItemStack.class).invoke(null, item);
-            return nmsItem.getItem().getDefaultInstance().getHoverName().getString();
+            return nmsItem
+                    .getHoverName()
+                    .getString();
         } catch (Exception e) {
             return material.name().toLowerCase().replace("_", " ");
         }

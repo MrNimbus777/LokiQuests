@@ -9,6 +9,7 @@ import net.nimbus.lokiquests.core.quest.Quest;
 import net.nimbus.lokiquests.core.quest.Quests;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
@@ -70,14 +71,20 @@ public class QuestPlayers {
             }
 
             JSONObject daily = (JSONObject) obj.getOrDefault("daily", new JSONObject());
-            DailyQuest[] dailyQuests = new DailyQuest[3];
-            for(int i = 0; i < 3; i++){
-                String s = (String) daily.getOrDefault(i+"", null);
-                if(s == null) continue;
-                String id = s.split(":")[0];
-                dailyQuests[i] = DailyQuests.createQuest(id, player, s.replaceFirst(id+":", ""));
+            int day = Integer.parseInt(daily.getOrDefault("day", -1).toString());
+            if(day == new Date().getDate() || !player.getPlayer().hasPermission("lq.admin")) { //permission checking for tests
+                DailyQuest[] dailyQuests = new DailyQuest[3];
+                for (int i = 0; i < 3; i++) {
+                    String s = (String) daily.getOrDefault(i + "", null);
+                    if (s == null) continue;
+                    String id = s.split(":")[0];
+                    dailyQuests[i] = DailyQuests.createQuest(id, player, s.replaceFirst(id + ":", ""));
+                }
+                player.setDailyQuests(dailyQuests);
+                player.setDailyQuestDay(day);
+            } else {
+                player.generateDailyQuests();
             }
-            player.setDailyQuests(dailyQuests);
 
             player.setFinishedQuests(getQuestsFromJson(obj.getOrDefault("finished", new JSONArray())));
             player.setCompletedQuests(getQuestsFromJson(obj.getOrDefault("completed", new JSONArray())));

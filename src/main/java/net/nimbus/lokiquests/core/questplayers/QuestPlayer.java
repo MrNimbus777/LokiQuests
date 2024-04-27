@@ -19,6 +19,7 @@ import org.json.simple.JSONObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +45,11 @@ public class QuestPlayer {
         return uuid;
     }
 
+    int dailyQuestDay;
+
+    public void setDailyQuestDay(int dailyQuestDay) {
+        this.dailyQuestDay = dailyQuestDay;
+    }
 
     public void save(){
         File file = new File(LQuests.a.getDataFolder(), "players/"+getUUID().toString()+".json");
@@ -84,6 +90,7 @@ public class QuestPlayer {
         for(int i = 0; i < 3; i++) {
             if(getDailyQuests()[i] != null) daily.put(i, getDailyQuests()[i].toString());
         }
+        daily.put("day", dailyQuestDay);
         obj.put("daily", daily);
 
         if(indicator != null){
@@ -223,6 +230,7 @@ public class QuestPlayer {
 
 
     public void generateDailyQuests(){
+        dailyQuestDay = new Date().getDate();
         int low = LQuests.a.r.nextInt(2)+1;
         int medium = LQuests.a.r.nextInt(low, 4);
         int hard = 3 - medium;

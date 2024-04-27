@@ -52,14 +52,15 @@ public class DQCraft extends DailyQuest {
     @Override
     public ItemStack getDisplay() {
         return new ItemBuilder(result)
-                .setName("&fCraft &b" + Utils.getLocalisedName(result.getType()))
+                .setName("&#c2c095Craft &#fffbb0" + Utils.getLocalisedName(result.getType()))
                 .setLore(
                         "",
-                        "&fReward: &e" + reward + "&2$",
-                        "",
-                        "&fProgress: &d" + progress + "&f/&5" + amount,
+                        "  &#e0b8e6Reward:       &#ff9100" + reward + "&#a2ff29 $    ",
+                        "  &#e0b8e6Progress:    &#a3daff" + progress + " &#e0b8e6/&#ff668a " + amount+"    ",
                         ""
                 )
+                .setEnchanted()
+                .hideAttributes()
                 .build();
     }
 

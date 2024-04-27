@@ -1,10 +1,14 @@
 package net.nimbus.lokiquests.core.dailyquest;
 
 import net.nimbus.lokiquests.LQuests;
+import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dailyquest.dailyquests.DQCraft;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
+import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -15,6 +19,21 @@ public class DailyQuests {
 
     public static void load(){
         register("craft", DQCraft.class);
+
+        new BukkitRunnable(){
+            int day = new Date().getDate();
+            @Override
+            public void run() {
+                int now = new Date().getDate();
+                if(day != now) {
+                    Bukkit.getOnlinePlayers().forEach(p -> {
+                        QuestPlayers.get(p).generateDailyQuests();
+                        p.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Actions.daily_quest_updated")));
+                    });
+                    day = now;
+                }
+            }
+        }.runTaskTimer(LQuests.a, 1200, 1200);
     }
 
     public static void register(String id, Class<? extends DailyQuest> clazz){

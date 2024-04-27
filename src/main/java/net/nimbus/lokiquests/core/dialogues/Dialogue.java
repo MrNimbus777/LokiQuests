@@ -53,7 +53,7 @@ public class Dialogue {
     public void processNext(Player player){
         String progress = getPlayerProgress(player);
         if(progress != null) if(progress.equals("100%")) return;
-        ConfigurationSection section = configuration.getConfigurationSection("dialog."+progress);
+        ConfigurationSection section = configuration.getConfigurationSection("dialogue."+progress);
         if(section == null) {
             section = configuration.getConfigurationSection("start");
         }
