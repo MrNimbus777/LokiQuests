@@ -9,6 +9,9 @@ low:
       - 'chest'
       - 'furnace'
       - 'crafting_table'
+  smelt:
+    '12':
+      - 'iron_ingot'
 medium:
   craft:
     '48':
@@ -17,6 +20,9 @@ medium:
       - 'crafting_table'
     '1':
       - 'netherite_hoe'
+  smelt:
+    '36':
+      - 'iron_ingot'
 hard:
   craft:
     '128':
@@ -25,3 +31,6 @@ hard:
       - 'crafting_table'
     '4':
       - "netherite_block"
+  smelt:
+    '96':
+      - 'iron_ingot'

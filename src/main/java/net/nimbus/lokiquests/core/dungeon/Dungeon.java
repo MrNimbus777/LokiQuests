@@ -299,7 +299,13 @@ public class Dungeon {
             Action action = Actions.get(action_id);
             if(action == null) return;
             String vars = a.replaceFirst(action_id+":", "");
-            getPlayers().forEach(player -> action.execute(player, vars));
+            try{
+                for (Player player : getPlayers()) {
+                    action.execute(player, vars);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         for(Player p : new ArrayList<>(getPlayers())) {
             QuestPlayer qp = QuestPlayers.get(p);

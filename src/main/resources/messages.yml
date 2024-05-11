@@ -17,6 +17,7 @@ Commands:
   dungeon:
     no_dungeon: "&cYou have selected no dungeon."
     no_dungeons: "&cThere are no dungeons."
+    no_spawners: "&cThere are no spawners."
     usage: "&7&o/dungeon create | spawner | remove | getSign | teleport | name | select"
     index_out_of_bounds: "&cIndex %index% out of limit %limit%!"
     create:

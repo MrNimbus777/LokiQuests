@@ -308,13 +308,13 @@ public class DungeonExe implements CommandExecutor {
                 }
                 if(dungeon.getActions().size() <= index) {
                     sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.index_out_of_bounds").
-                            replace("%index%", args[2]).
+                            replace("%index%", args[1]).
                             replace("%limit%", dungeon.getActions().size()+"")));
                     return true;
                 }
                 dungeon.removeAction(index);
                 dungeon.save();
-                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.spawner.removeAction.success").
+                sender.sendMessage(Utils.toPrefix(LQuests.a.getMessage("Commands.dungeon.removeAction.success").
                         replace("%action%", index+"").
                         replace("%location%", Utils.locToString(dungeon.getLocation()))));
                 LQGuis.updateSelectionGui();

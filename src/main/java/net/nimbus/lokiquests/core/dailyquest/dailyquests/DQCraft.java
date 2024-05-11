@@ -7,7 +7,6 @@ import net.nimbus.lokiquests.core.dailyquest.DailyQuest;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -82,14 +81,27 @@ public class DQCraft extends DailyQuest {
     @Override
     public boolean isCompleted(Event event) {
         if(event == null) return isCompleted();
+        if(isCompleted()) return true;
         if(event instanceof CraftItemEvent e) {
             ItemStack clone = e.getRecipe().getResult().clone();
             clone.setAmount(1);
             int amount_per_craft = e.getRecipe().getResult().getAmount();
             if(clone.serialize().equals(result.serialize())){
                 switch (e.getClick()) {
-                    case LEFT, RIGHT, NUMBER_KEY -> {
-                        progress+=amount_per_craft;
+                    case LEFT, RIGHT -> {
+                        if(e.getCursor() == null) {
+                            progress+=amount_per_craft;
+                            break;
+                        }
+                        ItemStack cursor = e.getCursor().clone();
+                        int amount = cursor.getAmount();
+                        cursor.setAmount(1);
+                        if(!e.getCursor().serialize().equals(this.result.serialize())) break;
+                        int space = cursor.getMaxStackSize() - amount;
+                        if(space > amount_per_craft) progress+=amount_per_craft;
+                    }
+                    case NUMBER_KEY -> {
+                        if(player.getPlayer().getInventory().getItem(e.getHotbarButton()) == null) progress+=amount_per_craft;
                     }
                     case SHIFT_LEFT, SHIFT_RIGHT -> {
                         int amountOfCraft = getCraftingAmount(e);

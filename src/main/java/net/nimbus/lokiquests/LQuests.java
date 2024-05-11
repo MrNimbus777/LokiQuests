@@ -73,6 +73,7 @@ public class LQuests extends JavaPlugin {
         loadEvent(new PlayerMoveEvents());
         loadEvent(new PlayerQuitEvents());
         loadEvent(new PlayerTeleportEvents());
+        loadEvent(new InventoryClickEvents());
 
         loadEvent(new CreatureSpawnEvents());
         loadEvent(new EntityDamageByEntityEvents());

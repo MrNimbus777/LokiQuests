@@ -112,6 +112,9 @@ public class Dungeons {
                 Dungeon.Wall wall = Dungeon.Wall.fromString(s);
                 if(wall != null) dungeon.addWall(wall);
             }
+            for(String s : configuration.getStringList(o+".actions")){
+                dungeon.addAction(s);
+            }
             register(dungeon);
         }
     }

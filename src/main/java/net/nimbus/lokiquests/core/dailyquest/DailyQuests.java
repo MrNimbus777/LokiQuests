@@ -3,6 +3,7 @@ package net.nimbus.lokiquests.core.dailyquest;
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dailyquest.dailyquests.DQCraft;
+import net.nimbus.lokiquests.core.dailyquest.dailyquests.DQSmelt;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ public class DailyQuests {
 
     public static void load(){
         register("craft", DQCraft.class);
+        register("smelt", DQSmelt.class);
 
         new BukkitRunnable(){
             int day = new Date().getDate();

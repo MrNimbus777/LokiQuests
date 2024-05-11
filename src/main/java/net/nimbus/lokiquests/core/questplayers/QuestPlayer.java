@@ -209,6 +209,9 @@ public class QuestPlayer {
 
     public void setDailyQuests(DailyQuest[] dailyQuests) {
         this.dailyQuests = dailyQuests;
+        for (DailyQuest dailyQuest : dailyQuests) {
+            if(dailyQuest != null) dailyQuest.run();
+        }
     }
     public void setDailyQuest(int index, DailyQuest dailyQuest){
         dailyQuests[index] = dailyQuest;
