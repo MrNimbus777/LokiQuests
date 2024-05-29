@@ -3,15 +3,15 @@ package net.nimbus.lokiquests.core.dailyquest;
 import net.nimbus.lokiquests.LQuests;
 import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.core.dailyquest.dailyquests.DQCraft;
+import net.nimbus.lokiquests.core.dailyquest.dailyquests.DQMobKill;
+import net.nimbus.lokiquests.core.dailyquest.dailyquests.DQPlayerKill;
 import net.nimbus.lokiquests.core.dailyquest.dailyquests.DQSmelt;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayer;
 import net.nimbus.lokiquests.core.questplayers.QuestPlayers;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -21,6 +21,8 @@ public class DailyQuests {
     public static void load(){
         register("craft", DQCraft.class);
         register("smelt", DQSmelt.class);
+        register("playerkill", DQPlayerKill.class);
+        register("mobkill", DQMobKill.class);
 
         new BukkitRunnable(){
             int day = new Date().getDate();
@@ -82,7 +84,7 @@ public class DailyQuests {
     public static DailyQuest generateRandom(QuestPlayer player, String level){
         String[] split = LQuests.a.getDailyQuests().getString("rewards."+level).split("-");
         int reward = LQuests.a.r.nextInt(Integer.parseInt(split[0]), Integer.parseInt(split[1])+1);
-        List<String> types = new ArrayList<>(LQuests.a.getDailyQuests().getConfigurationSection(level).getKeys(false));
+        List<String> types = new ArrayList<>(LQuests.a.getDailyQuests().getStringList("chanceLists."+level));
         String type = types.get(LQuests.a.r.nextInt(types.size()));
         Class<? extends DailyQuest> clazz = get(type);
         try {

@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +76,13 @@ public class Utils {
             return material.name().toLowerCase().replace("_", " ");
         }
     }
-
+    public static Object getHandle(Object obj){
+        try {
+            return obj.getClass().getMethod("getHandle").invoke(obj);
+        } catch (Exception e) {
+            return null;
+        }
+    }
     public static void saveSigns() {
         File file = new File(LQuests.a.getDataFolder(), "signs.json");
         if(!file.exists()) {

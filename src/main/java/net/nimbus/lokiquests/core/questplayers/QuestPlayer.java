@@ -5,6 +5,7 @@ import net.nimbus.lokiquests.core.dailyquest.DailyQuest;
 import net.nimbus.lokiquests.core.dailyquest.DailyQuests;
 import net.nimbus.lokiquests.core.dialogues.Dialogue;
 import net.nimbus.lokiquests.core.dialogues.Dialogues;
+import net.nimbus.lokiquests.core.dungeon.Dungeon;
 import net.nimbus.lokiquests.core.quest.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -31,6 +32,9 @@ public class QuestPlayer {
     private List<Quest> completedQuests;
 
     private DailyQuest[] dailyQuests;
+
+    private List<Long> completed_dungeons;
+
     private Location indicator;
 
     public QuestPlayer(UUID uuid){
@@ -39,13 +43,14 @@ public class QuestPlayer {
         finishedQuests = new ArrayList<>();
         completedQuests = new ArrayList<>();
         dailyQuests = new DailyQuest[3];
+        completed_dungeons = new ArrayList<>();
     }
 
     public UUID getUUID() {
         return uuid;
     }
 
-    int dailyQuestDay;
+    private int dailyQuestDay;
 
     public void setDailyQuestDay(int dailyQuestDay) {
         this.dailyQuestDay = dailyQuestDay;
@@ -98,6 +103,10 @@ public class QuestPlayer {
             obj.put("indicator", indicator);
         }
 
+        JSONArray completed_dungeons = new JSONArray();
+        getCompletedDungeons().forEach(id -> completed_dungeons.add(id+""));
+        obj.put("completed_dungeons", completed_dungeons);
+
         try {
             FileWriter writer = new FileWriter(file);
             writer.write(obj.toJSONString());
@@ -105,6 +114,21 @@ public class QuestPlayer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Long> getCompletedDungeons() {
+        return completed_dungeons;
+    }
+
+    public void setCompletedDungeons(List<Long> completed_dungeons) {
+        this.completed_dungeons = completed_dungeons;
+    }
+
+    public void addCompletedDungeon(Dungeon dungeon){
+        addCompletedDungeon(dungeon.getId());
+    }
+    public void addCompletedDungeon(Long id){
+        this.completed_dungeons.add(id);
     }
 
     public void setIndicator(Location location){
@@ -239,12 +263,15 @@ public class QuestPlayer {
         int hard = 3 - medium;
         for(int i = 0; i < low; i++) {
             dailyQuests[i] = DailyQuests.generateRandom(this, "low");
+            dailyQuests[i].run();
         }
         for(int i = low; i < medium; i++) {
             dailyQuests[i] = DailyQuests.generateRandom(this, "medium");
+            dailyQuests[i].run();
         }
         for(int i = 0; i < hard; i++) {
             dailyQuests[2-i] = DailyQuests.generateRandom(this, "hard");
+            dailyQuests[2-i].run();
         }
     }
 }

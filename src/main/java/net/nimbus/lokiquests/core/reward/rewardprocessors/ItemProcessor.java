@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 public class ItemProcessor implements RewardProcessor {
     @Override
     public void executeReward(Player player, String reward) {
-        player.getInventory().addItem(LQuests.a.getItems().getItemStack(reward));
+        player.getInventory().addItem(LQuests.a.getItems().getItemStack(reward).clone());
     }
 
     @Override

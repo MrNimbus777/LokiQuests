@@ -5,6 +5,7 @@ import net.nimbus.lokiquests.Utils;
 import net.nimbus.lokiquests.Vars;
 import net.nimbus.lokiquests.core.dialogues.action.Action;
 import net.nimbus.lokiquests.core.dialogues.action.Actions;
+import net.nimbus.lokiquests.core.dialogues.action.actions.ActionReward;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawner;
 import net.nimbus.lokiquests.core.dungeon.mobspawner.MobSpawners;
 import net.nimbus.lokiquests.core.quest.Quest;
@@ -301,6 +302,12 @@ public class Dungeon {
             String vars = a.replaceFirst(action_id+":", "");
             try{
                 for (Player player : getPlayers()) {
+                    if(action instanceof ActionReward){
+                        QuestPlayer qp = QuestPlayers.get(player);
+                        if(qp.getCompletedDungeons().contains(getId())){
+                            continue;
+                        }
+                    }
                     action.execute(player, vars);
                 }
             } catch (Exception e) {
@@ -309,6 +316,7 @@ public class Dungeon {
         });
         for(Player p : new ArrayList<>(getPlayers())) {
             QuestPlayer qp = QuestPlayers.get(p);
+            if(!qp.getCompletedDungeons().contains(this.getId())) qp.addCompletedDungeon(this);
             for(Quest quest : qp.getActiveQuests()) {
                 if(quest instanceof DungeonQuest dq) {
                     if(dq.getDungeon() == getId()) {

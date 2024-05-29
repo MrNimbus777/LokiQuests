@@ -1,36 +1,198 @@
-reward_command: "eco give %player% %amount%"
+reward_command: eco give %player% %amount%
 rewards:
   low: 16-26
   medium: 50-75
   hard: 100-150
+chanceLists:
+  low:
+    - craft
+    - craft
+    - craft
+    - craft
+    - craft
+    - smelt
+    - smelt
+    - smelt
+    - playerkill
+    - mobkill
+    - mobkill
+    - mobkill
+    - mobkill
+  medium:
+    - craft
+    - craft
+    - craft
+    - craft
+    - smelt
+    - smelt
+    - smelt
+    - smelt
+    - playerkill
+    - mobkill
+    - mobkill
+    - mobkill
+    - mobkill
+    - mobkill
+  hard:
+    - craft
+    - craft
+    - craft
+    - smelt
+    - smelt
+    - smelt
+    - playerkill
+    - mobkill
+    - mobkill
+    - mobkill
+    - mobkill
+    - mobkill
+    - mobkill
+    - mobkill
 low:
   craft:
+    '1':
+      - LECTERN
+      - CARTOGRAPHY_TABLE
+      - GRINDSTONE
+      - LOOM
+      - STONECUTTER
+      - compass
+    '4':
+      - bone_block
+      - fermented_spider_eye
+      - fire_charge
+      - ITEM_FRAME
+      - DAYLIGHT_DETECTOR
+      - SMOKER
+    '8':
+      - CHEST
+      - BARREL
     '16':
-      - 'chest'
-      - 'furnace'
-      - 'crafting_table'
+      - arrow
+      - magma_cream
+      - paper
+    '24':
+      - bread
+      - torch
+    '32':
+      - bricks
+      - stone_bricks
+      - nether_bricks
+      - GLASS_BOTTLE
   smelt:
     '12':
-      - 'iron_ingot'
+      - iron_ingot
+      - gold_ingot
+      - copper_ingot
+    '16':
+      - glass
+      - brick
+      - baked_potato
+    '24':
+      - charcoal
+      - smooth_stone
+  playerkill:
+    amount: 1-5
+  mobkill:
+    '8':
+      - chicken
+      - cow
+      - pig
+      - sheep
+    '15':
+      - zombie
+      - skeleton
+      - creeper
 medium:
   craft:
-    '48':
-      - 'chest'
-      - 'furnace'
-      - 'crafting_table'
     '1':
-      - 'netherite_hoe'
+      - netherite_hoe
+      - enchanting_table
+      - ENDER_CHEST
+      - NOTE_BLOCK
+      - SHULKER_BOX
+      - ANVIL
+      - JUKEBOX
+    '4':
+      - rabbit_stew
+      - pumpkin_pie
+      - cake
+      - ender_eye
+      - TARGET
+      - CAULDRON
+      - JACK_O_LANTERN
+      - note_block
+      - hopper_minecart
+    '16':
+      - BOOKSHELF
+      - SEA_LANTERN
+      - WHITE_BANNER
+    '32':
+      - MOSSY_STONE_BRICKS
+      - END_STONE_BRICKS
+      - PRISMARINE_BRICKS
   smelt:
-    '36':
-      - 'iron_ingot'
+    '24':
+      - glass
+      - smooth_quartz
+      - nether_brick
+    '16':
+      - cooked_porkchop
+      - cooked_salmon
+  playerkill:
+    amount: 8-15
+  mobkill:
+    '5':
+      - bat
+      - bee
+      - dolphin
+      - enderman
+      - fox
+      - ghast
+      - hoglin
+      - panda
+      - polar_bear
+      - turtle
+    '10':
+      - guardian
+      - pillager
+      - slime
 hard:
   craft:
-    '128':
-      - 'chest'
-      - 'furnace'
-      - 'crafting_table'
     '4':
-      - "netherite_block"
+      - netherite_ingot
+      - END_CRYSTAL
+    '1':
+      - beacon
+      - CONDUIT
+    '16':
+      - END_ROD
+      - sticky_piston
+    '20':
+      - golden_apple
+    '64':
+      - BOOKSHELF
+      - CAMPFIRE
+      - DIAMOND_BLOCK
   smelt:
-    '96':
-      - 'iron_ingot'
+    '64':
+      - cooked_beef
+      - cooked_chicken
+  playerkill:
+    amount: 20-30
+  mobkill:
+    '1':
+      - ender_dragon
+      - wither
+      - elder_guardian
+      - warden
+    '5':
+      - allay
+      - axolotl
+      - endermite
+      - evoker
+      - frog
+      - glow_squid
+    '10':
+      - phantom
+      - piglin_brute

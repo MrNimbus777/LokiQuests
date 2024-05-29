@@ -100,6 +100,10 @@ public class QuestPlayers {
                 player.setIndicator(loc);
             }
 
+            List<Long> completed_dungeons = new ArrayList<>();
+            ((JSONArray) obj.getOrDefault("completed_dungeons", new JSONArray())).forEach(o -> completed_dungeons.add(Long.parseLong(o.toString())));
+            player.setCompletedDungeons(completed_dungeons);
+
             return player;
         } catch (Exception e) {
             e.printStackTrace();
